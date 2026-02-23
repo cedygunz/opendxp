@@ -64,7 +64,7 @@ class Dao extends Model\Dao\AbstractDao
             } else {
                 // or brick has been added
                 $existsResult = $this->db->fetchOne(
-                    'SELECT id FROM ' . $storetable . ' WHERE id = ? LIMIT 1',
+                    sprintf('SELECT id FROM %s WHERE id = ? LIMIT 1', $storetable),
                     [$object->getId()]
                 );
 
@@ -110,7 +110,7 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             if ($isBrickUpdate) {
-                $this->db->update($storetable, Helper::quoteDataIdentifiers($this->db, $data), ['id'=> $object->getId()]);
+                $this->db->update($storetable, Helper::quoteDataIdentifiers($this->db, $data), ['id' => $object->getId()]);
             } else {
                 $this->db->insert($storetable, Helper::quoteDataIdentifiers($this->db, $data));
             }
@@ -124,7 +124,10 @@ class Dao extends Model\Dao\AbstractDao
             $data['fieldname'] = $this->model->getFieldname();
 
             $this->inheritanceHelper->resetFieldsToCheck();
-            $oldData = $this->db->fetchAssociative('SELECT * FROM ' . $querytable . ' WHERE id = ?', [$object->getId()]);
+            $oldData = $this->db->fetchAssociative(
+                sprintf('SELECT * FROM %s WHERE id = ?', $querytable),
+                [$object->getId()]
+            );
 
             $inheritanceEnabled = $object->getClass()->getAllowInherit();
             $parentData = null;
@@ -136,7 +139,10 @@ class Dao extends Model\Dao\AbstractDao
                     // we cannot DataObject::setGetInheritedValues(true); and then $this->model->$method();
                     // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                     // so the data of the parent cannot be changed while this transaction is on progress
-                    $parentData = $this->db->fetchAssociative('SELECT * FROM ' . $querytable . ' WHERE id = ? FOR UPDATE', [$parentForInheritance->getId()]);
+                    $parentData = $this->db->fetchAssociative(
+                        sprintf('SELECT * FROM %s WHERE id = ? FOR UPDATE', $querytable),
+                        [$parentForInheritance->getId()]
+                    );
                 }
             }
 
@@ -252,7 +258,10 @@ class Dao extends Model\Dao\AbstractDao
         // update data for query table
         $queryTable = $this->model->getDefinition()->getTableName($object->getClass(), true);
 
-        $oldData = $this->db->fetchAssociative('SELECT * FROM ' . $queryTable . ' WHERE id = ?', [$object->getId()]);
+        $oldData = $this->db->fetchAssociative(
+            sprintf('SELECT * FROM %s WHERE id = ?', $queryTable),
+            [$object->getId()]
+        );
         $this->db->delete($queryTable, ['id' => $object->getId()]);
 
         //update data for relations table
@@ -330,32 +339,40 @@ class Dao extends Model\Dao\AbstractDao
             $src = 'dest_id';
         }
 
-        return $this->db->fetchAllAssociative('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.className as subtype, concat(o.path ,o.key) as `path` , r.index, o.published
-            FROM objects o, object_relations_' . $classId . " r
+        // Raw SQL: UNION of 3 queries across objects/assets/documents — not expressible in QB
+        return $this->db->fetchAllAssociative(
+            sprintf(
+                'SELECT r.%1$s as dest_id, r.%1$s as id, r.type, o.className as subtype, concat(o.path ,o.key) as `path`, r.index, o.published
+            FROM objects o, object_relations_%2$s r
             WHERE r.fieldname= ?
-            AND r.ownertype = 'objectbrick'
-            AND r." . $src . ' = ?
-            AND o.id = r.' . $dest . "
-            AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')
-            AND r.type='object'
+            AND r.ownertype = "objectbrick"
+            AND r.%3$s = ?
+            AND o.id = r.%1$s
+            AND (position = "%4$s" OR position IS NULL OR position = "")
+            AND r.type="object"
 
-            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type,  a.type as subtype,  concat(a.path,a.filename) as `path`, r.index, "null" as published
-            FROM assets a, object_relations_' . $classId . " r
+            UNION SELECT r.%1$s as dest_id, r.%1$s as id, r.type, a.type as subtype, concat(a.path,a.filename) as `path`, r.index, "null" as published
+            FROM assets a, object_relations_%2$s r
             WHERE r.fieldname= ?
-            AND r.ownertype = 'objectbrick'
-            AND r." . $src . ' = ?
-            AND a.id = r.' . $dest . "
-            AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')
-            AND r.type='asset'
+            AND r.ownertype = "objectbrick"
+            AND r.%3$s = ?
+            AND a.id = r.%1$s
+            AND (position = "%4$s" OR position IS NULL OR position = "")
+            AND r.type="asset"
 
-            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, d.type as subtype, concat(d.path,d.key) as `path`, r.index, d.published as published
-            FROM documents d, object_relations_' . $classId . " r
+            UNION SELECT r.%1$s as dest_id, r.%1$s as id, r.type, d.type as subtype, concat(d.path,d.key) as `path`, r.index, d.published as published
+            FROM documents d, object_relations_%2$s r
             WHERE r.fieldname= ?
-            AND r.ownertype = 'objectbrick'
-            AND r." . $src . ' = ?
-            AND d.id = r.' . $dest . "
-            AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')
-            AND r.type='document'
-            ORDER BY `index` ASC", $params);
+            AND r.ownertype = "objectbrick"
+            AND r.%3$s = ?
+            AND d.id = r.%1$s
+            AND (position = "%4$s" OR position IS NULL OR position = "")
+            AND r.type="document"
+
+            ORDER BY `index` ASC',
+                $dest, $classId, $src, $this->model->getType()
+            ),
+            $params
+        );
     }
 }

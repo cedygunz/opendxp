@@ -51,10 +51,10 @@ class Dao extends Model\Dao\AbstractDao
     public function delete(DataObject\ClassDefinition $class): void
     {
         $table = $this->getTableName($class, false);
-        $this->db->executeQuery('DROP TABLE IF EXISTS `' . $table . '`');
+        $this->db->executeQuery(sprintf('DROP TABLE IF EXISTS `%s`', $table));
 
         $table = $this->getTableName($class, true);
-        $this->db->executeQuery('DROP TABLE IF EXISTS `' . $table . '`');
+        $this->db->executeQuery(sprintf('DROP TABLE IF EXISTS `%s`', $table));
     }
 
     public function createUpdateTable(DataObject\ClassDefinition $class): void
@@ -62,23 +62,31 @@ class Dao extends Model\Dao\AbstractDao
         $tableStore = $this->getTableName($class, false);
         $tableQuery = $this->getTableName($class, true);
 
-        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $tableStore . "` (
+        $this->db->executeQuery(sprintf(
+            "CREATE TABLE IF NOT EXISTS `%s` (
 		  `id` int(11) UNSIGNED NOT NULL default '0',
           `fieldname` varchar(190) default '',
           PRIMARY KEY (`id`,`fieldname`),
           INDEX `id` (`id`),
           INDEX `fieldname` (`fieldname`),
-          CONSTRAINT `".self::getForeignKeyName($tableStore, 'id').'` FOREIGN KEY (`id`) REFERENCES objects (`id`) ON DELETE CASCADE
-		) DEFAULT CHARSET=utf8mb4;');
+          CONSTRAINT `%s` FOREIGN KEY (`id`) REFERENCES objects (`id`) ON DELETE CASCADE
+		) DEFAULT CHARSET=utf8mb4;",
+            $tableStore,
+            self::getForeignKeyName($tableStore, 'id')
+        ));
 
-        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $tableQuery . "` (
+        $this->db->executeQuery(sprintf(
+            "CREATE TABLE IF NOT EXISTS `%s` (
 		  `id` int(11) UNSIGNED NOT NULL default '0',
           `fieldname` varchar(190) default '',
           PRIMARY KEY (`id`,`fieldname`),
           INDEX `id` (`id`),
           INDEX `fieldname` (`fieldname`),
-          CONSTRAINT `".self::getForeignKeyName($tableQuery, 'id').'` FOREIGN KEY (`id`) REFERENCES objects (`id`) ON DELETE CASCADE
-		) DEFAULT CHARSET=utf8mb4;');
+          CONSTRAINT `%s` FOREIGN KEY (`id`) REFERENCES objects (`id`) ON DELETE CASCADE
+		) DEFAULT CHARSET=utf8mb4;",
+            $tableQuery,
+            self::getForeignKeyName($tableQuery, 'id')
+        ));
 
         $existingColumnsStore = $this->getValidTableColumns($tableStore, false); // no caching of table definition
         $columnsToRemoveStore = $existingColumnsStore;
@@ -159,7 +167,7 @@ class Dao extends Model\Dao\AbstractDao
             $indexPrefix = str_starts_with($table, 'object_brick_query_') ? 'p_index_' : 'u_index_';
             foreach ($columnsToRemove as $value) {
                 if (!in_array(strtolower($value), $protectedColumns)) {
-                    Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` DROP INDEX `' . $indexPrefix . $value . '`;');
+                    Helper::queryIgnoreError($this->db, sprintf('ALTER TABLE `%s` DROP INDEX `%s%s`;', $table, $indexPrefix, $value));
                 }
             }
 

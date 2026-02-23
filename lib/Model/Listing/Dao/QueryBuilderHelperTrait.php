@@ -137,7 +137,7 @@ trait QueryBuilderHelperTrait
             $queryBuilder->distinct();
         }
 
-        $countSql = 'SELECT COUNT(*) FROM (' . $queryBuilder->getSQL() . ') count_subquery';
+        $countSql = sprintf('SELECT COUNT(*) FROM (%s) count_subquery', $queryBuilder->getSQL());
 
         return (int) $this->db->fetchOne(
             $countSql,

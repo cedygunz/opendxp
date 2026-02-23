@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace OpenDxp\Workflow\Notification;
 
-use OpenDxp\Db;
 use OpenDxp\Model\Element\Note;
 use OpenDxp\Model\User;
 
@@ -53,7 +52,7 @@ class AbstractNotificationService
         if ($roles) {
             //get roles
             $roleList = new User\Role\Listing();
-            $roleList->setCondition('name IN ('.implode(',', array_map([Db::get(), 'quote'], $roles)).')');
+            $roleList->setCondition('name IN (?)', [$roles]);
 
             foreach ($roleList->load() as $role) {
                 $userList = new User\Listing();
@@ -72,7 +71,7 @@ class AbstractNotificationService
         if ($users) {
             //get users
             $userList = new User\Listing();
-            $userList->setCondition('name IN ('.implode(',', array_map([Db::get(), 'quote'], $users)).') and active = 1');
+            $userList->setCondition('name IN (?) and active = 1', [$users]);
 
             if (!$includeAllUsers) {
                 $userList->addConditionParam('(email IS NOT NULL AND email != "")');

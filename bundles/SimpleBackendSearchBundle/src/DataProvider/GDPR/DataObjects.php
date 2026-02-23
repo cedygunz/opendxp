@@ -39,6 +39,7 @@ class DataObjects extends DataProvider\DataObjects
 
         $searcherList = new Data\Listing();
         $conditionParts = [];
+        $conditionParams = [];
         $db = \OpenDxp\Db::get();
 
         //id search
@@ -68,15 +69,12 @@ class DataObjects extends DataProvider\DataObjects
         }
 
         if ($classnames) {
-            $conditionClassnameParts = [];
-            foreach ($classnames as $classname) {
-                $conditionClassnameParts[] = $db->quote($classname);
-            }
-            $conditionParts[] = '( subtype IN (' . implode(',', $conditionClassnameParts) . ') )';
+            $conditionParts[] = '( subtype IN (?) )';
+            $conditionParams[] = $classnames;
         }
 
         $condition = implode(' AND ', $conditionParts);
-        $searcherList->setCondition($condition);
+        $searcherList->setCondition($condition, $conditionParams);
 
         $searcherList->setOffset($offset);
         $searcherList->setLimit($limit);

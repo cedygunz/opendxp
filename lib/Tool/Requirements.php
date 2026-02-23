@@ -265,7 +265,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->executeQuery('DELETE FROM __opendxp_req_check');
+            $db->executeStatement('DELETE FROM __opendxp_req_check');
         } catch (Exception) {
             $queryCheck = false;
         }

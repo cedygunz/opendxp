@@ -120,7 +120,7 @@ class ClassDefinitionManager
             $definitionModificationDate = null;
 
             if ($classId = $class->getId()) {
-                $definitionModificationDate = $db->fetchOne('SELECT definitionModificationDate FROM classes WHERE id = ?;', [$classId]);
+                $definitionModificationDate = $db->fetchOne('SELECT definitionModificationDate FROM classes WHERE id = ?', [$classId]);
             }
 
             if (!$definitionModificationDate || $definitionModificationDate !== $class->getModificationDate()) {

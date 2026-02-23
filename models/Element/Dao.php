@@ -15,6 +15,8 @@
 
 namespace OpenDxp\Model\Element;
 
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Exception;
 use OpenDxp\Db\Helper;
 use OpenDxp\Model;
@@ -85,11 +87,11 @@ abstract class Dao extends Model\Dao\AbstractDao
         }
         $fullPath = $current->getPath() . $current->getKey();
 
-        $sql = 'SELECT ' . $this->db->quoteIdentifier($type) . ' FROM users_workspaces_' . $tableSuffix . ' WHERE LOCATE(cpath, ?)=1 AND
-        userId IN (' . implode(',', $userIds) . ')
-        ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . end($userIds) . ') DESC, ' . $this->db->quoteIdentifier($type) . ' DESC LIMIT 1';
+        $sql = 'SELECT ' . $this->db->quoteIdentifier($type) . ' FROM users_workspaces_' . $tableSuffix . ' WHERE LOCATE(cpath, ?) = 1
+        AND userId IN (?)
+        ORDER BY LENGTH(cpath) DESC, FIELD(userId, ?) DESC, ' . $this->db->quoteIdentifier($type) . ' DESC LIMIT 1';
 
-        return (int)$this->db->fetchOne($sql, [$fullPath]);
+        return (int)$this->db->fetchOne($sql, [$fullPath, $userIds, end($userIds)], [ParameterType::STRING, ArrayParameterType::INTEGER, ParameterType::INTEGER]);
     }
 
     /**
@@ -117,11 +119,11 @@ abstract class Dao extends Model\Dao\AbstractDao
 
         $highestWorkspaceQuery = '
             SELECT userId,cid,`'. implode('`,`', $columns) .'` FROM users_workspaces_'.$tableSuffix.'
-            WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ')
-            ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $currentUserId . ') DESC LIMIT 1
+            WHERE cid IN (?) AND userId IN (?)
+            ORDER BY LENGTH(cpath) DESC, FIELD(userId, ?) DESC LIMIT 1
         ';
 
-        $highestWorkspace = $this->db->fetchAssociative($highestWorkspaceQuery);
+        $highestWorkspace = $this->db->fetchAssociative($highestWorkspaceQuery, [$parentIds, $userIds, $currentUserId], [ArrayParameterType::INTEGER, ArrayParameterType::INTEGER, ParameterType::INTEGER]);
 
         if ($highestWorkspace) {
             //if it's the current user, this is the permission that rules them all, no need to check others
@@ -142,10 +144,10 @@ abstract class Dao extends Model\Dao\AbstractDao
 
             $roleWorkspaceSql = '
              SELECT userId,`'. implode('`,`', $columns) .'` FROM users_workspaces_'.$tableSuffix.'
-             WHERE cid = ' . $highestWorkspace['cid'] . ' AND userId IN (' . implode(',', $userIds) . ')
-             ORDER BY FIELD(userId, ' . $currentUserId . ') DESC
+             WHERE cid = ? AND userId IN (?)
+             ORDER BY FIELD(userId, ?) DESC
              ';
-            $objectPermissions = $this->db->fetchAllAssociative($roleWorkspaceSql);
+            $objectPermissions = $this->db->fetchAllAssociative($roleWorkspaceSql, [$highestWorkspace['cid'], $userIds, $currentUserId], [ParameterType::INTEGER, ArrayParameterType::INTEGER, ParameterType::INTEGER]);
 
             //this performs the additive rule when conflicting rules with multiple roles,
             //breaks the loop when permission=1 is found and move on to check next permission type.
@@ -178,10 +180,11 @@ abstract class Dao extends Model\Dao\AbstractDao
 
         $permissionsChildren = $this->db->fetchOne('
             SELECT list FROM users_workspaces_'.$tableSuffix.' as uw
-            WHERE cpath LIKE ? AND userId IN (' . implode(',', $userIds) . ') AND list = 1
-            AND NOT EXISTS( SELECT list FROM users_workspaces_'.$tableSuffix.' WHERE cid = uw.cid AND list = 0 AND userId ='.end($userIds).')
+            WHERE cpath LIKE ? AND userId IN (?) AND list = 1
+            AND NOT EXISTS( SELECT list FROM users_workspaces_'.$tableSuffix.' WHERE cid = uw.cid AND list = 0 AND userId = ?)
             LIMIT 1',
-            [Helper::escapeLike($path) . '%']);
+            [Helper::escapeLike($path) . '%', $userIds, end($userIds)],
+            [ParameterType::STRING, ArrayParameterType::INTEGER, ParameterType::INTEGER]);
 
         return (int)$permissionsChildren;
     }

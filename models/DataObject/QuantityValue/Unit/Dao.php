@@ -45,7 +45,10 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByAbbreviation(string $abbreviation): void
     {
-        $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE abbreviation=' . $this->db->quote($abbreviation));
+        $classRaw = $this->db->fetchAssociative(
+            'SELECT * FROM ' . self::TABLE_NAME . ' WHERE abbreviation = ?',
+            [$abbreviation]
+        );
         if (!$classRaw) {
             throw new Model\Exception\NotFoundException('Unit ' . $abbreviation . ' not found.');
         }
@@ -57,7 +60,10 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByReference(string $reference): void
     {
-        $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE reference=' . $this->db->quote($reference));
+        $classRaw = $this->db->fetchAssociative(
+            'SELECT * FROM ' . self::TABLE_NAME . ' WHERE reference = ?',
+            [$reference]
+        );
         if (!$classRaw) {
             throw new Model\Exception\NotFoundException('Unit ' . $reference . ' not found.');
         }
@@ -84,7 +90,9 @@ class Dao extends Model\Dao\AbstractDao
     {
         if (!$this->model->getId()) {
             // mimic autoincrement
-            $id = $this->db->fetchOne('SELECT CONVERT(SUBSTRING_INDEX(id,\'-\',-1),UNSIGNED INTEGER) AS num FROM quantityvalue_units ORDER BY num DESC LIMIT 1');
+            $id = $this->db->fetchOne(
+                'SELECT CONVERT(SUBSTRING_INDEX(id,\'-\',-1),UNSIGNED INTEGER) AS num FROM quantityvalue_units ORDER BY num DESC LIMIT 1'
+            );
             $id = $id > 0 ? ($id + 1) : 1;
             $this->model->setId((string) $id);
         }

@@ -36,7 +36,7 @@ class CleanupClassificationstoreTablesTask implements TaskInterface
         $tableTypes = ['object_classificationstore_data', 'object_classificationstore_groups'];
         foreach ($tableTypes as $tableType) {
             $prefix = $tableType . '_';
-            $tableNames = $db->fetchAllAssociative("SHOW TABLES LIKE '" . $prefix . "%'");
+            $tableNames = $db->fetchAllAssociative(sprintf("SHOW TABLES LIKE '%s%%'", $prefix));
 
             foreach ($tableNames as $tableName) {
                 $tableName = current($tableName);
@@ -49,8 +49,12 @@ class CleanupClassificationstoreTablesTask implements TaskInterface
                     continue;
                 }
 
-                $fieldsQuery = 'SELECT fieldname FROM ' . $tableName . ' GROUP BY fieldname';
-                $fieldNames = $db->fetchFirstColumn($fieldsQuery);
+                $fieldNames = $db->createQueryBuilder()
+                    ->select('fieldname')
+                    ->from($tableName)
+                    ->groupBy('fieldname')
+                    ->executeQuery()
+                    ->fetchFirstColumn();
 
                 foreach ($fieldNames as $fieldName) {
                     $fieldDef = $classDefinition->getFieldDefinition($fieldName);

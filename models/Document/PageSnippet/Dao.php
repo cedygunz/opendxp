@@ -43,7 +43,10 @@ abstract class Dao extends Model\Document\Dao
      */
     public function getEditables(): array
     {
-        $editablesRaw = $this->db->fetchAllAssociative('SELECT * FROM documents_editables WHERE documentId = ?', [$this->model->getId()]);
+        $editablesRaw = $this->db->fetchAllAssociative(
+            'SELECT * FROM documents_editables WHERE documentId = ?',
+            [$this->model->getId()]
+        );
 
         $editables = [];
         $loader = OpenDxp::getContainer()->get(Document\Editable\Loader\EditableLoader::class);

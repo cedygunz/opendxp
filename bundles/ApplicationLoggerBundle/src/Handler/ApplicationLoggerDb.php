@@ -61,7 +61,13 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     {
         $db = Db::get();
 
-        return $db->fetchFirstColumn('SELECT component FROM ' . self::TABLE_NAME . ' WHERE NOT ISNULL(component) GROUP BY component;');
+        return $db->createQueryBuilder()
+            ->select('component')
+            ->from(self::TABLE_NAME)
+            ->where('component IS NOT NULL')
+            ->groupBy('component')
+            ->executeQuery()
+            ->fetchFirstColumn();
     }
 
     /**
@@ -83,7 +89,13 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
 
         $db = Db::get();
 
-        $priorityNumbers = $db->fetchFirstColumn('SELECT priority FROM ' . self::TABLE_NAME . ' WHERE NOT ISNULL(priority) GROUP BY priority;');
+        $priorityNumbers = $db->createQueryBuilder()
+            ->select('priority')
+            ->from(self::TABLE_NAME)
+            ->where('priority IS NOT NULL')
+            ->groupBy('priority')
+            ->executeQuery()
+            ->fetchFirstColumn();
         foreach ($priorityNumbers as $priorityNumber) {
             $priorities[$priorityNumber] = $priorityNames[$priorityNumber];
         }

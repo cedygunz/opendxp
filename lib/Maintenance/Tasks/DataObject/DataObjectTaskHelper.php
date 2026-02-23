@@ -59,7 +59,7 @@ class DataObjectTaskHelper implements DataObjectTaskHelperInterface
             return;
         }
 
-        $fieldsQuery = 'SELECT fieldname FROM ' . $tableName . ' GROUP BY fieldname';
+        $fieldsQuery = sprintf('SELECT fieldname FROM %s GROUP BY fieldname', $tableName);
         $fieldNames = $this->db->fetchFirstColumn($fieldsQuery);
 
         foreach ($fieldNames as $fieldName) {

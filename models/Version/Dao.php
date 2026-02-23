@@ -15,6 +15,8 @@
 
 namespace OpenDxp\Model\Version;
 
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use OpenDxp;
 use OpenDxp\Db\Helper;
 use OpenDxp\Logger;
@@ -93,7 +95,11 @@ class Dao extends Model\Dao\AbstractDao
 
     public function getBinaryFileIdForHash(string $hash): ?int
     {
-        $id = $this->db->fetchOne('SELECT IFNULL(binaryFileId, id) FROM versions WHERE binaryFileHash = ? AND cid = ? AND storageType = ? ORDER BY id ASC LIMIT 1', [$hash, $this->model->getCid(), $this->model->getStorageType()]);
+        $id = $this->db->fetchOne(
+            'SELECT IFNULL(binaryFileId, id) FROM versions WHERE binaryFileHash = ? AND cid = ? AND storageType = ? ORDER BY id ASC LIMIT 1',
+            [$hash, $this->model->getCid(), $this->model->getStorageType()]
+        );
+
         if (!$id) {
             return null;
         }
@@ -103,7 +109,10 @@ class Dao extends Model\Dao\AbstractDao
 
     public function isBinaryHashInUse(?string $hash): bool
     {
-        $count = $this->db->fetchOne('SELECT count(*) FROM versions WHERE binaryFileHash = ? AND cid = ?', [$hash, $this->model->getCid()]);
+        $count = $this->db->fetchOne(
+            'SELECT COUNT(*) FROM versions WHERE binaryFileHash = ? AND cid = ?',
+            [$hash, $this->model->getCid()]
+        );
 
         return $count > 1;
     }
@@ -116,13 +125,10 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function maintenanceGetOutdatedVersions(array $elementTypes, array $ignoreIds = []): array
     {
-        $ignoreIdsList = implode(',', $ignoreIds);
-        if (!$ignoreIdsList) {
-            $ignoreIdsList = '0'; // set a default to avoid SQL errors (there's no version with ID 0)
-        }
+        $ignoreIds = $ignoreIds ?: [0]; // fallback to [0] to avoid empty IN () — no version has ID 0
         $versionIds = [];
 
-        Logger::debug("ignore ID's: " . $ignoreIdsList);
+        Logger::debug(sprintf('ignore ID\'s: %s', implode(',', $ignoreIds)));
 
         if ($elementTypes !== []) {
             $count = 0;
@@ -131,18 +137,32 @@ class Dao extends Model\Dao\AbstractDao
                 if (isset($elementType['days'])) {
                     // by days
                     $deadline = time() - ($elementType['days'] * 86400);
-                    $tmpVersionIds = $this->db->fetchFirstColumn('SELECT id FROM versions as a WHERE ctype = ? AND date < ? AND public=0 AND id NOT IN (' . $ignoreIdsList . ')', [$elementType['elementType'], $deadline]);
+                    $tmpVersionIds = $this->db->fetchFirstColumn(
+                        'SELECT id FROM versions as a WHERE ctype = ? AND date < ? AND public=0 AND id NOT IN (?)',
+                        [$elementType['elementType'], $deadline, $ignoreIds],
+                        [ParameterType::STRING, ParameterType::INTEGER, ArrayParameterType::INTEGER]
+                    );
+
                     $versionIds = [...$versionIds, ...$tmpVersionIds];
                 } else {
                     // by steps
-                    $versionData = $this->db->executeQuery('SELECT cid FROM versions WHERE ctype = ? AND public=0 AND id NOT IN (' . $ignoreIdsList . ') GROUP BY cid HAVING COUNT(*) > ? LIMIT 1000', [$elementType['elementType'], $elementType['steps'] + 1]);
+                    $versionData = $this->db->executeQuery(
+                        'SELECT cid FROM versions WHERE ctype = ? AND public=0 AND id NOT IN (?) GROUP BY cid HAVING COUNT(*) > ? LIMIT 1000',
+                        [$elementType['elementType'], $ignoreIds, $elementType['steps'] + 1],
+                        [ParameterType::STRING, ArrayParameterType::INTEGER, ParameterType::INTEGER]
+                    );
+
                     while ($versionInfo = $versionData->fetchAssociative()) {
                         $count++;
-                        $elementVersions = $this->db->fetchFirstColumn('SELECT id FROM versions WHERE cid=? AND ctype = ? AND public=0 AND id NOT IN ('.$ignoreIdsList.') ORDER BY id DESC LIMIT '.($elementType['steps'] + 1).', '.PHP_INT_MAX, [$versionInfo['cid'], $elementType['elementType']]);
+                        $elementVersions = $this->db->fetchFirstColumn(
+                            sprintf('SELECT id FROM versions WHERE cid = ? AND ctype = ? AND public = 0 AND id NOT IN (?) ORDER BY id DESC LIMIT %d, %d', $elementType['steps'] + 1, PHP_INT_MAX),
+                            [$versionInfo['cid'], $elementType['elementType'], $ignoreIds],
+                            [ParameterType::INTEGER, ParameterType::STRING, ArrayParameterType::INTEGER]
+                        );
 
                         $versionIds = [...$versionIds, ...$elementVersions];
 
-                        Logger::info($versionInfo['cid'].'(object '.$count.') Vcount '.count($versionIds));
+                        Logger::info(sprintf('%s (object %d) Vcount %d', $versionInfo['cid'], $count, count($versionIds)));
 
                         // call the garbage collector if memory consumption is > 100MB
                         if (memory_get_usage() > 100000000 && ($count % 100 === 0)) {
@@ -162,7 +182,8 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
         }
-        Logger::info('return ' .  count($versionIds) . " ids\n");
+
+        Logger::info(sprintf('return %d ids', count($versionIds)));
 
         return array_map(intval(...), $versionIds);
     }

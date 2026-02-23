@@ -56,8 +56,14 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
             $typeQuery = ' AND `type` = ' . $this->db->quote($destinationType);
         }
 
-        $dataRaw = $this->db->fetchAllAssociative('SELECT * FROM ' .
-            $this->getTablename($source) . ' WHERE ' . $this->getTablename($source) .'.id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? and `index` = ? ' . $typeQuery, [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position, $index]);
+        $tablename = $this->getTablename($source);
+        $dataRaw = $this->db->fetchAllAssociative(
+            sprintf(
+                'SELECT * FROM %1$s WHERE %1$s.id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? and `index` = ? %2$s',
+                $tablename, $typeQuery
+            ),
+            [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position, $index]
+        );
         if ($dataRaw !== []) {
             $this->model->setElementTypeAndId($destinationType, $destinationId);
             $this->model->setFieldname($fieldname);

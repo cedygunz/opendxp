@@ -53,7 +53,7 @@ class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterf
         foreach ($tasks as $task) {
             $prefix = $task['prefix'];
             $pattern = $task['pattern'];
-            $tableNames = $this->db->fetchAllAssociative("SHOW TABLES LIKE '" . $pattern . "'");
+            $tableNames = $this->db->fetchAllAssociative(sprintf("SHOW TABLES LIKE '%s'", $pattern));
 
             foreach ($tableNames as $tableName) {
                 $tableName = current($tableName);

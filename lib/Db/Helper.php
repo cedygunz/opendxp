@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace OpenDxp\Db;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Types\Type;
@@ -75,8 +76,11 @@ class Helper
         if ($idsForDeletion !== []) {
             $chunks = array_chunk($idsForDeletion, 1000);
             foreach ($chunks as $chunk) {
-                $idString = implode(',', array_map($db->quote(...), $chunk));
-                $db->executeStatement('DELETE FROM ' . $table . ' WHERE ' . $idColumn . ' IN (' . $idString . ')');
+                $db->executeStatement(
+                    'DELETE FROM ' . $table . ' WHERE ' . $idColumn . ' IN (?)',
+                    [$chunk],
+                    [ArrayParameterType::INTEGER]
+                );
             }
         }
     }

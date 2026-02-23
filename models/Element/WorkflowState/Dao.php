@@ -30,7 +30,10 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByPrimary(int $cid, string $ctype, string $workflow): void
     {
-        $data = $this->db->fetchAssociative('SELECT * FROM element_workflow_state WHERE cid = ? AND ctype = ? AND workflow = ?', [$cid, $ctype, $workflow]);
+        $data = $this->db->fetchAssociative(
+            'SELECT * FROM element_workflow_state WHERE cid = ? AND ctype = ? AND workflow = ?',
+            [$cid, $ctype, $workflow]
+        );
 
         if (!$data) {
             throw new Model\Exception\NotFoundException('WorkflowStatus item for workflow ' . $workflow . ' with cid ' . $cid . ' and ctype ' . $ctype . ' not found');

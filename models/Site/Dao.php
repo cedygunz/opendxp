@@ -54,7 +54,10 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByDomain(string $domain): void
     {
-        $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE mainDomain = ? OR domains LIKE ?', [$domain, '%"' . $domain . '"%']);
+        $data = $this->db->fetchAssociative(
+            'SELECT * FROM sites WHERE mainDomain = ? OR domains LIKE ?',
+            [$domain, '%"' . $domain . '"%']
+        );
         if (!$data) {
             // check for wildcards
             // @TODO: refactor this to be more clear

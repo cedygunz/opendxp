@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace OpenDxp\Bundle\CoreBundle\Command;
 
+use Doctrine\DBAL\ArrayParameterType;
 use OpenDxp\Console\AbstractCommand;
 use OpenDxp\Console\Traits\DryRun;
 use OpenDxp\Db;
@@ -59,11 +60,7 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
             $skipLocales = explode(',', $input->getOption('skip-locales'));
         }
 
-        $languageList = [];
         $validLanguages = Tool::getValidLanguages();
-        foreach ($validLanguages as $language) {
-            $languageList[] = $db->quote($language);
-        }
 
         $tables = $db->fetchAllAssociative("SHOW TABLES LIKE 'object\_localized\_data\_%'");
 
@@ -72,20 +69,24 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
             $table = current($table);
             $classId = str_replace('object_localized_data_', '', $table);
 
-            $result = $db->fetchAllAssociative('SELECT DISTINCT `language` FROM ' . $table . ' WHERE `language` NOT IN(' . implode(',', $languageList) .')');
+            $result = $db->fetchAllAssociative(
+                sprintf('SELECT DISTINCT `language` FROM %s WHERE `language` NOT IN(?)', $table),
+                [$validLanguages],
+                [ArrayParameterType::STRING]
+            );
             $result = ($result ?: []);
 
             //delete data from object_localized_data_classID tables
             foreach ($result as $res) {
                 $language = $res['language'];
                 if (!ArrayHelper::inArrayCaseInsensitive($language, $skipLocales) && !ArrayHelper::inArrayCaseInsensitive($language, $validLanguages)) {
-                    $sqlDeleteData = 'Delete FROM object_localized_data_' . $classId  . ' WHERE `language` = ' . $db->quote($language);
                     $printLine = true;
+                    $deleteStmt = sprintf('DELETE FROM object_localized_data_%s WHERE `language` = ?', $classId);
                     if (!$this->isDryRun()) {
-                        $output->writeln($sqlDeleteData);
-                        $db->executeQuery($sqlDeleteData);
+                        $output->writeln(sprintf('DELETE FROM object_localized_data_%s WHERE `language` = %s', $classId, $db->quote($language)));
+                        $db->executeStatement($deleteStmt, [$language]);
                     } else {
-                        $output->writeln($this->dryRunMessage($sqlDeleteData));
+                        $output->writeln($this->dryRunMessage(sprintf('DELETE FROM object_localized_data_%s WHERE `language` = %s', $classId, $db->quote($language))));
                     }
                 }
             }
@@ -97,7 +98,7 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
                 $existingLanguage = str_replace('object_localized_'.$classId.'_', '', $localizedView);
 
                 if (!ArrayHelper::inArrayCaseInsensitive($existingLanguage, $validLanguages)) {
-                    $sqlDropView = 'DROP VIEW IF EXISTS object_localized_' . $classId . '_' .$existingLanguage;
+                    $sqlDropView = sprintf('DROP VIEW IF EXISTS object_localized_%s_%s', $classId, $existingLanguage);
                     $printLine = true;
 
                     if (!$this->isDryRun()) {
@@ -116,7 +117,7 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
                 $existingLanguage = str_replace('object_localized_query_'.$classId.'_', '', $localizedTable);
 
                 if (!ArrayHelper::inArrayCaseInsensitive($existingLanguage, $validLanguages)) {
-                    $sqlDropTable = 'DROP TABLE IF EXISTS object_localized_query_' . $classId . '_' .$existingLanguage;
+                    $sqlDropTable = sprintf('DROP TABLE IF EXISTS object_localized_query_%s_%s', $classId, $existingLanguage);
                     $printLine = true;
 
                     if (!$this->isDryRun()) {

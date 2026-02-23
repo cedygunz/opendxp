@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace OpenDxp\Bundle\ApplicationLoggerBundle\Maintenance;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use OpenDxp\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use OpenDxp\Config;
@@ -43,7 +44,7 @@ class LogMailMaintenanceTask implements TaskInterface
 
             // getting the enums from priority
             $priorityColumnDefinition = $this->db->fetchAllAssociative(
-                'SHOW COLUMNS FROM ' .ApplicationLoggerDb::TABLE_NAME. " LIKE 'priority'"
+                sprintf("SHOW COLUMNS FROM %s LIKE 'priority'", ApplicationLoggerDb::TABLE_NAME)
             );
 
             // type is the actual enum values
@@ -59,15 +60,15 @@ class LogMailMaintenanceTask implements TaskInterface
                 $logLevels[] = $enumValue[$i];
             }
 
-            $query = 'SELECT * FROM '
-                . ApplicationLoggerDb::TABLE_NAME
-                . ' WHERE maintenanceChecked IS NULL '
-                . 'AND priority IN('
-                . implode(',', $logLevels)
-                . ') '
-                . 'ORDER BY id DESC';
-
-            $rows = $this->db->fetchAllAssociative($query);
+            $rows = $this->db->createQueryBuilder()
+                ->select('*')
+                ->from(ApplicationLoggerDb::TABLE_NAME)
+                ->where('maintenanceChecked IS NULL')
+                ->andWhere('priority IN (:levels)')
+                ->setParameter('levels', $logLevels, ArrayParameterType::STRING)
+                ->orderBy('id', 'DESC')
+                ->executeQuery()
+                ->fetchAllAssociative();
             $limit = 100;
             $rowsProcessed = 0;
 

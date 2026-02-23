@@ -39,10 +39,13 @@ class Dao extends Model\Document\PageSnippet\Dao
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchAssociative("SELECT documents.*, documents_email.*, tree_locks.locked FROM documents
-            LEFT JOIN documents_email ON documents.id = documents_email.id
-            LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
-                WHERE documents.id = ?", [$this->model->getId()]);
+        $data = $this->db->fetchAssociative(
+            'SELECT documents.*, documents_email.*, tree_locks.locked FROM documents
+                LEFT JOIN documents_email ON documents.id = documents_email.id
+                LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = "document"
+                WHERE documents.id = ?',
+            [$this->model->getId()]
+        );
 
         if ($data) {
             $data['published'] = (bool)$data['published'];

@@ -89,7 +89,7 @@ class CleanupCommand extends AbstractCommand
                 $tableName = 'documents_' . $filteredDocumentType;
 
                 try {
-                    $db->executeQuery('DROP TABLE IF EXISTS ' . $tableName);
+                    $db->executeQuery(sprintf('DROP TABLE IF EXISTS %s', $tableName));
                 } catch (Exception $ex) {
                     $output->writeln(sprintf('Could not drop table %s: %s', $tableName, $ex));
                 }

@@ -17,7 +17,6 @@ namespace OpenDxp\Model\DataObject\Fieldcollection;
 
 use Exception;
 use OpenDxp;
-use OpenDxp\Db\Helper;
 use OpenDxp\Logger;
 use OpenDxp\Model;
 use OpenDxp\Model\DataObject;
@@ -56,7 +55,10 @@ class Dao extends Model\Dao\AbstractDao
             $tableName = $definition->getTableName($object->getClass());
 
             try {
-                $results = $this->db->fetchAllAssociative('SELECT * FROM ' . $tableName . ' WHERE id = ? AND fieldname = ? ORDER BY `index` ASC', [$object->getId(), $this->model->getFieldname()]);
+                $results = $this->db->fetchAllAssociative(
+                    sprintf('SELECT * FROM %s WHERE id = ? AND fieldname = ? ORDER BY `index` ASC', $tableName),
+                    [$object->getId(), $this->model->getFieldname()]
+                );
             } catch (Exception) {
                 $results = [];
             }
@@ -156,7 +158,10 @@ class Dao extends Model\Dao\AbstractDao
             $tableName = $definition->getTableName($object->getClass());
 
             try {
-                $dataExists = $this->db->fetchOne('SELECT `id` FROM `'.$tableName."` WHERE `id` = '".$object->getId()."' AND `fieldname` = '".$this->model->getFieldname()."' LIMIT 1");
+                $dataExists = $this->db->fetchOne(
+                    sprintf('SELECT `id` FROM `%s` WHERE `id` = ? AND `fieldname` = ? LIMIT 1', $tableName),
+                    [$object->getId(), $this->model->getFieldname()]
+                );
                 if ($dataExists) {
                     $this->db->delete($tableName, [
                         'id' => $object->getId(),
@@ -172,8 +177,10 @@ class Dao extends Model\Dao\AbstractDao
                 $tableName = $definition->getLocalizedTableName($object->getClass());
 
                 try {
-                    $dataExists = $this->db->fetchOne('SELECT `ooo_id` FROM `'.$tableName."` WHERE
-         `ooo_id` = '".$object->getId()."' AND `fieldname` = '".$this->model->getFieldname()."' LIMIT 1 ");
+                    $dataExists = $this->db->fetchOne(
+                        sprintf('SELECT `ooo_id` FROM `%s` WHERE `ooo_id` = ? AND `fieldname` = ? LIMIT 1', $tableName),
+                        [$object->getId(), $this->model->getFieldname()]
+                    );
                     if ($dataExists) {
                         $this->db->delete($tableName, [
                             'ooo_id' => $object->getId(),
@@ -230,24 +237,25 @@ class Dao extends Model\Dao\AbstractDao
             return [];
         }
 
-        $whereLocalizedFields = "(ownertype = 'localizedfield' AND "
-            . Helper::quoteInto($this->db, 'ownername LIKE ?', '/fieldcollection~'
-                . $this->model->getFieldname() . '/%')
-            . ' AND ' . Helper::quoteInto($this->db, 'src_id = ?', $object->getId()). ')';
-
         if ($saveMode && (!DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields() && $hasLocalizedFields)) {
             // always empty localized fields
-            $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $whereLocalizedFields);
+            $this->db->executeStatement(
+                sprintf('DELETE FROM object_relations_%s WHERE (ownertype = "localizedfield" AND ownername LIKE ? AND src_id = ?)', $object->getClassId()),
+                ['/fieldcollection~' . $this->model->getFieldname() . '/%', $object->getId()]
+            );
 
             return ['saveLocalizedRelations' => true];
         }
 
-        $where = "(ownertype = 'fieldcollection' AND " . Helper::quoteInto($this->db, 'ownername = ?', $this->model->getFieldname())
-            . ' AND ' . Helper::quoteInto($this->db, 'src_id = ?', $object->getId()) . ')';
-
         // empty relation table
-        $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $where);
-        $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $whereLocalizedFields);
+        $this->db->executeStatement(
+            sprintf('DELETE FROM object_relations_%s WHERE (ownertype = "fieldcollection" AND ownername = ? AND src_id = ?)', $object->getClassId()),
+            [$this->model->getFieldname(), $object->getId()]
+        );
+        $this->db->executeStatement(
+            sprintf('DELETE FROM object_relations_%s WHERE (ownertype = "localizedfield" AND ownername LIKE ? AND src_id = ?)', $object->getClassId()),
+            ['/fieldcollection~' . $this->model->getFieldname() . '/%', $object->getId()]
+        );
 
         return ['saveFieldcollectionRelations' => true, 'saveLocalizedRelations' => true];
     }

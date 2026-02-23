@@ -85,7 +85,10 @@ class ResponseExceptionListener implements EventSubscriberInterface
         $uri = $request->getUri();
         $exists = $this->db->fetchOne('SELECT date FROM http_error_log WHERE uri = ?', [$uri]);
         if ($exists) {
-            $this->db->executeQuery('UPDATE http_error_log SET `count` = `count` + 1, date = ? WHERE uri = ?', [time(), $uri]);
+            $this->db->executeStatement(
+                'UPDATE http_error_log SET `count` = `count` + 1, date = ? WHERE uri = ?',
+                [time(), $uri]
+            );
         } else {
             $this->db->insert('http_error_log', [
                 'uri' => $uri,
