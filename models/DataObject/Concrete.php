@@ -740,11 +740,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     protected function doRetrieveData(array $descriptor, string $table): array
     {
         $db = Db::get();
-        [$conditionParts, $params] = Service::buildConditionPartsFromDescriptor($descriptor);
+        [$conditionParts, $sqlParams] = Service::buildConditionPartsFromDescriptor($descriptor);
 
         return $db->fetchAllAssociative(
             sprintf('SELECT * FROM %s WHERE %s', $table, implode(' AND ', $conditionParts)),
-            $params
+            $sqlParams
         );
     }
 
