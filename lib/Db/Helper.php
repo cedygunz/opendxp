@@ -50,6 +50,9 @@ class Helper
         }
     }
 
+    /**
+     * @deprecated since OpenDXP 1.3 and will be removed in 2.0.
+     */
     public static function fetchPairs(Connection $db, string $sql, array $params = [], array $types = []): array
     {
         $stmt = $db->executeQuery($sql, $params, $types);
@@ -63,6 +66,9 @@ class Helper
         return $data;
     }
 
+    /**
+     * @deprecated since OpenDXP 1.3 and will be removed in 2.0.
+     */
     public static function selectAndDeleteWhere(Connection $db, string $table, string $idColumn = 'id', string $where = ''): void
     {
         $sql = 'SELECT ' . $db->quoteIdentifier($idColumn) . '  FROM ' . $table;
@@ -101,6 +107,9 @@ class Helper
         return null;
     }
 
+    /**
+     * @deprecated since OpenDXP 1.3 and will be removed in 2.0. Use parameterized queries with ? or :name placeholders instead.
+     */
     public static function quoteInto(Connection $db, string $text, mixed $value, int|string|Type|null $type = null, ?int $count = null): array|string
     {
         if ($count === null) {
