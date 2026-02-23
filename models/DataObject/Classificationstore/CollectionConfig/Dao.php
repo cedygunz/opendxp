@@ -39,13 +39,10 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->createQueryBuilder()
-            ->select('*')
-            ->from(self::TABLE_NAME_COLLECTIONS)
-            ->where('id = :id')
-            ->setParameter('id', $this->model->getId())
-            ->executeQuery()
-            ->fetchAssociative();
+        $data = $this->db->fetchAssociative(
+            sprintf('SELECT * FROM %s WHERE id = ?', self::TABLE_NAME_COLLECTIONS),
+            [$this->model->getId()]
+        );
 
         if ($data) {
             $this->assignVariablesToModel($data);
@@ -66,14 +63,10 @@ class Dao extends Model\Dao\AbstractDao
         $name = $this->model->getName();
         $storeId = $this->model->getStoreId();
 
-        $data = $this->db->createQueryBuilder()
-            ->select('*')
-            ->from(self::TABLE_NAME_COLLECTIONS)
-            ->where('name = :name AND storeId = :storeId')
-            ->setParameter('name', $name)
-            ->setParameter('storeId', $storeId)
-            ->executeQuery()
-            ->fetchAssociative();
+        $data = $this->db->fetchAssociative(
+            sprintf('SELECT * FROM %s WHERE name = ? AND storeId = ?', self::TABLE_NAME_COLLECTIONS),
+            [$name, $storeId]
+        );
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);

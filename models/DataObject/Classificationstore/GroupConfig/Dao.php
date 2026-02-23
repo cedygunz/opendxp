@@ -39,13 +39,10 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->createQueryBuilder()
-            ->select('*')
-            ->from(self::TABLE_NAME_GROUPS)
-            ->where('id = :id')
-            ->setParameter('id', $this->model->getId())
-            ->executeQuery()
-            ->fetchAssociative();
+        $data = $this->db->fetchAssociative(
+            sprintf('SELECT * FROM %s WHERE id = ?', self::TABLE_NAME_GROUPS),
+            [$this->model->getId()]
+        );
 
         if ($data) {
             $this->assignVariablesToModel($data);
@@ -66,14 +63,10 @@ class Dao extends Model\Dao\AbstractDao
         $name = $this->model->getName();
         $storeId = $this->model->getStoreId();
 
-        $data = $this->db->createQueryBuilder()
-            ->select('*')
-            ->from(self::TABLE_NAME_GROUPS)
-            ->where('name = :name AND storeId = :storeId')
-            ->setParameter('name', $name)
-            ->setParameter('storeId', $storeId)
-            ->executeQuery()
-            ->fetchAssociative();
+        $data = $this->db->fetchAssociative(
+            sprintf('SELECT * FROM %s WHERE name = ? AND storeId = ?', self::TABLE_NAME_GROUPS),
+            [$name, $storeId]
+        );
 
         if ($data) {
             $this->assignVariablesToModel($data);
@@ -88,13 +81,10 @@ class Dao extends Model\Dao\AbstractDao
             return false;
         }
 
-        return (bool) $this->db->createQueryBuilder()
-            ->select('COUNT(*)')
-            ->from(self::TABLE_NAME_GROUPS)
-            ->where('parentId = :parentId')
-            ->setParameter('parentId', $this->model->getId())
-            ->executeQuery()
-            ->fetchOne();
+        return (bool) $this->db->fetchOne(
+            sprintf('SELECT COUNT(*) FROM %s WHERE parentId = ?', self::TABLE_NAME_GROUPS),
+            [$this->model->getId()]
+        );
     }
 
     /**
