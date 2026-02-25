@@ -328,14 +328,16 @@ class Processor
     private static function saveWithoutVersion(Model\Asset $asset): void
     {
         $versioningEnabled = Model\Version::isEnabled();
-        if ($versioningEnabled) {
-            Model\Version::disable();
-        }
+        try {
+            if ($versioningEnabled) {
+                Model\Version::disable();
+            }
 
-        $asset->save();
-
-        if ($versioningEnabled) {
-            Model\Version::enable();
+            $asset->save();
+        } finally {
+            if ($versioningEnabled) {
+                Model\Version::enable();
+            }
         }
     }
 
