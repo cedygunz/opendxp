@@ -131,8 +131,10 @@ final class Version extends AbstractModel
     public static function withDisabledVersioning(callable $callback): mixed
     {
         $versioningEnabled = self::isEnabled();
+
         try {
             self::disable();
+
             return $callback();
         } finally {
             if ($versioningEnabled) {
