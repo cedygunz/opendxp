@@ -107,9 +107,6 @@ class ThumbnailsVideoCommand extends AbstractCommand
 
     protected function runSingleCommand(string $item, InputInterface $input, OutputInterface $output): void
     {
-        // disable versioning
-        Version::disable();
-
         [$assetId, $thumbnailConfigName] = explode('~~~', $item, 2);
 
         $video = Asset\Video::getById((int) $assetId);
@@ -121,20 +118,23 @@ class ThumbnailsVideoCommand extends AbstractCommand
 
         $thumbnail = Asset\Video\Thumbnail\Config::getByName($thumbnailConfigName);
 
-        if ($output->isVerbose()) {
-            $this->output->writeln(' generating thumbnail for video: ' . $video->getRealFullPath() . ' | ' . $video->getId() . ' | Thumbnail: ' . $thumbnailConfigName . ' : ' . FileSystemHelper::formatBytes(memory_get_usage()));
-        }
-        $video->getThumbnail($thumbnail);
-        $this->waitTillFinished($video->getId(), $thumbnail);
-
-        if ($input->getOption('system')) {
+        // Use helper to ensure versioning is properly re-enabled even if exception occurs
+        Version::withDisabledVersioning(function () use ($video, $thumbnail, $input, $output, $thumbnailConfigName) {
             if ($output->isVerbose()) {
-                $this->output->writeln(' generating thumbnail for video: ' . $video->getRealFullPath() . ' | ' . $video->getId() . ' | Thumbnail: System Preview : ' . FileSystemHelper::formatBytes(memory_get_usage()));
+                $this->output->writeln(' generating thumbnail for video: ' . $video->getRealFullPath() . ' | ' . $video->getId() . ' | Thumbnail: ' . $thumbnailConfigName . ' : ' . FileSystemHelper::formatBytes(memory_get_usage()));
             }
-            $thumbnail = Asset\Video\Thumbnail\Config::getPreviewConfig();
             $video->getThumbnail($thumbnail);
             $this->waitTillFinished($video->getId(), $thumbnail);
-        }
+
+            if ($input->getOption('system')) {
+                if ($output->isVerbose()) {
+                    $this->output->writeln(' generating thumbnail for video: ' . $video->getRealFullPath() . ' | ' . $video->getId() . ' | Thumbnail: System Preview : ' . FileSystemHelper::formatBytes(memory_get_usage()));
+                }
+                $thumbnail = Asset\Video\Thumbnail\Config::getPreviewConfig();
+                $video->getThumbnail($thumbnail);
+                $this->waitTillFinished($video->getId(), $thumbnail);
+            }
+        });
     }
 
     protected function waitTillFinished(int $videoId, string|Asset\Video\Thumbnail\Config $thumbnail): void
