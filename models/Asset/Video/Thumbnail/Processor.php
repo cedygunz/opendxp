@@ -327,15 +327,7 @@ class Processor
 
     private static function saveWithoutVersion(Model\Asset $asset): void
     {
-        $versioningEnabled = Model\Version::isEnabled();
-        try {
-            Model\Version::disable();
-            $asset->save();
-        } finally {
-            if ($versioningEnabled) {
-                Model\Version::enable();
-            }
-        }
+        Model\Version::withDisabledVersioning(fn() => $asset->save());
     }
 
     protected function getJobStoreId(?string $processId = null): string

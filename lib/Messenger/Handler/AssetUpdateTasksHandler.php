@@ -63,16 +63,10 @@ class AssetUpdateTasksHandler
 
     private function saveAsset(Asset $asset, array $saveParams = []): void
     {
-        $versioningEnabled = Version::isEnabled();
-        try {
-            Version::disable();
+        Version::withDisabledVersioning(function () use ($asset, $saveParams) {
             $asset->markFieldDirty('modificationDate'); // prevent modificationDate from being changed
             $asset->save($saveParams);
-        } finally {
-            if ($versioningEnabled) {
-                Version::enable();
-            }
-        }
+        });
     }
 
     private function processDocument(Asset\Document $asset): void

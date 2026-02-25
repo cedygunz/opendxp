@@ -123,6 +123,24 @@ final class Version extends AbstractModel
         return !self::$disabled;
     }
 
+    /**
+     * Executes a callback with versioning disabled, ensuring versioning state is properly restored.
+     * This is a convenience method to ensure Version::enable() is always called,
+     * even if the callback throws an exception.
+     */
+    public static function withDisabledVersioning(callable $callback): mixed
+    {
+        $versioningEnabled = self::isEnabled();
+        try {
+            self::disable();
+            return $callback();
+        } finally {
+            if ($versioningEnabled) {
+                self::enable();
+            }
+        }
+    }
+
     public function save(): void
     {
         $this->dispatchEvent(new VersionEvent($this), VersionEvents::PRE_SAVE);

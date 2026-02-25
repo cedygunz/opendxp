@@ -196,15 +196,7 @@ class Video extends Model\Asset
             if ($duration) {
                 $this->setCustomSetting('duration', $duration);
 
-                $versioningEnabled = Model\Version::isEnabled();
-                try {
-                    Model\Version::disable();
-                    $this->save(); // auto save
-                } finally {
-                    if ($versioningEnabled) {
-                        Model\Version::enable();
-                    }
-                }
+                Model\Version::withDisabledVersioning(fn() => $this->save()); // auto save
             }
         }
 
@@ -231,15 +223,7 @@ class Video extends Model\Asset
                 $this->setCustomSetting(self::CUSTOM_SETTING_PROCESSING_FAILED, true);
             }
 
-            $versioningEnabled = Model\Version::isEnabled();
-            try {
-                Model\Version::disable();
-                $this->save(); // auto save
-            } finally {
-                if ($versioningEnabled) {
-                    Model\Version::enable();
-                }
-            }
+            Model\Version::withDisabledVersioning(fn() => $this->save()); // auto save
         }
 
         return $dimensions;

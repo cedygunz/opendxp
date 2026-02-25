@@ -103,11 +103,9 @@ class Item extends Model\AbstractModel
                 $element->setKey($element->getKey().'_restore');
             }
 
-            $versioningEnabled = Model\Version::isEnabled();
-            try {
+            Model\Version::withDisabledVersioning(function () use ($element) {
                 // create an empty object first and clone it to prevent that unique key constraint is being ignored
                 // when restoring from recycle bin
-                Model\Version::disable();
                 $className = $element::class;
                 /** @var Document|Asset|AbstractObject $dummy */
                 $dummy = OpenDxp::getContainer()->get('opendxp.model.factory')->build($className);
@@ -118,11 +116,7 @@ class Item extends Model\AbstractModel
                     $dummy->setOmitMandatoryCheck(true);
                 }
                 $dummy->save(['isRecycleBinRestore' => true]);
-            } finally {
-                if ($versioningEnabled) {
-                    Model\Version::enable();
-                }
-            }
+            });
         }
 
         if (\OpenDxp\Tool\Admin::getCurrentUser()) {
