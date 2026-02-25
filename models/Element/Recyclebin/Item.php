@@ -103,7 +103,7 @@ class Item extends Model\AbstractModel
                 $element->setKey($element->getKey().'_restore');
             }
 
-            Model\Version::withDisabledVersioning(function () use ($element) {
+            Model\Version::withDisabledVersioning(function () use ($element, $dummy) {
                 // create an empty object first and clone it to prevent that unique key constraint is being ignored
                 // when restoring from recycle bin
                 $className = $element::class;
