@@ -196,7 +196,7 @@ class Video extends Model\Asset
             if ($duration) {
                 $this->setCustomSetting('duration', $duration);
 
-                Model\Version::withDisabledVersioning(fn() => $this->save()); // auto save
+                Model\Version::withDisabledVersioning($this->save(...)); // auto save
             }
         }
 
