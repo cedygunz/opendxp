@@ -196,9 +196,15 @@ class Video extends Model\Asset
             if ($duration) {
                 $this->setCustomSetting('duration', $duration);
 
-                Model\Version::disable();
-                $this->save(); // auto save
-                Model\Version::enable();
+                $versioningEnabled = Model\Version::isEnabled();
+                try {
+                    Model\Version::disable();
+                    $this->save(); // auto save
+                } finally {
+                    if ($versioningEnabled) {
+                        Model\Version::enable();
+                    }
+                }
             }
         }
 
