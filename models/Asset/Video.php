@@ -223,7 +223,7 @@ class Video extends Model\Asset
                 $this->setCustomSetting(self::CUSTOM_SETTING_PROCESSING_FAILED, true);
             }
 
-            Model\Version::withDisabledVersioning(fn() => $this->save()); // auto save
+            Model\Version::withDisabledVersioning($this->save(...)); // auto save
         }
 
         return $dimensions;
