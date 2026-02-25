@@ -119,7 +119,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
         $thumbnail = Asset\Video\Thumbnail\Config::getByName($thumbnailConfigName);
 
         // Use helper to ensure versioning is properly re-enabled even if exception occurs
-        Version::withDisabledVersioning(function () use ($video, $thumbnail, $input, $output) {
+        Version::withDisabledVersioning(function () use ($video, $thumbnail, $input, $output, $thumbnailConfigName) {
             if ($output->isVerbose()) {
                 $this->output->writeln(' generating thumbnail for video: ' . $video->getRealFullPath() . ' | ' . $video->getId() . ' | Thumbnail: ' . $thumbnailConfigName . ' : ' . FileSystemHelper::formatBytes(memory_get_usage()));
             }
