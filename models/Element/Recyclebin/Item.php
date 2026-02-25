@@ -103,20 +103,26 @@ class Item extends Model\AbstractModel
                 $element->setKey($element->getKey().'_restore');
             }
 
-            // create an empty object first and clone it to prevent that unique key constraint is being ignored
-            // when restoring from recycle bin
-            Model\Version::disable();
-            $className = $element::class;
-            /** @var Document|Asset|AbstractObject $dummy */
-            $dummy = OpenDxp::getContainer()->get('opendxp.model.factory')->build($className);
-            $dummy->setId($element->getId());
-            $dummy->setParentId($element->getParentId() ?: 1);
-            $dummy->setKey($element->getKey());
-            if ($dummy instanceof DataObject\Concrete) {
-                $dummy->setOmitMandatoryCheck(true);
+            $versioningEnabled = Model\Version::isEnabled();
+            try {
+                // create an empty object first and clone it to prevent that unique key constraint is being ignored
+                // when restoring from recycle bin
+                Model\Version::disable();
+                $className = $element::class;
+                /** @var Document|Asset|AbstractObject $dummy */
+                $dummy = OpenDxp::getContainer()->get('opendxp.model.factory')->build($className);
+                $dummy->setId($element->getId());
+                $dummy->setParentId($element->getParentId() ?: 1);
+                $dummy->setKey($element->getKey());
+                if ($dummy instanceof DataObject\Concrete) {
+                    $dummy->setOmitMandatoryCheck(true);
+                }
+                $dummy->save(['isRecycleBinRestore' => true]);
+            } finally {
+                if ($versioningEnabled) {
+                    Model\Version::enable();
+                }
             }
-            $dummy->save(['isRecycleBinRestore' => true]);
-            Model\Version::enable();
         }
 
         if (\OpenDxp\Tool\Admin::getCurrentUser()) {

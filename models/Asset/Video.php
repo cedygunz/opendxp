@@ -225,9 +225,15 @@ class Video extends Model\Asset
                 $this->setCustomSetting(self::CUSTOM_SETTING_PROCESSING_FAILED, true);
             }
 
-            Model\Version::disable();
-            $this->save(); // auto save
-            Model\Version::enable();
+            $versioningEnabled = Model\Version::isEnabled();
+            try {
+                Model\Version::disable();
+                $this->save(); // auto save
+            } finally {
+                if ($versioningEnabled) {
+                    Model\Version::enable();
+                }
+            }
         }
 
         return $dimensions;

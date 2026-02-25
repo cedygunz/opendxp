@@ -329,10 +329,7 @@ class Processor
     {
         $versioningEnabled = Model\Version::isEnabled();
         try {
-            if ($versioningEnabled) {
-                Model\Version::disable();
-            }
-
+            Model\Version::disable();
             $asset->save();
         } finally {
             if ($versioningEnabled) {
