@@ -345,24 +345,47 @@ class Dao extends Model\Element\Dao
             return false;
         }
 
-        $query = 'SELECT `a`.`id` FROM `assets` a  WHERE parentId = ? ';
+        $sql = 'SELECT 1 FROM assets a WHERE parentId = ?';
+        $params = [$this->model->getId()];
+        $types = [ParameterType::INTEGER];
 
         if ($user && !$user->isAdmin()) {
-            $userIds = array_map('intval', $user->getRoles());
+            $roleIds = array_map('intval', $user->getRoles());
             $currentUserId = $user->getId();
-            $userIds[] = $currentUserId;
+            $permissionIds = [...$roleIds, $currentUserId];
 
-            $inheritedPermission = $this->isInheritingPermission('list', $userIds);
+            $inheritedPermission = $this->isInheritingPermission('list', $permissionIds);
 
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_asset uwa WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(`path`,filename),cpath)=1 AND
-                NOT EXISTS(SELECT list FROM users_workspaces_asset WHERE userId =' . (int) $currentUserId . '  AND list=0 AND cpath = uwa.cpath))';
-            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
+            $anyAllowedRowOrChildren = 'EXISTS(
+                SELECT list FROM users_workspaces_asset uwa
+                WHERE userId IN (?)
+                AND list=1
+                AND LOCATE(CONCAT(`path`,filename),cpath)=1
+                AND NOT EXISTS(
+                    SELECT list FROM users_workspaces_asset
+                    WHERE userId=? AND list=0 AND cpath = uwa.cpath
+                )
+            )';
 
-            $query .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
+            $isDisallowedCurrentRow = 'EXISTS(
+                SELECT list FROM users_workspaces_asset uworow
+                WHERE userId IN (?)
+                AND cid = id
+                AND list=0
+            )';
+
+            $sql .= sprintf(' AND IF(%s,1,IF(%d,%s = 0,0)) = 1', $anyAllowedRowOrChildren, $inheritedPermission, $isDisallowedCurrentRow);
+
+            $params[] = $permissionIds;
+            $types[] = ArrayParameterType::INTEGER;
+            $params[] = $currentUserId;
+            $types[] = ParameterType::INTEGER;
+            $params[] = $permissionIds;
+            $types[] = ArrayParameterType::INTEGER;
         }
 
-        $query .= ' LIMIT 1;';
-        $c = $this->db->fetchOne($query, [$this->model->getId()]);
+        $sql .= ' LIMIT 1';
+        $c = $this->db->fetchOne($sql, $params, $types);
 
         return (bool)$c;
     }
@@ -401,22 +424,44 @@ class Dao extends Model\Element\Dao
         }
 
         $query = 'SELECT COUNT(*) AS count FROM assets WHERE parentId = ?';
+        $params = [$this->model->getId()];
+        $types = [ParameterType::INTEGER];
 
         if ($user && !$user->isAdmin()) {
-            $userIds = array_map('intval', $user->getRoles());
+            $roleIds = array_map('intval', $user->getRoles());
             $currentUserId = $user->getId();
-            $userIds[] = $currentUserId;
+            $permissionIds = [...$roleIds, $currentUserId];
 
-            $inheritedPermission = $this->isInheritingPermission('list', $userIds);
+            $inheritedPermission = $this->isInheritingPermission('list', $permissionIds);
 
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_asset uwa WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(`path`,filename),cpath)=1 AND
-                NOT EXISTS(SELECT list FROM users_workspaces_asset WHERE userId =' . (int) $currentUserId . '  AND list=0 AND cpath = uwa.cpath))';
-            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
+            $anyAllowedRowOrChildren = 'EXISTS(
+                SELECT list FROM users_workspaces_asset uwa
+                WHERE userId IN (?)
+                AND list=1
+                AND LOCATE(CONCAT(`path`,filename),cpath)=1
+                AND NOT EXISTS(
+                    SELECT list FROM users_workspaces_asset
+                    WHERE userId=? AND list=0 AND cpath = uwa.cpath
+                )
+            )';
+            $isDisallowedCurrentRow = 'EXISTS(
+                SELECT list FROM users_workspaces_asset uworow
+                WHERE userId IN (?)
+                AND cid = id
+                AND list=0
+            )';
 
-            $query .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
+            $query .= sprintf(' AND IF(%s,1,IF(%d,%s = 0,0)) = 1', $anyAllowedRowOrChildren, $inheritedPermission, $isDisallowedCurrentRow);
+
+            $params[] = $permissionIds;
+            $types[] = ArrayParameterType::INTEGER;
+            $params[] = $currentUserId;
+            $types[] = ParameterType::INTEGER;
+            $params[] = $permissionIds;
+            $types[] = ArrayParameterType::INTEGER;
         }
 
-        return (int) $this->db->fetchOne($query, [$this->model->getId()]);
+        return (int) $this->db->fetchOne($query, $params, $types);
     }
 
     public function isLocked(): bool
