@@ -112,8 +112,7 @@ class MiscController extends UserAwareController
     {
         $this->checkPermission('http_errors');
 
-        $db = Db::get();
-        $db->executeQuery('TRUNCATE TABLE http_error_log');
+        Db::get()->executeQuery('TRUNCATE TABLE http_error_log');
 
         return $this->jsonResponse([
             'success' => true,

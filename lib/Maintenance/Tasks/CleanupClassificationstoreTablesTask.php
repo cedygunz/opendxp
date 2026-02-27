@@ -49,12 +49,9 @@ class CleanupClassificationstoreTablesTask implements TaskInterface
                     continue;
                 }
 
-                $fieldNames = $db->createQueryBuilder()
-                    ->select('fieldname')
-                    ->from($tableName)
-                    ->groupBy('fieldname')
-                    ->executeQuery()
-                    ->fetchFirstColumn();
+                $fieldNames = $db->fetchFirstColumn(
+                    sprintf('SELECT fieldname FROM %s GROUP BY fieldname', $tableName)
+                );
 
                 foreach ($fieldNames as $fieldName) {
                     $fieldDef = $classDefinition->getFieldDefinition($fieldName);

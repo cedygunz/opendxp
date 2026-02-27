@@ -59,15 +59,11 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
      */
     public static function getComponents(): array
     {
-        $db = Db::get();
-
-        return $db->createQueryBuilder()
-            ->select('component')
-            ->from(self::TABLE_NAME)
-            ->where('component IS NOT NULL')
-            ->groupBy('component')
-            ->executeQuery()
-            ->fetchFirstColumn();
+        return Db::get()->fetchFirstColumn(sprintf(
+            'SELECT component FROM %s WHERE component IS NOT NULL GROUP BY component',
+            self::TABLE_NAME
+            )
+        );
     }
 
     /**
@@ -87,15 +83,12 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
             'emergency' => 'EMERG',
         ];
 
-        $db = Db::get();
+        $priorityNumbers = Db::get()->fetchFirstColumn(sprintf(
+            'SELECT priority FROM %s WHERE priority IS NOT NULL GROUP BY priority',
+            self::TABLE_NAME
+            )
+        );
 
-        $priorityNumbers = $db->createQueryBuilder()
-            ->select('priority')
-            ->from(self::TABLE_NAME)
-            ->where('priority IS NOT NULL')
-            ->groupBy('priority')
-            ->executeQuery()
-            ->fetchFirstColumn();
         foreach ($priorityNumbers as $priorityNumber) {
             $priorities[$priorityNumber] = $priorityNames[$priorityNumber];
         }

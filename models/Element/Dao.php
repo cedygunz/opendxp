@@ -91,7 +91,11 @@ abstract class Dao extends Model\Dao\AbstractDao
         AND userId IN (?)
         ORDER BY LENGTH(cpath) DESC, FIELD(userId, ?) DESC, ' . $this->db->quoteIdentifier($type) . ' DESC LIMIT 1';
 
-        return (int)$this->db->fetchOne($sql, [$fullPath, $userIds, end($userIds)], [ParameterType::STRING, ArrayParameterType::INTEGER, ParameterType::INTEGER]);
+        return (int)$this->db->fetchOne(
+            $sql,
+            [$fullPath, $userIds, end($userIds)],
+            [ParameterType::STRING, ArrayParameterType::INTEGER, ParameterType::INTEGER]
+        );
     }
 
     /**
@@ -123,7 +127,11 @@ abstract class Dao extends Model\Dao\AbstractDao
             ORDER BY LENGTH(cpath) DESC, FIELD(userId, ?) DESC LIMIT 1
         ';
 
-        $highestWorkspace = $this->db->fetchAssociative($highestWorkspaceQuery, [$parentIds, $userIds, $currentUserId], [ArrayParameterType::INTEGER, ArrayParameterType::INTEGER, ParameterType::INTEGER]);
+        $highestWorkspace = $this->db->fetchAssociative(
+            $highestWorkspaceQuery,
+            [$parentIds, $userIds, $currentUserId],
+            [ArrayParameterType::INTEGER, ArrayParameterType::INTEGER, ParameterType::INTEGER]
+        );
 
         if ($highestWorkspace) {
             //if it's the current user, this is the permission that rules them all, no need to check others
@@ -147,7 +155,11 @@ abstract class Dao extends Model\Dao\AbstractDao
              WHERE cid = ? AND userId IN (?)
              ORDER BY FIELD(userId, ?) DESC
              ';
-            $objectPermissions = $this->db->fetchAllAssociative($roleWorkspaceSql, [$highestWorkspace['cid'], $userIds, $currentUserId], [ParameterType::INTEGER, ArrayParameterType::INTEGER, ParameterType::INTEGER]);
+            $objectPermissions = $this->db->fetchAllAssociative(
+                $roleWorkspaceSql,
+                [$highestWorkspace['cid'], $userIds, $currentUserId],
+                [ParameterType::INTEGER, ArrayParameterType::INTEGER, ParameterType::INTEGER]
+            );
 
             //this performs the additive rule when conflicting rules with multiple roles,
             //breaks the loop when permission=1 is found and move on to check next permission type.

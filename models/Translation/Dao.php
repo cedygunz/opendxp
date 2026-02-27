@@ -135,12 +135,9 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getAvailableLanguages(): array
     {
-        $l = $this->db->createQueryBuilder()
-            ->select('*')
-            ->from($this->getDatabaseTableName())
-            ->groupBy($this->db->quoteIdentifier('language'))
-            ->executeQuery()
-            ->fetchAllAssociative();
+        $l = $this->db->fetchAllAssociative(
+            sprintf('SELECT * FROM %s GROUP BY `language`', $this->getDatabaseTableName())
+        );
         $languages = [];
 
         foreach ($l as $values) {
