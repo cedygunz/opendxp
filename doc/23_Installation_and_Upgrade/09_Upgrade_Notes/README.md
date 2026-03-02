@@ -54,6 +54,8 @@ Upgrade to the latest Pimcore `11.5.x` first!
 #### Twig
 - All twig methods changed from `pimcore_` => `opendxp_`
 
+If you want to migrate your existing document, asset and object versions please read this: [Version Migration](Version_Migration.md)
+
 ***
 
 ### Breaking Changes
