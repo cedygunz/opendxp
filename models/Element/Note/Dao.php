@@ -54,25 +54,25 @@ class Dao extends Model\Dao\AbstractDao
             $type = $keyValue['type'];
             $name = $keyValue['name'];
 
-            if ($type == 'document') {
+            if ($type === 'document') {
                 if ($data) {
                     $data = Document::getById($data);
                 }
-            } elseif ($type == 'asset') {
+            } elseif ($type === 'asset') {
                 if ($data) {
                     $data = Asset::getById($data);
                 }
-            } elseif ($type == 'object') {
+            } elseif ($type === 'object') {
                 if ($data) {
                     $data = DataObject::getById($data);
                 }
-            } elseif ($type == 'date') {
+            } elseif ($type === 'date') {
                 if ($data > 0) {
                     $date = new DateTime();
                     $date->setTimestamp($data);
                     $data = $date;
                 }
-            } elseif ($type == 'bool') {
+            } elseif ($type === 'bool') {
                 $data = (bool) $data;
             }
 
@@ -115,23 +115,23 @@ class Dao extends Model\Dao\AbstractDao
             $data = $meta['data'];
             $type = $meta['type'];
 
-            if ($type == 'document') {
+            if ($type === 'document') {
                 if ($data instanceof Document) {
                     $data = $data->getId();
                 }
-            } elseif ($type == 'asset') {
+            } elseif ($type === 'asset') {
                 if ($data instanceof Asset) {
                     $data = $data->getId();
                 }
-            } elseif ($type == 'object') {
+            } elseif ($type === 'object') {
                 if ($data instanceof DataObject\AbstractObject) {
                     $data = $data->getId();
                 }
-            } elseif ($type == 'date') {
+            } elseif ($type === 'date') {
                 if ($data instanceof DateTimeInterface) {
                     $data = $data->getTimestamp();
                 }
-            } elseif ($type == 'bool') {
+            } elseif ($type === 'bool') {
                 $data = (bool) $data;
             }
 

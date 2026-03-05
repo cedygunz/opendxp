@@ -422,21 +422,21 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
                     $newData = [];
                     foreach ($dataArrayEntry['data'] as $dataEntry) {
                         //rewrite objects
-                        if ($dataEntry['type'] == 'object' && $dataEntry['value']) {
+                        if ($dataEntry['type'] === 'object' && $dataEntry['value']) {
                             $id = $dataEntry['value']->getId();
                             if (array_key_exists('object', $idMapping) && array_key_exists($id, $idMapping['object'])) {
                                 $dataEntry['value'] = DataObject::getById((int) $idMapping['object'][$id]);
                             }
                         }
                         //rewrite assets
-                        if ($dataEntry['type'] == 'asset' && $dataEntry['value']) {
+                        if ($dataEntry['type'] === 'asset' && $dataEntry['value']) {
                             $id = $dataEntry['value']->getId();
                             if (array_key_exists('asset', $idMapping) && array_key_exists($id, $idMapping['asset'])) {
                                 $dataEntry['value'] = Asset::getById((int) $idMapping['asset'][$id]);
                             }
                         }
                         //rewrite documents
-                        if ($dataEntry['type'] == 'document' && $dataEntry['value']) {
+                        if ($dataEntry['type'] === 'document' && $dataEntry['value']) {
                             $id = $dataEntry['value']->getId();
                             if (array_key_exists('document', $idMapping) && array_key_exists($id, $idMapping['document'])) {
                                 $dataEntry['value'] = Document::getById((int) $idMapping['document'][$id]);

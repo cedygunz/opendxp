@@ -269,7 +269,7 @@ class AdvancedManyToManyRelationTest extends AbstractLazyLoadingTest
 
             //load relation and check if relation loads correctly
             $collection = $object->getFieldcollection();
-            if ($objectType == 'parent') {
+            if ($objectType === 'parent') {
                 $item = $collection->get(0);
                 $relationObjects = $item->getAdvancedRelations();
                 $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
@@ -285,7 +285,7 @@ class AdvancedManyToManyRelationTest extends AbstractLazyLoadingTest
             $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($objectType, $relationObjects, $messagePrefix) {
                 //load relation and check if relation loads correctly
                 $collection = $objectCache->getFieldcollection();
-                if ($objectType == 'parent') {
+                if ($objectType === 'parent') {
                     $item = $collection->get(0);
                     $relationObjects = $item->getAdvancedRelations();
                     $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
@@ -326,7 +326,7 @@ class AdvancedManyToManyRelationTest extends AbstractLazyLoadingTest
 
             //load relation and check if relation loads correctly
             $collection = $object->getFieldcollection();
-            if ($objectType == 'parent') {
+            if ($objectType === 'parent') {
                 $item = $collection->get(0);
                 $relationObjects = $item->getLadvancedRelations();
                 $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
@@ -341,7 +341,7 @@ class AdvancedManyToManyRelationTest extends AbstractLazyLoadingTest
             //check if data also loaded correctly when loaded from cache
             $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($objectType, $relationObjects, $messagePrefix) {
                 $collection = $objectCache->getFieldcollection();
-                if ($objectType == 'parent') {
+                if ($objectType === 'parent') {
                     $item = $collection->get(0);
                     $relationObjects = $item->getLadvancedRelations();
                     $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');

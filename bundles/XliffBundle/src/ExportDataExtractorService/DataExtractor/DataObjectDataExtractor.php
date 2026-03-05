@@ -339,7 +339,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                             $blockIdx++;
                             if ($blockItems) {
                                 foreach ($blockItems as $blockItem) {
-                                    if ($blockItem->getType() == 'localizedfields') {
+                                    if ($blockItem->getType() === 'localizedfields') {
                                         /** @var DataObject\Localizedfield $blockItemData */
                                         $blockItemData = $blockItem->getData();
 

@@ -56,7 +56,7 @@ final class Property extends AbstractModel
             if ($el) {
                 $this->data = $el->getId();
             }
-        } elseif ($this->type == 'bool') {
+        } elseif ($this->type === 'bool') {
             $this->data = false;
             if (!empty($data)) {
                 $this->data = true;
@@ -78,9 +78,9 @@ final class Property extends AbstractModel
     {
         // IMPORTANT: if you use this method be sure that the type of the property is already set
         // do not set data for object, asset and document here, this is loaded dynamically when calling $this->getData();
-        if ($this->type == 'date') {
+        if ($this->type === 'date') {
             $this->data = \OpenDxp\Tool\Serialize::unserialize($data);
-        } elseif ($this->type == 'bool') {
+        } elseif ($this->type === 'bool') {
             $this->data = false;
             if (!empty($data)) {
                 $this->data = true;

@@ -883,7 +883,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             $code .= '<video' . $attributesString . '>' . "\n";
 
             foreach ($urls as $type => $url) {
-                if ($type == 'medias') {
+                if ($type === 'medias') {
                     foreach ($url as $format => $medias) {
                         foreach ($medias as $media => $mediaUrl) {
                             $code .= '<source type="video/' . $format . '" src="' . $mediaUrl . '" media="' . $media . '"  />' . "\n";

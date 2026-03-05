@@ -351,7 +351,7 @@ EOT;
     {
         $isAnimated = false;
 
-        if ($this->getMimeType() == 'image/gif') {
+        if ($this->getMimeType() === 'image/gif') {
             $fileContent = $this->getData();
 
             /**
@@ -377,7 +377,7 @@ EOT;
     {
         $isAnimated = false;
 
-        if ($this->getMimeType() == 'image/png') {
+        if ($this->getMimeType() === 'image/png') {
             $fileContent = $this->getData();
 
             /**

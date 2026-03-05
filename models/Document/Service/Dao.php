@@ -77,7 +77,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $translations = [];
         foreach ($data as $translation) {
-            if ($translation['language'] == 'source') {
+            if ($translation['language'] === 'source') {
                 $sourceDocument = Document::getById((int) $translation['id']);
                 $translations[$sourceDocument->getProperty('language')] = $sourceDocument->getId();
             } else {

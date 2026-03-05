@@ -291,7 +291,7 @@ class Link implements OwnerAwareFieldInterface, Stringable
     {
         if (!empty($path)) {
             $matchedElement = null;
-            if ($this->getLinktype() == 'internal' && $this->getInternalType()) {
+            if ($this->getLinktype() === 'internal' && $this->getInternalType()) {
                 $matchedElement = Service::getElementByPath($this->getInternalType(), $path);
                 if ($matchedElement) {
                     $this->linktype = 'internal';
@@ -328,7 +328,7 @@ class Link implements OwnerAwareFieldInterface, Stringable
     public function getPath(): string
     {
         $path = '';
-        if ($this->getLinktype() == 'internal') {
+        if ($this->getLinktype() === 'internal') {
             if ($this->getElement() instanceof ElementInterface) {
                 $path = $this->getElement()->getFullPath();
             }
@@ -345,7 +345,7 @@ class Link implements OwnerAwareFieldInterface, Stringable
     public function getHref(): string
     {
         $path = '';
-        if ($this->getLinktype() == 'internal') {
+        if ($this->getLinktype() === 'internal') {
             if ($this->getElement() instanceof Document || $this->getElement() instanceof Asset) {
                 $path = $this->getElement()->getFullPath();
             } elseif ($this->getElement() instanceof Concrete) {

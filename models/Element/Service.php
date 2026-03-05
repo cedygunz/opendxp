@@ -312,7 +312,7 @@ class Service extends Model\AbstractModel
                 if (!$elementId) {
                     continue;
                 }
-                if ($elementType == 'asset') {
+                if ($elementType === 'asset') {
                     // there is no published flag for assets
                     continue;
                 }
@@ -343,7 +343,7 @@ class Service extends Model\AbstractModel
                     $elementType = $advancedElement->getElementType();
                 }
 
-                if ($elementType == 'asset') {
+                if ($elementType === 'asset') {
                     $publishedList[] = $advancedElement;
                 }
 
@@ -376,7 +376,7 @@ class Service extends Model\AbstractModel
     public static function getBaseClassNameForElement(string|ElementInterface $element): string
     {
         $elementType = $element instanceof ElementInterface ? self::getElementType($element) : $element;
-        if ($elementType == 'object') {
+        if ($elementType === 'object') {
             return 'DataObject';
         }
 
@@ -1193,7 +1193,7 @@ class Service extends Model\AbstractModel
                         'type' => $d['data']->getType(),
                     ];
                 }
-            } elseif ($type == 'date') {
+            } elseif ($type === 'date') {
                 if (is_object($d['data'])) {
                     $data = $d['data']->getTimestamp();
                 }

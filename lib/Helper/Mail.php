@@ -229,7 +229,7 @@ CSS;
                 continue;
             } else {
                 $absolutePath = $hostUrl . "/$path";
-                if ($path[0] == '?') {
+                if ($path[0] === '?') {
                     $absolutePath = $hostUrl . $document . $path;
                 }
                 $netUrl = new Net_URL2($absolutePath);
@@ -328,7 +328,7 @@ CSS;
             $fullMatch = $matches[0][$key];
             $path = $matches[1][$key];
 
-            if ($path[0] == '/') {
+            if ($path[0] === '/') {
                 $imageUrl = $hostUrl . $path;
             } else {
                 $imageUrl = dirname($fileInfo['fileUrlNormalized']) . "/$path";
