@@ -31,6 +31,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 final readonly class ReportConfigWriter
 {
     public const string REPORT_SETTING_ID = 'reports';
+
     public const string REPORT_SETTING_SCOPE = 'opendxp';
 
     public function __construct(private EventDispatcherInterface $eventDispatcher)

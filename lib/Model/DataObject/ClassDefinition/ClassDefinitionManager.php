@@ -22,8 +22,11 @@ use OpenDxp\Model\DataObject\ClassDefinitionInterface;
 class ClassDefinitionManager
 {
     public const string SAVED = 'saved';
+
     public const string CREATED = 'created';
+
     public const string SKIPPED = 'skipped';
+
     public const string DELETED = 'deleted';
 
     /**

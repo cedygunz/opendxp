@@ -30,8 +30,11 @@ use Override;
 class DataObjectDataExtractor extends AbstractElementDataExtractor
 {
     public const array EXPORTABLE_TAGS = ['input', 'textarea', 'wysiwyg'];
+
     public const string BRICK_DELIMITER = '|';
+
     public const string FIELD_COLLECTIONS_DELIMITER = '|';
+
     public const string BLOCK_DELIMITER = '|';
 
     public function __construct(protected array $exportAttributes = [])

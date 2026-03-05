@@ -27,15 +27,25 @@ use Symfony\Component\HttpFoundation\Request;
 class NotificationServiceFilterParser
 {
     public const string KEY_FILTER = 'filter';
+
     public const string KEY_TYPE = 'type';
+
     public const string KEY_PROPERTY = 'property';
+
     public const string KEY_OPERATOR = 'operator';
+
     public const string KEY_VALUE = 'value';
+
     public const string TYPE_STRING = 'string';
+
     public const string TYPE_DATE = 'date';
+
     public const string OPERATOR_LIKE = 'like';
+
     public const string OPERATOR_EQ = 'eq';
+
     public const string OPERATOR_GT = 'gt';
+
     public const string OPERATOR_LT = 'lt';
 
     private array $properties = [

@@ -33,9 +33,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class NotificationSubscriber implements EventSubscriberInterface
 {
     public const string MAIL_TYPE_TEMPLATE = 'template';
+
     public const string MAIL_TYPE_DOCUMENT = 'opendxp_document';
+
     public const string NOTIFICATION_CHANNEL_MAIL = 'mail';
+
     public const string NOTIFICATION_CHANNEL_OPENDXP_NOTIFICATION = 'opendxp_notification';
+
     public const string DEFAULT_MAIL_TEMPLATE_PATH = '@OpenDxpCore/Workflow/NotificationEmail/notificationEmail.html.twig';
 
     protected bool $enabled = true;

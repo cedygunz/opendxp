@@ -21,6 +21,7 @@ use OpenDxp\Model\DataObject\Concrete;
 interface PreviewGeneratorInterface
 {
     public const string PARAMETER_SITE = 'site';
+
     public const string PARAMETER_LOCALE = 'locale';
 
     public function generatePreviewUrl(Concrete $object, array $params): string;

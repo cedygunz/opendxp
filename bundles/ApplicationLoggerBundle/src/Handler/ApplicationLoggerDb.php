@@ -26,6 +26,7 @@ use OpenDxp\Db;
 class ApplicationLoggerDb extends AbstractProcessingHandler
 {
     public const string TABLE_NAME = 'application_logs';
+
     public const string TABLE_ARCHIVE_PREFIX = 'application_logs_archive';
 
     public function __construct(

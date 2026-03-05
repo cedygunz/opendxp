@@ -28,7 +28,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class OpenDxpContextResolver extends AbstractRequestResolver
 {
     public const string ATTRIBUTE_OPENDXP_CONTEXT = '_opendxp_context';
+
     public const string CONTEXT_ADMIN = 'admin';
+
     public const string CONTEXT_DEFAULT = 'default';
 
     public function __construct(RequestStack $requestStack, protected OpenDxpContextGuesser $guesser)

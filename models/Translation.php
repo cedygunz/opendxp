@@ -42,6 +42,7 @@ final class Translation extends AbstractModel
     use RecursionBlockingEventDispatchHelperTrait;
 
     public const string DOMAIN_DEFAULT = 'messages';
+
     public const string DOMAIN_ADMIN = 'admin';
 
     protected ?string $key = null;

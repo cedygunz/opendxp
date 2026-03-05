@@ -24,6 +24,7 @@ use OpenDxp\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOption
 class OptionsProviderResolver extends ClassResolver
 {
     public const int MODE_SELECT = 1;
+
     public const int MODE_MULTISELECT = 2;
 
     public static array $providerCache = [];

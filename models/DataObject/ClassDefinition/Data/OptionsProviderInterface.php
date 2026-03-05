@@ -19,7 +19,9 @@ namespace OpenDxp\Model\DataObject\ClassDefinition\Data;
 interface OptionsProviderInterface
 {
     public const string TYPE_CONFIGURE = 'configure';
+
     public const string TYPE_SELECT_OPTIONS = 'select_options';
+
     public const string TYPE_CLASS = 'class';
 
     public const array TYPES = [

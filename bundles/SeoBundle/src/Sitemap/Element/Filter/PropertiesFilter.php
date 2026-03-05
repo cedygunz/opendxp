@@ -27,6 +27,7 @@ use OpenDxp\Model\Element\ElementInterface;
 class PropertiesFilter implements FilterInterface
 {
     public const string PROPERTY_EXCLUDE = 'sitemaps_exclude';
+
     public const string PROPERTY_EXCLUDE_CHILDREN = 'sitemaps_exclude_children';
 
     public function canBeAdded(ElementInterface $element, GeneratorContextInterface $context): bool

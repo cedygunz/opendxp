@@ -19,14 +19,23 @@ namespace OpenDxp\Bundle\XliffBundle\AttributeSet;
 class Attribute
 {
     public const string TYPE_PROPERTY = 'property';
+
     public const string TYPE_TAG = 'tag';
+
     public const string TYPE_SETTINGS = 'settings';
+
     public const string TYPE_LOCALIZED_FIELD = 'localizedfield';
+
     public const string TYPE_BRICK_LOCALIZED_FIELD = 'localizedbrick';
+
     public const string TYPE_BLOCK = 'block';
+
     public const string TYPE_BLOCK_IN_LOCALIZED_FIELD = 'blockinlocalizedfield';
+
     public const string TYPE_BLOCK_IN_LOCALIZED_FIELD_COLLECTION = 'blockinlocalizedfieldcollection';
+
     public const string TYPE_FIELD_COLLECTION_LOCALIZED_FIELD = 'localizedfieldcollection';
+
     public const string TYPE_ELEMENT_KEY = 'key';
 
     /**

@@ -31,8 +31,11 @@ use Override;
 class Video extends Model\Document\Editable implements IdRewriterInterface
 {
     public const string TYPE_ASSET = 'asset';
+
     public const string TYPE_YOUTUBE = 'youtube';
+
     public const string TYPE_VIMEO = 'vimeo';
+
     public const string TYPE_DAILYMOTION = 'dailymotion';
 
     public const array ALLOWED_TYPES = [

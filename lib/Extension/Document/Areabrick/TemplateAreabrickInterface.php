@@ -30,7 +30,9 @@ namespace OpenDxp\Extension\Document\Areabrick;
 interface TemplateAreabrickInterface extends AreabrickInterface
 {
     public const string TEMPLATE_LOCATION_GLOBAL = 'global';
+
     public const string TEMPLATE_LOCATION_BUNDLE = 'bundle';
+
     public const string TEMPLATE_SUFFIX_TWIG = 'html.twig';
 
     /**

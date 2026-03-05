@@ -27,13 +27,21 @@ use RuntimeException;
 class IntlFormatter
 {
     public const string DATE_SHORT = 'date_short';
+
     public const string DATE_MEDIUM = 'date_medium';
+
     public const string DATE_LONG = 'date_long';
+
     public const string DATETIME_SHORT = 'datetime_short';
+
     public const string DATETIME_MEDIUM = 'datetime_medium';
+
     public const string DATETIME_LONG = 'datetime_long';
+
     public const string TIME_SHORT = 'time_short';
+
     public const string TIME_MEDIUM = 'time_medium';
+
     public const string TIME_LONG = 'time_long';
 
     protected ?string $locale = null;

@@ -32,13 +32,21 @@ class LocationAwareConfigRepository
     use StopMessengerWorkersTrait;
 
     public const string LOCATION_SYMFONY_CONFIG = 'symfony-config';
+
     public const string LOCATION_SETTINGS_STORE = 'settings-store';
+
     public const string LOCATION_DISABLED = 'disabled';
+
     public const string READ_TARGET = 'read_target';
+
     public const string WRITE_TARGET = 'write_target';
+
     public const string CONFIG_LOCATION = 'config_location';
+
     public const string TYPE = 'type';
+
     public const string OPTIONS = 'options';
+
     public const string DIRECTORY = 'directory';
 
     public function __construct(

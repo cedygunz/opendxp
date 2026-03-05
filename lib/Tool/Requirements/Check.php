@@ -24,7 +24,9 @@ use ArrayAccess;
 final class Check implements ArrayAccess
 {
     public const int STATE_OK = 1;
+
     public const int STATE_WARNING = 2;
+
     public const int STATE_ERROR = 3;
 
     public string $name;

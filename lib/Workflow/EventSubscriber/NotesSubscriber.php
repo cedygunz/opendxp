@@ -32,6 +32,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class NotesSubscriber implements EventSubscriberInterface
 {
     public const string ADDITIONAL_DATA_NOTES_COMMENT = 'notes';
+
     public const string ADDITIONAL_DATA_NOTES_ADDITIONAL_FIELDS = 'additional';
 
     private bool $enabled = true;
