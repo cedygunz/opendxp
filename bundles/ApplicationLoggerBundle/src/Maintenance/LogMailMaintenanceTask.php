@@ -61,9 +61,9 @@ class LogMailMaintenanceTask implements TaskInterface
             }
 
             $rows = $this->db->fetchAllAssociative(sprintf(
-                    'SELECT * FROM %s WHERE maintenanceChecked IS NULL AND priority IN (?) ORDER BY id DESC',
-                    ApplicationLoggerDb::TABLE_NAME
-                ),
+                'SELECT * FROM %s WHERE maintenanceChecked IS NULL AND priority IN (?) ORDER BY id DESC',
+                ApplicationLoggerDb::TABLE_NAME
+            ),
                 [$logLevels],
                 [ArrayParameterType::STRING]
             );

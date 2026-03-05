@@ -283,21 +283,21 @@ class Dao extends Model\Dao\AbstractDao
         $dataTable = $this->getDataTableName();
 
         $this->db->executeQuery(sprintf(
-            "CREATE TABLE IF NOT EXISTS `%s` (
+            'CREATE TABLE IF NOT EXISTS `%s` (
             `id` INT(11) UNSIGNED NOT NULL,
             `groupId` INT(11) UNSIGNED NOT NULL,
             `fieldname` VARCHAR(70) NOT NULL,
             PRIMARY KEY (`id`, `fieldname`, `groupId`),
             CONSTRAINT `%s` FOREIGN KEY (`id`) REFERENCES `objects` (`id`) ON DELETE CASCADE,
             CONSTRAINT `%s` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON DELETE CASCADE
-        ) DEFAULT CHARSET=utf8mb4;",
+        ) DEFAULT CHARSET=utf8mb4;',
             $groupsTable,
             self::getForeignKeyName($groupsTable, 'id'),
             self::getForeignKeyName($groupsTable, 'groupId')
         ));
 
         $this->db->executeQuery(sprintf(
-            "CREATE TABLE IF NOT EXISTS `%s` (
+            'CREATE TABLE IF NOT EXISTS `%s` (
             `id` INT(11) UNSIGNED NOT NULL,
             `collectionId` BIGINT(20) NULL,
             `groupId` INT(11) UNSIGNED NOT NULL,
@@ -313,7 +313,7 @@ class Dao extends Model\Dao\AbstractDao
             INDEX `groupKeys` (`id`, `fieldname`, `groupId`),
             CONSTRAINT `%s` FOREIGN KEY (`id`) REFERENCES `objects` (`id`) ON DELETE CASCADE,
             CONSTRAINT `%s` FOREIGN KEY (`id`, `fieldname`, `groupId`) REFERENCES `%s` (`id`, `fieldname`, `groupId`) ON DELETE CASCADE
-        ) DEFAULT CHARSET=utf8mb4;",
+        ) DEFAULT CHARSET=utf8mb4;',
             $dataTable,
             self::getForeignKeyName($dataTable, 'id'),
             self::getForeignKeyName($dataTable, 'id__fieldname__groupId'),

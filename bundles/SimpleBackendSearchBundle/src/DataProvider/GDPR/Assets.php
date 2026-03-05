@@ -19,7 +19,6 @@ namespace OpenDxp\Bundle\SimpleBackendSearchBundle\DataProvider\GDPR;
 use OpenDxp\Bundle\AdminBundle\GDPR\DataProvider;
 use OpenDxp\Bundle\AdminBundle\Service\GridData;
 use OpenDxp\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
-use OpenDxp\Db;
 use OpenDxp\Model\Asset;
 use OpenDxp\Model\Element\Service;
 use Override;

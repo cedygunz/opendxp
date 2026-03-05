@@ -39,7 +39,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
             $this->model->getConditionVariableTypes()
         );
 
-
         foreach ($classesRaw as $classRaw) {
             if ($class = DataObject\ClassDefinition::getById($classRaw)) {
                 $classes[] = $class;

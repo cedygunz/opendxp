@@ -25,7 +25,6 @@ use OpenDxp\Bundle\AdminBundle\DataObject\GridColumnConfig\Operator\AbstractOper
 use OpenDxp\Bundle\AdminBundle\DataObject\GridColumnConfig\Service as GridColumnConfigService;
 use OpenDxp\Bundle\AdminBundle\Service\GridData;
 use OpenDxp\Cache\RuntimeCache;
-use OpenDxp\Db;
 use OpenDxp\Event\DataObjectEvents;
 use OpenDxp\Event\Model\DataObjectEvent;
 use OpenDxp\Localization\LocaleServiceInterface;

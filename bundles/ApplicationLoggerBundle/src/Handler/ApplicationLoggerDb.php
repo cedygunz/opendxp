@@ -62,7 +62,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
         return Db::get()->fetchFirstColumn(sprintf(
             'SELECT component FROM %s WHERE component IS NOT NULL GROUP BY component',
             self::TABLE_NAME
-            )
+        )
         );
     }
 
@@ -86,7 +86,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
         $priorityNumbers = Db::get()->fetchFirstColumn(sprintf(
             'SELECT priority FROM %s WHERE priority IS NOT NULL GROUP BY priority',
             self::TABLE_NAME
-            )
+        )
         );
 
         foreach ($priorityNumbers as $priorityNumber) {
