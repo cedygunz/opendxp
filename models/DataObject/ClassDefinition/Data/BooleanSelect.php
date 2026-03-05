@@ -36,23 +36,21 @@ class BooleanSelect extends Data implements
     use DataObject\Traits\SimpleNormalizerTrait;
 
     /** storage value for yes */
-    const YES_VALUE = 1;
+    public const int YES_VALUE = 1;
 
     /** storage value for no */
-    const NO_VALUE = -1;
+    public const int NO_VALUE = -1;
 
     /** storage value for empty */
-    const EMPTY_VALUE = null;
+    public const null EMPTY_VALUE = null;
 
     /** edit mode valze for empty */
-    const EMPTY_VALUE_EDITMODE = 0;
+    public const int EMPTY_VALUE_EDITMODE = 0;
 
     /**
      * Available options to select - Default options
-     *
-     * @var array
      */
-    const DEFAULT_OPTIONS = [
+    public const array DEFAULT_OPTIONS = [
         [
             'key' => 'empty',
             'value' => self::EMPTY_VALUE_EDITMODE,

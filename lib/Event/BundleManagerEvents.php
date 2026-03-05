@@ -25,7 +25,7 @@ class BundleManagerEvents
      *
      * @var string
      */
-    const CSS_PATHS = 'opendxp.bundle_manager.paths.css';
+    public const string CSS_PATHS = 'opendxp.bundle_manager.paths.css';
 
     /**
      * The JS_PATHS event is triggered for paths to JS files which are about to be loaded for the admin interface.
@@ -34,7 +34,7 @@ class BundleManagerEvents
      *
      * @var string
      */
-    const JS_PATHS = 'opendxp.bundle_manager.paths.js';
+    public const string JS_PATHS = 'opendxp.bundle_manager.paths.js';
 
     /**
      * The EDITMODE_CSS_PATHS event is triggered for paths to CSS files which are about to be loaded in editmode.
@@ -43,7 +43,7 @@ class BundleManagerEvents
      *
      * @var string
      */
-    const EDITMODE_CSS_PATHS = 'opendxp.bundle_manager.paths.editmode_css';
+    public const string EDITMODE_CSS_PATHS = 'opendxp.bundle_manager.paths.editmode_css';
 
     /**
      * The EDITMODE_JS_PATHS event is triggered for paths to JS files which are about to be loaded in editmode.
@@ -52,5 +52,5 @@ class BundleManagerEvents
      *
      * @var string
      */
-    const EDITMODE_JS_PATHS = 'opendxp.bundle_manager.paths.editmode_js';
+    public const string EDITMODE_JS_PATHS = 'opendxp.bundle_manager.paths.editmode_js';
 }

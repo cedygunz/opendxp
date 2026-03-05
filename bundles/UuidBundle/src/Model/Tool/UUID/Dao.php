@@ -28,7 +28,7 @@ use OpenDxp\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    const TABLE_NAME = 'uuids';
+    public const string TABLE_NAME = 'uuids';
 
     public function save(): void
     {

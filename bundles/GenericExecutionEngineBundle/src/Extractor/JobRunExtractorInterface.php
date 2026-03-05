@@ -23,13 +23,11 @@ use OpenDxp\Model\Element\ElementInterface;
 
 interface JobRunExtractorInterface
 {
-    public const ASSET_TYPE = 'asset';
 
-    public const DOCUMENT_TYPE = 'document';
-
-    public const FOLDER_TYPE = 'folder';
-
-    public const OBJECT_TYPE = 'object';
+    public const string ASSET_TYPE = 'asset';
+    public const string DOCUMENT_TYPE = 'document';
+    public const string FOLDER_TYPE = 'folder';
+    public const string OBJECT_TYPE = 'object';
 
     public function getJobRun(GenericExecutionEngineMessageInterface $message, bool $forceReload = false): JobRun;
 

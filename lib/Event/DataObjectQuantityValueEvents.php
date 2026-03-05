@@ -21,30 +21,30 @@ final class DataObjectQuantityValueEvents
     /**
      * @Event("OpenDxp\Event\Model\DataObject\QuantityValueUnitEvent")
      */
-    const string UNIT_PRE_ADD = 'opendxp.dataobject.quantityvalue.unit.preAdd';
+    public const string UNIT_PRE_ADD = 'opendxp.dataobject.quantityvalue.unit.preAdd';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\QuantityValueUnitEvent")
      */
-    const string UNIT_POST_ADD = 'opendxp.dataobject.quantityvalue.unit.postAdd';
+    public const string UNIT_POST_ADD = 'opendxp.dataobject.quantityvalue.unit.postAdd';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\QuantityValueUnitEvent")
      */
-    const string UNIT_PRE_UPDATE = 'opendxp.dataobject.quantityvalue.unit.preUpdate';
+    public const string UNIT_PRE_UPDATE = 'opendxp.dataobject.quantityvalue.unit.preUpdate';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\QuantityValueUnitEvent")
      */
-    const string UNIT_POST_UPDATE = 'opendxp.dataobject.quantityvalue.unit.postUpdate';
+    public const string UNIT_POST_UPDATE = 'opendxp.dataobject.quantityvalue.unit.postUpdate';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\QuantityValueUnitEvent")
      */
-    const string UNIT_PRE_DELETE = 'opendxp.dataobject.quantityvalue.unit.preDelete';
+    public const string UNIT_PRE_DELETE = 'opendxp.dataobject.quantityvalue.unit.preDelete';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\QuantityValueUnitEvent")
      */
-    const string UNIT_POST_DELETE = 'opendxp.dataobject.quantityvalue.unit.postDelete';
+    public const string UNIT_POST_DELETE = 'opendxp.dataobject.quantityvalue.unit.postDelete';
 }

@@ -28,15 +28,11 @@ use OpenDxp\Model\DataObject;
  */
 class InheritanceHelper
 {
-    const STORE_TABLE = 'object_store_';
-
-    const QUERY_TABLE = 'object_query_';
-
-    const RELATION_TABLE = 'object_relations_';
-
-    const ID_FIELD = 'oo_id';
-
-    const DEFAULT_QUERY_ID_COLUMN = 'ooo_id';
+    public const string STORE_TABLE = 'object_store_';
+    public const string QUERY_TABLE = 'object_query_';
+    public const string RELATION_TABLE = 'object_relations_';
+    public const string ID_FIELD = 'oo_id';
+    public const string DEFAULT_QUERY_ID_COLUMN = 'ooo_id';
 
     protected Connection $db;
 

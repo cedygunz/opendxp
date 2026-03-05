@@ -25,7 +25,7 @@ use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 
 class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
 {
-    const ALLOWED_PLACE_FIELD_TYPES = ['input', 'select', 'multiselect'];
+    public const array ALLOWED_PLACE_FIELD_TYPES = ['input', 'select', 'multiselect'];
 
     private array $stateMapping;
 

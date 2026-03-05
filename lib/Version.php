@@ -23,7 +23,7 @@ use Composer\InstalledVersions;
  */
 final class Version
 {
-    const string PACKAGE_NAME = 'open-dxp/opendxp';
+    public const string PACKAGE_NAME = 'open-dxp/opendxp';
 
     private const int MAJOR_VERSION = 1;
 

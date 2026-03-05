@@ -34,9 +34,8 @@ class NumericRange extends Data implements
 {
     use DataObject\Traits\DataWidthTrait;
 
-    public const DECIMAL_SIZE_DEFAULT = 64;
-
-    public const DECIMAL_PRECISION_DEFAULT = 0;
+    public const int DECIMAL_SIZE_DEFAULT = 64;
+    public const int DECIMAL_PRECISION_DEFAULT = 0;
 
     /**
      * @internal

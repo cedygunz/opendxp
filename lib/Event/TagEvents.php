@@ -21,41 +21,32 @@ final class TagEvents
     /**
      * @Event("OpenDxp\Event\Model\TagEvent")
      */
-    const string PRE_ADD = 'opendxp.tag.preAdd';
+    public const string PRE_ADD = 'opendxp.tag.preAdd';
 
     /**
      * @Event("OpenDxp\Event\Model\TagEvent")
      */
-    const string POST_ADD = 'opendxp.tag.postAdd';
+    public const string POST_ADD = 'opendxp.tag.postAdd';
 
     /**
      * @Event("OpenDxp\Event\Model\TagEvent")
      */
-    const string PRE_UPDATE = 'opendxp.tag.preUpdate';
+    public const string PRE_UPDATE = 'opendxp.tag.preUpdate';
 
     /**
      * @Event("OpenDxp\Event\Model\TagEvent")
      */
-    const string POST_UPDATE = 'opendxp.tag.postUpdate';
+    public const string POST_UPDATE = 'opendxp.tag.postUpdate';
 
     /**
      * @Event("OpenDxp\Event\Model\TagEvent")
      */
-    const string PRE_DELETE = 'opendxp.tag.preDelete';
+    public const string PRE_DELETE = 'opendxp.tag.preDelete';
 
     /**
      * @Event("OpenDxp\Event\Model\TagEvent")
      */
-    const string POST_DELETE = 'opendxp.tag.postDelete';
-
-    /**
-     * Arguments:
-     *  - elementType
-     *  - elementId
-     *
-     * @Event("OpenDxp\Event\Model\TagEvent")
-     */
-    const string PRE_ADD_TO_ELEMENT = 'opendxp.tag.preAddToElement';
+    public const string POST_DELETE = 'opendxp.tag.postDelete';
 
     /**
      * Arguments:
@@ -64,7 +55,7 @@ final class TagEvents
      *
      * @Event("OpenDxp\Event\Model\TagEvent")
      */
-    const string POST_ADD_TO_ELEMENT = 'opendxp.tag.postAddToElement';
+    public const string PRE_ADD_TO_ELEMENT = 'opendxp.tag.preAddToElement';
 
     /**
      * Arguments:
@@ -73,7 +64,7 @@ final class TagEvents
      *
      * @Event("OpenDxp\Event\Model\TagEvent")
      */
-    const string PRE_REMOVE_FROM_ELEMENT = 'opendxp.tag.preRemoveFromElement';
+    public const string POST_ADD_TO_ELEMENT = 'opendxp.tag.postAddToElement';
 
     /**
      * Arguments:
@@ -82,5 +73,14 @@ final class TagEvents
      *
      * @Event("OpenDxp\Event\Model\TagEvent")
      */
-    const string POST_REMOVE_FROM_ELEMENT = 'opendxp.tag.postRemoveFromElement';
+    public const string PRE_REMOVE_FROM_ELEMENT = 'opendxp.tag.preRemoveFromElement';
+
+    /**
+     * Arguments:
+     *  - elementType
+     *  - elementId
+     *
+     * @Event("OpenDxp\Event\Model\TagEvent")
+     */
+    public const string POST_REMOVE_FROM_ELEMENT = 'opendxp.tag.postRemoveFromElement';
 }

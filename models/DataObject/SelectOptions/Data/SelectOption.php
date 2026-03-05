@@ -20,11 +20,9 @@ use JsonSerializable;
 
 class SelectOption implements JsonSerializable
 {
-    public const PROPERTY_VALUE = 'value';
-
-    public const PROPERTY_LABEL = 'label';
-
-    public const PROPERTY_NAME = 'name';
+    public const string PROPERTY_VALUE = 'value';
+    public const string PROPERTY_LABEL = 'label';
+    public const string PROPERTY_NAME = 'name';
 
     public function __construct(
         protected string $value,

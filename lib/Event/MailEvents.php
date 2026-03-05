@@ -24,7 +24,7 @@ final class MailEvents
      *
      * @Event("OpenDxp\Event\Model\MailEvent")
      */
-    const string PRE_SEND = 'opendxp.mail.preSend';
+    public const string PRE_SEND = 'opendxp.mail.preSend';
 
-    const string PRE_LOG = 'opendxp.mail.preLog';
+    public const string PRE_LOG = 'opendxp.mail.preLog';
 }

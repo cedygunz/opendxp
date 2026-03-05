@@ -21,20 +21,20 @@ final class TranslationEvents
     /**
      * @Event("OpenDxp\Event\Model\TranslationEvent")
      */
-    const string PRE_SAVE = 'opendxp.translation.preSave';
+    public const string PRE_SAVE = 'opendxp.translation.preSave';
 
     /**
      * @Event("OpenDxp\Event\Model\TranslationEvent")
      */
-    const string POST_SAVE = 'opendxp.translation.postSave';
+    public const string POST_SAVE = 'opendxp.translation.postSave';
 
     /**
      * @Event("OpenDxp\Event\Model\TranslationEvent")
      */
-    const string PRE_DELETE = 'opendxp.translation.preDelete';
+    public const string PRE_DELETE = 'opendxp.translation.preDelete';
 
     /**
      * @Event("OpenDxp\Event\Model\TranslationEvent")
      */
-    const string POST_DELETE = 'opendxp.translation.postDelete';
+    public const string POST_DELETE = 'opendxp.translation.postDelete';
 }

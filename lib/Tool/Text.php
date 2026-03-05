@@ -28,9 +28,8 @@ use OpenDxp\Tool;
 
 class Text
 {
-    public const OPENDXP_WYSIWYG_SANITIZER_ID = 'html_sanitizer.sanitizer.opendxp.wysiwyg_sanitizer';
-
-    public const OPENDXP_TRANSLATION_SANITIZER_ID = 'html_sanitizer.sanitizer.opendxp.translation_sanitizer';
+    public const string OPENDXP_WYSIWYG_SANITIZER_ID = 'html_sanitizer.sanitizer.opendxp.wysiwyg_sanitizer';
+    public const string OPENDXP_TRANSLATION_SANITIZER_ID = 'html_sanitizer.sanitizer.opendxp.translation_sanitizer';
 
     public static function removeLineBreaks(string $text = ''): string
     {

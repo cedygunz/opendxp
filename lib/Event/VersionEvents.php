@@ -21,20 +21,20 @@ final class VersionEvents
     /**
      * @Event("OpenDxp\Event\Model\VersionEvent")
      */
-    const string PRE_SAVE = 'opendxp.version.preSave';
+    public const string PRE_SAVE = 'opendxp.version.preSave';
 
     /**
      * @Event("OpenDxp\Event\Model\VersionEvent")
      */
-    const string POST_SAVE = 'opendxp.version.postSave';
+    public const string POST_SAVE = 'opendxp.version.postSave';
 
     /**
      * @Event("OpenDxp\Event\Model\VersionEvent")
      */
-    const string PRE_DELETE = 'opendxp.version.preDelete';
+    public const string PRE_DELETE = 'opendxp.version.preDelete';
 
     /**
      * @Event("OpenDxp\Event\Model\VersionEvent")
      */
-    const string POST_DELETE = 'opendxp.version.postDelete';
+    public const string POST_DELETE = 'opendxp.version.postDelete';
 }

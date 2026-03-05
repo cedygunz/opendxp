@@ -44,17 +44,15 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     /**
      * @internal
-     *
-     * Necessary for assigning object reference to corresponding fields while wakeup
      */
-    public array $__objectAwareFields = [];
+    public const array SYSTEM_COLUMN_NAMES = ['id', 'fullpath', 'key', 'published', 'creationDate', 'modificationDate', 'filename', 'classname', 'index'];
 
     /**
      * @internal
      *
-     * @var array
+     * Necessary for assigning object reference to corresponding fields while wakeup
      */
-    public const SYSTEM_COLUMN_NAMES = ['id', 'fullpath', 'key', 'published', 'creationDate', 'modificationDate', 'filename', 'classname', 'index'];
+    public array $__objectAwareFields = [];
 
     /**
      * @internal

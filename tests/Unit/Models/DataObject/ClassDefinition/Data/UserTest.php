@@ -21,7 +21,7 @@ use OpenDxp\Tests\Support\Test\TestCase;
 
 class UserTest extends TestCase
 {
-    private const SAMPLE_USER_DATA = [
+    private const array SAMPLE_USER_DATA = [
         'name' => 'openDxpUser',
         'title' => 'OpenDxp User',
         'tooltip' => '',

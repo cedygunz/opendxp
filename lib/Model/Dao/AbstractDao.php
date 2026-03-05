@@ -25,7 +25,7 @@ abstract class AbstractDao implements DaoInterface
 {
     use DaoTrait;
 
-    const CACHEKEY = 'system_resource_columns_';
+    public const string CACHEKEY = 'system_resource_columns_';
 
     public Connection $db;
 

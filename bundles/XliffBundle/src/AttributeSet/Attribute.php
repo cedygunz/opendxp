@@ -18,29 +18,18 @@ namespace OpenDxp\Bundle\XliffBundle\AttributeSet;
 
 class Attribute
 {
-    const TYPE_PROPERTY = 'property';
-
-    const TYPE_TAG = 'tag';
-
-    const TYPE_SETTINGS = 'settings';
-
-    const TYPE_LOCALIZED_FIELD = 'localizedfield';
-
-    const TYPE_BRICK_LOCALIZED_FIELD = 'localizedbrick';
-
-    const TYPE_BLOCK = 'block';
-
-    const TYPE_BLOCK_IN_LOCALIZED_FIELD = 'blockinlocalizedfield';
-
-    const TYPE_BLOCK_IN_LOCALIZED_FIELD_COLLECTION = 'blockinlocalizedfieldcollection';
-
-    const TYPE_FIELD_COLLECTION_LOCALIZED_FIELD = 'localizedfieldcollection';
-
-    const TYPE_ELEMENT_KEY = 'key';
+    public const string TYPE_PROPERTY = 'property';
+    public const string TYPE_TAG = 'tag';
+    public const string TYPE_SETTINGS = 'settings';
+    public const string TYPE_LOCALIZED_FIELD = 'localizedfield';
+    public const string TYPE_BRICK_LOCALIZED_FIELD = 'localizedbrick';
+    public const string TYPE_BLOCK = 'block';
+    public const string TYPE_BLOCK_IN_LOCALIZED_FIELD = 'blockinlocalizedfield';
+    public const string TYPE_BLOCK_IN_LOCALIZED_FIELD_COLLECTION = 'blockinlocalizedfieldcollection';
+    public const string TYPE_FIELD_COLLECTION_LOCALIZED_FIELD = 'localizedfieldcollection';
+    public const string TYPE_ELEMENT_KEY = 'key';
 
     /**
-     * DataExtractorResultAttribute constructor.
-     *
      * @param string[] $targetContent
      */
     public function __construct(

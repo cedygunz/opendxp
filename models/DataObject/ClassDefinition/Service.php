@@ -509,7 +509,7 @@ class Service
     {
         $nameUpperSnakeCase = static::camelCaseToUpperSnakeCase($fieldDefinition->getName());
 
-        return 'public const FIELD_' . $nameUpperSnakeCase . ' = \'' . $fieldDefinition->getName() . '\';';
+        return 'public const string FIELD_' . $nameUpperSnakeCase . ' = \'' . $fieldDefinition->getName() . '\';';
     }
 
     /**

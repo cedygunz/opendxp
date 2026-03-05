@@ -18,7 +18,7 @@ namespace OpenDxp\Model\DataObject;
 
 interface LazyLoadedFieldsInterface
 {
-    const LAZY_KEY_SEPARATOR = '~~';
+    public const string LAZY_KEY_SEPARATOR = '~~';
 
     public function markLazyKeyAsLoaded(string $key): void;
 

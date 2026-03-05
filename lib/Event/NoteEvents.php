@@ -21,5 +21,5 @@ final class NoteEvents
     /**
      * @Event("OpenDxp\Event\Model\ModelEvent")
      */
-    const string POST_ADD = 'opendxp.note.postAdd';
+    public const string POST_ADD = 'opendxp.note.postAdd';
 }

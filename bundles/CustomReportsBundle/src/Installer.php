@@ -21,9 +21,9 @@ use Override;
 
 class Installer extends SettingsStoreAwareInstaller
 {
-    protected const USER_PERMISSIONS_CATEGORY = 'OpenDxp Custom Reports Bundle';
+    protected const string USER_PERMISSIONS_CATEGORY = 'OpenDxp Custom Reports Bundle';
 
-    protected const USER_PERMISSIONS = [
+    protected const array USER_PERMISSIONS = [
         'reports',
         'reports_config',
     ];

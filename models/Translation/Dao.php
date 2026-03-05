@@ -30,10 +30,7 @@ use Symfony\Component\Translation\Exception\NotFoundResourceException;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    /**
-     * @var string
-     */
-    const TABLE_PREFIX = 'translations_';
+    public const string TABLE_PREFIX = 'translations_';
 
     public function getDatabaseTableName(): string
     {

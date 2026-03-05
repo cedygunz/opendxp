@@ -31,7 +31,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * @internal
      */
-    const ATTRIBUTE_IGNORE_EDITMODE_INDICES = '_block_ignore_extra_editmode_indices';
+    public const string ATTRIBUTE_IGNORE_EDITMODE_INDICES = '_block_ignore_extra_editmode_indices';
 
     /**
      * Contains an array of indices, which represent the order of the elements in the block

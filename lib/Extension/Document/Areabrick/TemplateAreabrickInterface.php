@@ -29,11 +29,9 @@ namespace OpenDxp\Extension\Document\Areabrick;
  */
 interface TemplateAreabrickInterface extends AreabrickInterface
 {
-    const TEMPLATE_LOCATION_GLOBAL = 'global';
-
-    const TEMPLATE_LOCATION_BUNDLE = 'bundle';
-
-    const TEMPLATE_SUFFIX_TWIG = 'html.twig';
+    public const string TEMPLATE_LOCATION_GLOBAL = 'global';
+    public const string TEMPLATE_LOCATION_BUNDLE = 'bundle';
+    public const string TEMPLATE_SUFFIX_TWIG = 'html.twig';
 
     /**
      * Determines if template should be auto-located in bundle or in project

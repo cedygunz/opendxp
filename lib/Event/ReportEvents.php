@@ -23,5 +23,5 @@ final class ReportEvents
      *
      * @Event("OpenDxp\Event\Report\SettingsEvent")
      */
-    const string SAVE_SETTINGS = 'opendxp.reports.save_settings';
+    public const string SAVE_SETTINGS = 'opendxp.reports.save_settings';
 }

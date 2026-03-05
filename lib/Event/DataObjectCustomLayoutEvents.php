@@ -21,10 +21,10 @@ final class DataObjectCustomLayoutEvents
     /**
      * @Event("OpenDxp\Event\Model\DataObject\CustomLayoutEvent")
      */
-    const string PRE_ADD = 'opendxp.dataobject.customLayout.preAdd';
+    public const string PRE_ADD = 'opendxp.dataobject.customLayout.preAdd';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\CustomLayoutEvent")
      */
-    const string PRE_UPDATE = 'opendxp.dataobject.customLayout.preUpdate';
+    public const string PRE_UPDATE = 'opendxp.dataobject.customLayout.preUpdate';
 }

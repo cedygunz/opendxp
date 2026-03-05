@@ -29,7 +29,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class OutputTimestampListener implements EventSubscriberInterface
 {
-    const TIMESTAMP_OVERRIDE_PARAM_NAME = 'opendxp_override_output_timestamp';
+    public const string TIMESTAMP_OVERRIDE_PARAM_NAME = 'opendxp_override_output_timestamp';
 
     public function __construct(protected OutputTimestampResolver $outputTimestampResolver)
     {

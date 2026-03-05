@@ -28,7 +28,7 @@ use OpenDxp\Tests\Support\Util\TestHelper;
 
 class AbstractLazyLoadingTest extends ModelTestCase
 {
-    const RELATION_COUNT = 5;
+    public const int RELATION_COUNT = 5;
 
     public function setUp(): void
     {

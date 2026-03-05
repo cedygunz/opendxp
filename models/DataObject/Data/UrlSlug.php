@@ -36,7 +36,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     use ObjectVarTrait;
     use OwnerAwareFieldTrait;
 
-    public const TABLE_NAME = 'object_url_slugs';
+    public const string TABLE_NAME = 'object_url_slugs';
 
     protected int $objectId;
 

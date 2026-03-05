@@ -27,7 +27,7 @@ use Symfony\Component\Routing\RequestContext;
 
 class RequestHelper
 {
-    const ATTRIBUTE_FRONTEND_REQUEST = '_opendxp_frontend_request';
+    public const string ATTRIBUTE_FRONTEND_REQUEST= '_opendxp_frontend_request';
 
     public function __construct(protected RequestStack $requestStack, protected RequestContext $requestContext)
     {

@@ -25,12 +25,11 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ResponseHeaderResolver extends AbstractRequestResolver
 {
-    const ATTRIBUTE_RESPONSE_HEADER = '_response_header';
+    public const string ATTRIBUTE_RESPONSE_HEADER = '_response_header';
 
     /**
      * Get response headers which were added to the request either by annotation
      * or manually.
-     *
      *
      * @return ResponseHeader[]
      */

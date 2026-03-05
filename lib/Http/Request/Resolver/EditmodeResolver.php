@@ -27,7 +27,7 @@ class EditmodeResolver extends AbstractRequestResolver implements LoggerAwareInt
 {
     use LoggerAwareTrait;
 
-    const ATTRIBUTE_EDITMODE = '_editmode';
+    public const string ATTRIBUTE_EDITMODE = '_editmode';
 
     private bool $forceEditmode = false;
 

@@ -43,7 +43,7 @@ final class RedirectHandler
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    const string RESPONSE_HEADER_NAME_ID = 'X-OpenDxp-Redirect-ID';
+    public const string RESPONSE_HEADER_NAME_ID = 'X-OpenDxp-Redirect-ID';
 
     /**
      * @var Redirect[]|null

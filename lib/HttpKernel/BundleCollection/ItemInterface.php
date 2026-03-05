@@ -21,9 +21,8 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 interface ItemInterface
 {
-    const SOURCE_PROGRAMATICALLY = 'programatically';
-
-    const SOURCE_EXTENSION_MANAGER_CONFIG = 'extension_manager_config';
+    public const string SOURCE_PROGRAMATICALLY = 'programatically';
+    public const string SOURCE_EXTENSION_MANAGER_CONFIG = 'extension_manager_config';
 
     public function getBundleIdentifier(): string;
 

@@ -30,7 +30,7 @@ use Twig\Environment;
 
 class NotificationEmailService extends AbstractNotificationService
 {
-    const MAIL_PATH_LANGUAGE_PLACEHOLDER = '%_locale%';
+    public const string MAIL_PATH_LANGUAGE_PLACEHOLDER = '%_locale%';
 
     public function __construct(
         private readonly Environment $template,

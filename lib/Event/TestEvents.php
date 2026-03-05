@@ -22,5 +22,5 @@ final class TestEvents
     /**
      * @Event("\Symfony\Component\EventDispatcher\GenericEvent")
      */
-    const string KERNEL_BOOTED = 'opendxp.test.kernel.booted';
+    public const string KERNEL_BOOTED = 'opendxp.test.kernel.booted';
 }
