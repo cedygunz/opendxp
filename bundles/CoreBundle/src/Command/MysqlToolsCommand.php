@@ -55,7 +55,7 @@ class MysqlToolsCommand extends AbstractCommand
 
         $db = \OpenDxp\Db::get();
 
-        if ($input->getOption('mode') == 'optimize') {
+        if ($input->getOption('mode') === 'optimize') {
             $tables = $db->fetchAllAssociative('SHOW TABLES');
 
             foreach ($tables as $table) {
@@ -63,12 +63,12 @@ class MysqlToolsCommand extends AbstractCommand
 
                 try {
                     Logger::debug('Running: OPTIMIZE TABLE ' . $t);
-                    $db->executeQuery('OPTIMIZE TABLE ' . $t);
+                    $db->executeQuery(sprintf('OPTIMIZE TABLE %s', $t));
                 } catch (Exception $e) {
                     Logger::error((string) $e);
                 }
             }
-        } elseif ($input->getOption('mode') == 'warmup') {
+        } elseif ($input->getOption('mode') === 'warmup') {
             $tables = $db->fetchAllAssociative('SHOW TABLES');
 
             foreach ($tables as $table) {
@@ -76,7 +76,7 @@ class MysqlToolsCommand extends AbstractCommand
 
                 try {
                     Logger::debug("Running: SELECT COUNT(*) FROM $t");
-                    $res = $db->fetchOne("SELECT COUNT(*) FROM $t");
+                    $res = $db->fetchOne(sprintf('SELECT COUNT(*) FROM %s', $t));
                     Logger::debug('Result: ' . $res);
                 } catch (Exception $e) {
                     Logger::error((string) $e);

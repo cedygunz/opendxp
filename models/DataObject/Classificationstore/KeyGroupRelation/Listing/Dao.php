@@ -65,12 +65,20 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     public function getDataArray(): array
     {
-        return $this->db->fetchAllAssociative('SELECT *' . $this->getFrom() . $this->getWhere() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        return $this->db->fetchAllAssociative(
+            'SELECT *' . $this->getFrom() . $this->getWhere() . $this->getOrder() . $this->getOffsetLimit(),
+            $this->model->getConditionVariables(),
+            $this->model->getConditionVariableTypes()
+        );
     }
 
     public function getTotalCount(): int
     {
-        return (int) $this->db->fetchOne('SELECT COUNT(*)' . $this->getFrom() . $this->getWhere(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        return (int) $this->db->fetchOne(
+            'SELECT COUNT(*)' . $this->getFrom() . $this->getWhere(),
+            $this->model->getConditionVariables(),
+            $this->model->getConditionVariableTypes()
+        );
     }
 
     private function getWhere(): string

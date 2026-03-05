@@ -47,10 +47,15 @@ class Dao extends Model\Dao\AbstractDao
     public function getByKey(string $key, ?array $languages = null): void
     {
         if (is_array($languages)) {
-            $sql = 'SELECT * FROM ' . $this->getDatabaseTableName() . ' WHERE `key` = :key
-            AND `language` IN (:languages) ORDER BY `creationDate` ';
+            $sql = sprintf(
+                'SELECT * FROM %s WHERE `key` = :key AND `language` IN (:languages) ORDER BY `creationDate`',
+                $this->getDatabaseTableName()
+            );
         } else {
-            $sql ='SELECT * FROM ' . $this->getDatabaseTableName() . ' WHERE `key` = :key ORDER BY `creationDate` ';
+            $sql = sprintf(
+                'SELECT * FROM %s WHERE `key` = :key ORDER BY `creationDate`',
+                $this->getDatabaseTableName()
+            );
         }
 
         $data = $this->db->fetchAllAssociative($sql,
@@ -130,7 +135,9 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getAvailableLanguages(): array
     {
-        $l = $this->db->fetchAllAssociative('SELECT * FROM ' . $this->getDatabaseTableName()  . '  GROUP BY `language`;');
+        $l = $this->db->fetchAllAssociative(
+            sprintf('SELECT * FROM %s GROUP BY `language`', $this->getDatabaseTableName())
+        );
         $languages = [];
 
         foreach ($l as $values) {
@@ -169,7 +176,7 @@ class Dao extends Model\Dao\AbstractDao
                 return false;
             }
 
-            $this->db->fetchOne(sprintf('SELECT * FROM translations_%s LIMIT 1;', $domain));
+            $this->db->fetchOne(sprintf('SELECT * FROM translations_%s LIMIT 1', $domain));
 
             return true;
         } catch (Exception) {
@@ -185,7 +192,8 @@ class Dao extends Model\Dao\AbstractDao
             throw new Exception('Domain is missing to create new translation domain');
         }
 
-        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $table . "` (
+        $this->db->executeQuery(sprintf(
+            "CREATE TABLE IF NOT EXISTS `%s` (
                           `key` varchar(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
                           `type` varchar(10) DEFAULT NULL,
                           `language` varchar(10) NOT NULL DEFAULT '',
@@ -196,7 +204,9 @@ class Dao extends Model\Dao\AbstractDao
                           `userModification` int(11) unsigned DEFAULT NULL,
                           PRIMARY KEY (`key`,`language`),
                           KEY `language` (`language`)
-                        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+                        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+            $table
+        ));
     }
 
     protected function updateModificationInfos(): void

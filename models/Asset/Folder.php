@@ -107,7 +107,10 @@ class Folder extends Model\Asset
         ];
 
         if ($storage->fileExists($cacheFilePath)) {
-            $lastUpdate = $db->fetchOne('SELECT MAX(modificationDate) FROM assets WHERE ' . $condition . ' ORDER BY filename ASC LIMIT ' . $limit, $conditionParams);
+            $lastUpdate = $db->fetchOne(
+                sprintf('SELECT MAX(modificationDate) FROM assets WHERE %s', $condition),
+                $conditionParams
+            );
             if ($lastUpdate < $storage->lastModified($cacheFilePath)) {
                 return $storage->readStream($cacheFilePath);
             }

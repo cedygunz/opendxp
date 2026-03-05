@@ -15,10 +15,11 @@
 
 namespace OpenDxp\Model\Dependency;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\DBAL\ParameterType;
 use Exception;
 use OpenDxp;
-use OpenDxp\Db\Helper;
 use OpenDxp\Logger;
 use OpenDxp\Messenger\SanityCheckMessage;
 use OpenDxp\Model;
@@ -82,31 +83,46 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         //filterRequiresByPath
-        $query = "
+        $params = [
+            'sourceType' => $sourceType,
+            'sourceId'   => $sourceId,
+            'value'      => preg_quote((string) $value, '/'),
+        ];
+
+        $types = [
+            'sourceType' => ParameterType::STRING,
+            'sourceId'   => ParameterType::INTEGER,
+            'value'      => ParameterType::STRING,
+        ];
+
+        $query = sprintf(
+            '
         SELECT id, type
         FROM (
             SELECT d.targetid as id, d.targettype as type
             FROM dependencies d
-            INNER JOIN objects o ON o.id = d.targetid AND d.targettype= 'object'
-            WHERE d.sourcetype = '" . $sourceType. "' AND d.sourceid = " . $sourceId . " AND LOWER(CONCAT(o.path, o.key)) RLIKE '".$value."'
+            INNER JOIN objects o ON o.id = d.targetid AND d.targettype= "object"
+            WHERE d.sourcetype = :sourceType AND d.sourceid = :sourceId AND LOWER(CONCAT(o.path, o.key)) RLIKE :value
             UNION
             SELECT d.targetid as id, d.targettype as type
             FROM dependencies d
-            INNER JOIN documents doc ON doc.id = d.targetid AND d.targettype= 'document'
-            WHERE d.sourcetype = '" . $sourceType. "' AND d.sourceid = " . $sourceId . " AND LOWER(CONCAT(doc.path, doc.key)) RLIKE '".$value."'
+            INNER JOIN documents doc ON doc.id = d.targetid AND d.targettype= "document"
+            WHERE d.sourcetype = :sourceType AND d.sourceid = :sourceId AND LOWER(CONCAT(doc.path, doc.key)) RLIKE :value
             UNION
             SELECT d.targetid as id, d.targettype as type
             FROM dependencies d
-            INNER JOIN assets a ON a.id = d.targetid AND d.targettype= 'asset'
-            WHERE d.sourcetype = '" . $sourceType. "' AND d.sourceid = " . $sourceId . " AND LOWER(CONCAT(a.path, a.filename)) RLIKE '".$value."'
+            INNER JOIN assets a ON a.id = d.targetid AND d.targettype= "asset"
+            WHERE d.sourcetype = :sourceType AND d.sourceid = :sourceId AND LOWER(CONCAT(a.path, a.filename)) RLIKE :value
         ) dep
-        ORDER BY " . $orderBy . ' ' . $orderDirection;
+        ORDER BY %s %s',
+            $orderBy, $orderDirection
+        );
 
         if ($offset !== null && $limit !== null) {
-            $query = sprintf($query . ' LIMIT %d,%d', $offset, $limit);
+            $query .= sprintf(' LIMIT %d,%d', $offset, $limit);
         }
 
-        $requiresByPath = $this->db->fetchAllAssociative($query);
+        $requiresByPath = $this->db->fetchAllAssociative($query, $params, $types);
 
         if (count($requiresByPath) > 0) {
             return $requiresByPath;
@@ -140,31 +156,46 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         //filterRequiredByPath
-        $query = "
+        $params = [
+            'targetType' => $targetType,
+            'targetId'   => $targetId,
+            'value'      => preg_quote((string) $value, '/'),
+        ];
+
+        $types = [
+            'targetType' => ParameterType::STRING,
+            'targetId'   => ParameterType::INTEGER,
+            'value'      => ParameterType::STRING,
+        ];
+
+        $query = sprintf(
+            '
         SELECT id, type
         FROM (
             SELECT d.sourceid as id, d.sourcetype as type
             FROM dependencies d
-            INNER JOIN objects o ON o.id = d.sourceid AND d.targettype= 'object'
-            WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND LOWER(CONCAT(o.path, o.key)) RLIKE '".$value."'
+            INNER JOIN objects o ON o.id = d.sourceid AND d.targettype= "object"
+            WHERE d.targettype = :targetType AND d.targetid = :targetId AND LOWER(CONCAT(o.path, o.key)) RLIKE :value
             UNION
             SELECT d.sourceid as id, d.sourcetype as type
             FROM dependencies d
-            INNER JOIN documents doc ON doc.id = d.sourceid AND d.targettype= 'document'
-            WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND LOWER(CONCAT(doc.path, doc.key)) RLIKE '".$value."'
+            INNER JOIN documents doc ON doc.id = d.sourceid AND d.targettype= "document"
+            WHERE d.targettype = :targetType AND d.targetid = :targetId AND LOWER(CONCAT(doc.path, doc.key)) RLIKE :value
             UNION
             SELECT d.sourceid as id, d.sourcetype as type
             FROM dependencies d
-            INNER JOIN assets a ON a.id = d.sourceid AND d.targettype= 'asset'
-            WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND LOWER(CONCAT(a.path, a.filename)) RLIKE '".$value."'
+            INNER JOIN assets a ON a.id = d.sourceid AND d.targettype= "asset"
+            WHERE d.targettype = :targetType AND d.targetid = :targetId AND LOWER(CONCAT(a.path, a.filename)) RLIKE :value
         ) dep
-        ORDER BY " . $orderBy . ' ' . $orderDirection;
+        ORDER BY %s %s',
+            $orderBy, $orderDirection
+        );
 
         if ($offset !== null && $limit !== null) {
-            $query = sprintf($query . ' LIMIT %d,%d', $offset, $limit);
+            $query .= sprintf(' LIMIT %d,%d', $offset, $limit);
         }
 
-        $requiredByPath = $this->db->fetchAllAssociative($query);
+        $requiredByPath = $this->db->fetchAllAssociative($query, $params, $types);
 
         if (count($requiredByPath) > 0) {
             return $requiredByPath;
@@ -183,14 +214,20 @@ class Dao extends Model\Dao\AbstractDao
             $type = Element\Service::getElementType($element);
 
             //schedule for sanity check
-            $data = $this->db->fetchAllAssociative('SELECT `sourceid`, `sourcetype` FROM dependencies WHERE targettype = ? AND targetid = ?', [$type, $id]);
+            $data = $this->db->fetchAllAssociative(
+                'SELECT `sourceid`, `sourcetype` FROM dependencies WHERE targettype = ? AND targetid = ?',
+                [$type, $id]
+            );
             foreach ($data as $row) {
                 OpenDxp::getContainer()->get('messenger.bus.opendxp-core')->dispatch(
                     new SanityCheckMessage($row['sourcetype'], $row['sourceid'])
                 );
             }
 
-            Helper::selectAndDeleteWhere($this->db, 'dependencies', 'id', Helper::quoteInto($this->db, 'sourceid = ?', $id) . ' AND  ' . Helper::quoteInto($this->db, 'sourcetype = ?', $type));
+            $this->db->executeStatement(
+                'DELETE FROM dependencies WHERE sourceid = ? AND sourcetype = ?',
+                [$id, $type]
+            );
         } catch (Exception $e) {
             Logger::error((string) $e);
         }
@@ -202,7 +239,10 @@ class Dao extends Model\Dao\AbstractDao
     public function clear(): void
     {
         try {
-            Helper::selectAndDeleteWhere($this->db, 'dependencies', 'id', Helper::quoteInto($this->db, 'sourceid = ?', $this->model->getSourceId()) . ' AND  ' . Helper::quoteInto($this->db, 'sourcetype = ?', $this->model->getSourceType()));
+            $this->db->executeStatement(
+                'DELETE FROM dependencies WHERE sourceid = ? AND sourcetype = ?',
+                [$this->model->getSourceId(), $this->model->getSourceType()]
+            );
         } catch (Exception $e) {
             Logger::error((string) $e);
         }
@@ -214,8 +254,10 @@ class Dao extends Model\Dao\AbstractDao
     public function save(): void
     {
         // get existing dependencies
-        $existingDependenciesRaw = $this->db->fetchAllAssociative('SELECT id, targetType, targetId FROM dependencies WHERE sourceType= ? AND sourceId = ?',
-            [$this->model->getSourceType(), $this->model->getSourceId()]);
+        $existingDependenciesRaw = $this->db->fetchAllAssociative(
+            'SELECT id, targetType, targetId FROM dependencies WHERE sourceType = ? AND sourceId = ?',
+            [$this->model->getSourceType(), $this->model->getSourceId()]
+        );
 
         $existingDepencies = [];
         foreach ($existingDependenciesRaw as $dep) {
@@ -255,8 +297,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if ($idsForDeletion) {
-            $idString = implode(',', $idsForDeletion);
-            $this->db->executeStatement('DELETE FROM dependencies WHERE id IN (' . $idString . ')');
+            $this->db->executeStatement('DELETE FROM dependencies WHERE id IN (?)', [$idsForDeletion], [ArrayParameterType::INTEGER]);
         }
 
         foreach ($newData as $target) {
@@ -287,7 +328,7 @@ class Dao extends Model\Dao\AbstractDao
         ';
 
         if ($offset !== null && $limit !== null) {
-            $query = sprintf($query . ' LIMIT %d,%d', $offset, $limit);
+            $query .= sprintf(' LIMIT %d,%d', $offset, $limit);
         }
 
         $data = $this->db->fetchAllAssociative($query, [$this->model->getSourceType(), $this->model->getSourceId()]);
@@ -322,31 +363,44 @@ class Dao extends Model\Dao\AbstractDao
             $orderDirection = 'ASC';
         }
 
-        $query = "
+        $params = [
+            'targetType' => $targetType,
+            'targetId'   => $targetId,
+        ];
+
+        $types = [
+            'targetType' => ParameterType::STRING,
+            'targetId'   => ParameterType::INTEGER,
+        ];
+
+        $query = sprintf(
+            '
             SELECT id, type, path
             FROM (
                 SELECT d.sourceid as id, d.sourcetype as `type`, CONCAT(o.path, o.key) as `path`
                 FROM dependencies d
                 JOIN objects o ON o.id = d.sourceid
-                WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND d.sourceType = 'object'
+                WHERE d.targettype = :targetType AND d.targetid = :targetId AND d.sourceType = "object"
                 UNION
                 SELECT d.sourceid as id, d.sourcetype as `type`, CONCAT(doc.path, doc.key) as `path`
                 FROM dependencies d
                 JOIN documents doc ON doc.id = d.sourceid
-                WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND d.sourceType = 'document'
+                WHERE d.targettype = :targetType AND d.targetid = :targetId AND d.sourceType = "document"
                 UNION
                 SELECT d.sourceid as id, d.sourcetype as `type`, CONCAT(a.path, a.filename) as `path`
                 FROM dependencies d
                 JOIN assets a ON a.id = d.sourceid
-                WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND d.sourceType = 'asset'
+                WHERE d.targettype = :targetType AND d.targetid = :targetId AND d.sourceType = "asset"
             ) dep
-            ORDER BY " . $orderBy . ' ' . $orderDirection;
+            ORDER BY %s %s',
+            $orderBy, $orderDirection
+        );
 
         if (is_int($offset) && is_int($limit)) {
-            $query .= ' LIMIT ' . $offset . ', ' . $limit;
+            $query .= sprintf(' LIMIT %d,%d', $offset, $limit);
         }
 
-        return $this->db->fetchAllAssociative($query);
+        return $this->db->fetchAllAssociative($query, $params, $types);
     }
 
     /**
@@ -354,6 +408,9 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getRequiredByTotalCount(): int
     {
-        return (int) $this->db->fetchOne('SELECT COUNT(*) FROM dependencies WHERE targettype = ? AND targetid = ?', [$this->model->getSourceType(), $this->model->getSourceId()]);
+        return (int) $this->db->fetchOne(
+            'SELECT COUNT(*) FROM dependencies WHERE targettype = ? AND targetid = ?',
+            [$this->model->getSourceType(), $this->model->getSourceId()]
+        );
     }
 }

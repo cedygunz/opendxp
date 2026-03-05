@@ -65,7 +65,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList(): array
     {
-        $versionIds = $this->db->fetchFirstColumn('SELECT id FROM versions' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $versionIds = $this->db->fetchFirstColumn(
+            'SELECT id FROM versions' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(),
+            $this->model->getConditionVariables(),
+            $this->model->getConditionVariableTypes()
+        );
 
         return array_map(intval(...), $versionIds);
     }
@@ -73,7 +77,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount(): int
     {
         try {
-            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM versions ' . $this->getCondition(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+            return (int) $this->db->fetchOne(
+                'SELECT COUNT(*) FROM versions ' . $this->getCondition(),
+                $this->model->getConditionVariables(),
+                $this->model->getConditionVariableTypes()
+            );
         } catch (Exception) {
             return 0;
         }

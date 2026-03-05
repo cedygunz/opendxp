@@ -58,9 +58,12 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     #[Override]
     public function getById(int $id): void
     {
-        $data = $this->db->fetchAssociative("SELECT objects.*, tree_locks.locked as locked FROM objects
-            LEFT JOIN tree_locks ON objects.id = tree_locks.id AND tree_locks.type = 'object'
-                WHERE objects.id = ?", [$id]);
+        $data = $this->db->fetchAssociative(
+            'SELECT objects.*, tree_locks.locked as locked FROM objects
+                LEFT JOIN tree_locks ON objects.id = tree_locks.id AND tree_locks.type = "object"
+                WHERE objects.id = ?',
+            [$id]
+        );
 
         if ($data) {
             $data['published'] = (bool)$data['published'];
@@ -74,7 +77,13 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     public function getRelationIds(string $fieldName): array
     {
         $relations = [];
-        $allRelations = $this->db->fetchAllAssociative('SELECT * FROM object_relations_' . $this->model->getClassId() . " WHERE fieldname = ? AND src_id = ? AND ownertype = 'object' ORDER BY `index` ASC", [$fieldName, $this->model->getId()]);
+        $allRelations = $this->db->fetchAllAssociative(
+            sprintf(
+                'SELECT * FROM object_relations_%s WHERE fieldname = ? AND src_id = ? AND ownertype = "object" ORDER BY `index` ASC',
+                $this->model->getClassId()
+            ),
+            [$fieldName, $this->model->getId()]
+        );
         foreach ($allRelations as $relation) {
             $relations[] = $relation['dest_id'];
         }
@@ -96,31 +105,38 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             $src = 'dest_id';
         }
 
-        return $this->db->fetchAllAssociative('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.className as subtype, o.published as published, concat(o.path ,o.key) as `path` , r.index
-            FROM objects o, object_relations_' . $classId . " r
+        // Raw SQL: UNION of 3 queries across objects/assets/documents — not expressible in QB
+        return $this->db->fetchAllAssociative(
+            sprintf(
+                'SELECT r.%1$s as dest_id, r.%1$s as id, r.type, o.className as subtype, o.published as published, concat(o.path ,o.key) as `path` , r.index
+            FROM objects o, object_relations_%2$s r
             WHERE r.fieldname= ?
-            AND r.ownertype = 'object'
-            AND r." . $src . ' = ?
-            AND o.id = r.' . $dest . "
-            AND r.type='object'
+            AND r.ownertype = "object"
+            AND r.%3$s = ?
+            AND o.id = r.%1$s
+            AND r.type="object"
 
-            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type,  a.type as subtype, "null" as published, concat(a.path,a.filename) as `path`, r.index
-            FROM assets a, object_relations_' . $classId . " r
+            UNION SELECT r.%1$s as dest_id, r.%1$s as id, r.type,  a.type as subtype, "null" as published, concat(a.path,a.filename) as `path`, r.index
+            FROM assets a, object_relations_%2$s r
             WHERE r.fieldname= ?
-            AND r.ownertype = 'object'
-            AND r." . $src . ' = ?
-            AND a.id = r.' . $dest . "
-            AND r.type='asset'
+            AND r.ownertype = "object"
+            AND r.%3$s = ?
+            AND a.id = r.%1$s
+            AND r.type="asset"
 
-            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, d.type as subtype, d.published as published, concat(d.path,d.key) as `path`, r.index
-            FROM documents d, object_relations_' . $classId . " r
+            UNION SELECT r.%1$s as dest_id, r.%1$s as id, r.type, d.type as subtype, d.published as published, concat(d.path,d.key) as `path`, r.index
+            FROM documents d, object_relations_%2$s r
             WHERE r.fieldname= ?
-            AND r.ownertype = 'object'
-            AND r." . $src . ' = ?
-            AND d.id = r.' . $dest . "
-            AND r.type='document'
+            AND r.ownertype = "object"
+            AND r.%3$s = ?
+            AND d.id = r.%1$s
+            AND r.type="document"
 
-            ORDER BY `index` ASC", $params);
+            ORDER BY `index` ASC',
+                $dest, $classId, $src
+            ),
+            $params
+        );
     }
 
     /**
@@ -128,7 +144,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      */
     public function getData(): void
     {
-        if (!$data = $this->db->fetchAssociative('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ? FOR UPDATE', [$this->model->getId()])) {
+        if (!$data = $this->db->fetchAssociative(sprintf('SELECT * FROM object_store_%s WHERE oo_id = ? FOR UPDATE', $this->model->getClassId()), [$this->model->getId()])) {
             return;
         }
 
@@ -247,7 +263,10 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             // get data for query table
             $data = [];
             $this->getInheritanceHelper()->resetFieldsToCheck();
-            $oldData = $this->db->fetchAssociative('SELECT * FROM object_query_' . $this->model->getClassId() . ' WHERE oo_id = ?', [$this->model->getId()]);
+            $oldData = $this->db->fetchAssociative(
+                sprintf('SELECT * FROM object_query_%s WHERE oo_id = ?', $this->model->getClassId()),
+                [$this->model->getId()]
+            );
 
             $inheritanceEnabled = $this->model->getClass()->getAllowInherit();
             $parentData = null;
@@ -259,7 +278,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     // we cannot DataObject::setGetInheritedValues(true); and then $this->model->$method();
                     // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                     // so the data of the parent cannot be changed while this transaction is on progress
-                    $parentData = $this->db->fetchAssociative('SELECT * FROM object_query_' . $this->model->getClassId() . ' WHERE oo_id = ? FOR UPDATE', [$parentForInheritance->getId()]);
+                    $parentData = $this->db->fetchAssociative(sprintf('SELECT * FROM object_query_%s WHERE oo_id = ? FOR UPDATE', $this->model->getClassId()), [$parentForInheritance->getId()]);
                 }
             }
 

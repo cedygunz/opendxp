@@ -39,7 +39,10 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME_GROUPS . ' WHERE id = ?', [$this->model->getId()]);
+        $data = $this->db->fetchAssociative(
+            sprintf('SELECT * FROM %s WHERE id = ?', self::TABLE_NAME_GROUPS),
+            [$this->model->getId()]
+        );
 
         if ($data) {
             $this->assignVariablesToModel($data);
@@ -60,7 +63,10 @@ class Dao extends Model\Dao\AbstractDao
         $name = $this->model->getName();
         $storeId = $this->model->getStoreId();
 
-        $data = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME_GROUPS . ' WHERE name = ? and storeId = ?', [$name, $storeId]);
+        $data = $this->db->fetchAssociative(
+            sprintf('SELECT * FROM %s WHERE name = ? AND storeId = ?', self::TABLE_NAME_GROUPS),
+            [$name, $storeId]
+        );
 
         if ($data) {
             $this->assignVariablesToModel($data);
@@ -75,7 +81,10 @@ class Dao extends Model\Dao\AbstractDao
             return false;
         }
 
-        return (bool) $this->db->fetchOne('SELECT COUNT(*) as amount FROM ' . self::TABLE_NAME_GROUPS . ' WHERE parentId = ?', [$this->model->getId()]);
+        return (bool) $this->db->fetchOne(
+            sprintf('SELECT COUNT(*) FROM %s WHERE parentId = ?', self::TABLE_NAME_GROUPS),
+            [$this->model->getId()]
+        );
     }
 
     /**

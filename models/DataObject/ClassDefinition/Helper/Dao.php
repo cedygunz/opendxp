@@ -51,7 +51,7 @@ trait Dao
                             }
                         }
                         if ($this->indexDoesNotExist($table, $prefix, $indexName)) {
-                            $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName . '` (' . $columnName . ');');
+                            $this->db->executeQuery(sprintf('ALTER TABLE `%s` ADD %sINDEX `%s%s` (%s);', $table, $uniqueStr, $prefix, $indexName, $columnName));
                         }
                     }
                 } else {
@@ -66,7 +66,7 @@ trait Dao
                         }
                     }
                     if ($this->indexDoesNotExist($table, $prefix, $indexName)) {
-                        $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName . '` (' . $columnName . ');');
+                        $this->db->executeQuery(sprintf('ALTER TABLE `%s` ADD %sINDEX `%s%s` (%s);', $table, $uniqueStr, $prefix, $indexName, $columnName));
                     }
                 }
             } elseif (is_array($columnType)) {
@@ -74,14 +74,14 @@ trait Dao
                 foreach (array_keys($columnType) as $fkey) {
                     $indexName = $field->getName().'__'.$fkey;
                     if ($this->indexExists($table, $prefix, $indexName)) {
-                        $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP INDEX `' . $prefix . $indexName . '`;');
+                        $this->db->executeQuery(sprintf('ALTER TABLE `%s` DROP INDEX `%s%s`;', $table, $prefix, $indexName));
                     }
                 }
             } else {
                 // single -column field
                 $indexName = $field->getName();
                 if ($this->indexExists($table, $prefix, $indexName)) {
-                    $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP INDEX `' . $prefix . $indexName . '`;');
+                    $this->db->executeQuery(sprintf('ALTER TABLE `%s` DROP INDEX `%s%s`;', $table, $prefix, $indexName));
                 }
             }
         }
@@ -99,10 +99,10 @@ trait Dao
             $existingColName = current($matchingExisting);
         }
         if ($existingColName === null) {
-            $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+            $this->db->executeQuery(sprintf('ALTER TABLE `%s` ADD COLUMN `%s` %s%s %s;', $table, $colName, $type, $default, $null));
             $this->resetValidTableColumnsCache($table);
         } elseif (!DataObject\ClassDefinition\Service::skipColumn($this->tableDefinitions, $table, $colName, $type, $default, $null)) {
-            $this->db->executeQuery('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+            $this->db->executeQuery(sprintf('ALTER TABLE `%s` CHANGE COLUMN `%s` `%s` %s%s %s;', $table, $existingColName, $colName, $type, $default, $null));
         }
     }
 
@@ -121,7 +121,7 @@ trait Dao
             }
         }
         if ($dropColumns) {
-            $this->db->executeQuery('ALTER TABLE `' . $table . '` ' . implode(', ', $dropColumns) . ';');
+            $this->db->executeQuery(sprintf('ALTER TABLE `%s` %s;', $table, implode(', ', $dropColumns)));
             $this->resetValidTableColumnsCache($table);
         }
     }
@@ -172,7 +172,7 @@ trait Dao
             $lowerCaseColumns = array_map(strtolower(...), $protectedColumns);
             foreach ($columnsToRemove as $value) {
                 if (!in_array(strtolower($value), $lowerCaseColumns) && $this->indexExists($table, 'u_index_', $value)) {
-                    $this->db->executeQuery('ALTER TABLE `'.$table.'` DROP INDEX `u_index_'. $value . '`;');
+                    $this->db->executeQuery(sprintf('ALTER TABLE `%s` DROP INDEX `u_index_%s`;', $table, $value));
                 }
             }
             $this->resetValidTableColumnsCache($table);

@@ -42,22 +42,26 @@ class Dao extends Model\Dao\AbstractDao
     public function delete(DataObject\ClassDefinition $class): void
     {
         $table = $this->getTableName($class);
-        $this->db->executeQuery('DROP TABLE IF EXISTS `' . $table . '`');
+        $this->db->executeQuery(sprintf('DROP TABLE IF EXISTS `%s`', $table));
     }
 
     public function createUpdateTable(DataObject\ClassDefinition $class): void
     {
         $table = $this->getTableName($class);
 
-        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $table . "` (
+        $this->db->executeQuery(sprintf(
+            "CREATE TABLE IF NOT EXISTS `%s` (
 		  `id` int(11) UNSIGNED NOT NULL default '0',
 		  `index` int(11) default '0',
           `fieldname` varchar(190) default '',
           PRIMARY KEY (`id`,`index`,`fieldname`(190)),
           INDEX `index` (`index`),
           INDEX `fieldname` (`fieldname`),
-          CONSTRAINT `".self::getForeignKeyName($table, 'id').'` FOREIGN KEY (`id`) REFERENCES objects (`id`) ON DELETE CASCADE
-		) DEFAULT CHARSET=utf8mb4;');
+          CONSTRAINT `%s` FOREIGN KEY (`id`) REFERENCES objects (`id`) ON DELETE CASCADE
+		) DEFAULT CHARSET=utf8mb4;",
+            $table,
+            self::getForeignKeyName($table, 'id')
+        ));
 
         $existingColumns = $this->getValidTableColumns($table, false); // no caching of table definition
         $columnsToRemove = $existingColumns;

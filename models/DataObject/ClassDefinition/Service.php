@@ -374,7 +374,7 @@ class Service
         $db = \OpenDxp\Db::get();
         $tmp = [];
         foreach ($tableNames as $tableName) {
-            $tmp[$tableName] = $db->fetchAllAssociative('show columns from ' . $tableName);
+            $tmp[$tableName] = $db->fetchAllAssociative(sprintf('SHOW COLUMNS FROM %s', $tableName));
         }
 
         foreach ($tmp as $tableName => $columns) {

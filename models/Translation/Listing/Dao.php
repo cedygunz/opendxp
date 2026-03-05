@@ -15,6 +15,7 @@
 
 namespace OpenDxp\Model\Translation\Listing;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use OpenDxp\Cache;
 use OpenDxp\Model;
@@ -135,7 +136,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     public function isCacheable(): bool
     {
-        $count = $this->db->fetchOne('SELECT COUNT(*) FROM ' . $this->getDatabaseTableName());
+        $count = $this->db->fetchOne(sprintf('SELECT COUNT(*) FROM %s', $this->getDatabaseTableName()));
         $cacheLimit = Model\Translation\Listing::getCacheLimit();
 
         return $count <= $cacheLimit;
@@ -143,17 +144,16 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     public function cleanup(): void
     {
-        $keysToDelete = $this->db->fetchFirstColumn('SELECT `key` FROM ' . $this->getDatabaseTableName() . ' as tbl1 WHERE
-               (SELECT count(*) FROM ' . $this->getDatabaseTableName() . " WHERE `key` = tbl1.`key` AND (`text` IS NULL OR `text` = ''))
-               = (SELECT count(*) FROM " . $this->getDatabaseTableName() . ' WHERE `key` = tbl1.`key`) GROUP BY `key`;');
+        $table = $this->getDatabaseTableName();
+        $keysToDelete = $this->db->fetchFirstColumn(sprintf(
+            'SELECT `key` FROM %s as tbl1 WHERE
+               (SELECT count(*) FROM %s WHERE `key` = tbl1.`key` AND (`text` IS NULL OR `text` = ""))
+               = (SELECT count(*) FROM %s WHERE `key` = tbl1.`key`) GROUP BY `key`',
+            $table, $table, $table
+        ));
 
         if ($keysToDelete) {
-            $preparedKeys = [];
-            foreach ($keysToDelete as $value) {
-                $preparedKeys[] = $this->db->quote($value);
-            }
-
-            $this->db->executeStatement('DELETE FROM ' . $this->getDatabaseTableName() . ' WHERE ' . '`key` IN (' . implode(',', $preparedKeys) . ')');
+            $this->db->executeStatement(sprintf('DELETE FROM %s WHERE `key` IN (?)', $this->getDatabaseTableName()), [$keysToDelete], [ArrayParameterType::STRING]);
         }
     }
 

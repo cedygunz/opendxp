@@ -61,7 +61,10 @@ class Dao extends Model\User\AbstractUser\Dao
             $workspaces = [];
             $baseClassName = Element\Service::getBaseClassNameForElement($type);
             $className = '\\OpenDxp\\Model\\User\\Workspace\\' . $baseClassName;
-            $result = $this->db->fetchAllAssociative('SELECT * FROM users_workspaces_' . $type . ' WHERE userId = ?', [$this->model->getId()]);
+            $result = $this->db->fetchAllAssociative(
+                sprintf('SELECT * FROM users_workspaces_%s WHERE userId = ?', $type),
+                [$this->model->getId()]
+            );
             foreach ($result as $row) {
                 $workspace = new $className();
                 $row['list'] = (bool)$row['list'];

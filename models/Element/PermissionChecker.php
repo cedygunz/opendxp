@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace OpenDxp\Model\Element;
 
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Exception;
 use OpenDxp\Db;
 use OpenDxp\Db\Helper;
@@ -48,7 +50,7 @@ class PermissionChecker
         }
         $db = Db::get();
         $tableName = 'users_workspaces_'.$type;
-        $tableDesc = $db->fetchAllAssociative('describe '.$tableName);
+        $tableDesc = $db->fetchAllAssociative(sprintf('DESCRIBE %s', $tableName));
 
         $result = [
             'columns' => [],
@@ -92,13 +94,12 @@ class PermissionChecker
 
                 try {
                     $permissionsParent = $db->fetchAssociative(
-                        'SELECT * FROM users_workspaces_'.$type.' , users u WHERE userId = u.id AND cid IN ('.implode(
-                            ',',
-                            $parentIds
-                        ).') AND userId IN ('.implode(
-                            ',',
-                            $userIds
-                        ).') ORDER BY LENGTH(cpath) DESC, FIELD(userId,'.$user->getId().') DESC, `' . $columnName . '` DESC  LIMIT 1'
+                        sprintf(
+                            'SELECT * FROM users_workspaces_%s, users u WHERE userId = u.id AND cid IN (?) AND userId IN (?) ORDER BY LENGTH(cpath) DESC, FIELD(userId,?) DESC, %s DESC LIMIT 1',
+                            $type, $db->quoteIdentifier($columnName)
+                        ),
+                        [$parentIds, $userIds, $user->getId()],
+                        [ArrayParameterType::INTEGER, ArrayParameterType::INTEGER, ParameterType::INTEGER]
                     );
 
                     if ($permissionsParent) {
@@ -118,11 +119,9 @@ class PermissionChecker
                         }
 
                         $permissionsChildren = $db->fetchAssociative(
-                            'SELECT list FROM users_workspaces_'.$type.', users u WHERE userId = u.id AND cpath LIKE ? AND userId IN ('.implode(
-                                ',',
-                                $userIds
-                            ).') AND list = 1 LIMIT 1',
-                            [Helper::escapeLike($path) .'%']
+                            sprintf('SELECT list FROM users_workspaces_%s, users u WHERE userId = u.id AND cpath LIKE ? AND userId IN (?) AND list = 1 LIMIT 1', $type),
+                            [Helper::escapeLike($path) .'%', $userIds],
+                            [ParameterType::STRING, ArrayParameterType::INTEGER]
                         );
                         if ($permissionsChildren) {
                             $result[$columnName] = (bool) $permissionsChildren[$columnName];
@@ -187,7 +186,7 @@ class PermissionChecker
         $details[] = self::createDetail($user, '<b>User Permissions</b>');
 
         $db = Db::get();
-        $permissions = $db->fetchFirstColumn('select `key` from users_permission_definitions');
+        $permissions = $db->fetchFirstColumn('SELECT `key` FROM users_permission_definitions');
         foreach ($permissions as $permissionKey) {
             $entry = null;
 

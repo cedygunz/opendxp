@@ -1000,7 +1000,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     {
         if ($this->__rawRelationData === null) {
             $db = Db::get();
-            $this->__rawRelationData = $db->fetchAllAssociative('SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE src_id = ?', [$this->getId()]);
+            $this->__rawRelationData = $db->fetchAllAssociative(sprintf('SELECT * FROM object_relations_%s WHERE src_id = ?', $this->getClassId()), [$this->getId()]);
         }
 
         return $this->__rawRelationData;

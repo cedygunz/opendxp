@@ -32,7 +32,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load(): array
     {
         $items = [];
-        $usersData = $this->db->fetchAllAssociative('SELECT id,type FROM users' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $usersData = $this->db->fetchAllAssociative(
+            'SELECT id,type FROM users' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(),
+            $this->model->getConditionVariables(),
+            $this->model->getConditionVariableTypes()
+        );
 
         foreach ($usersData as $userData) {
             $className = Model\User\Service::getClassNameForType($userData['type']);

@@ -39,7 +39,10 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME_KEYS . ' WHERE id = ?', [$this->model->getId()]);
+        $data = $this->db->fetchAssociative(
+            sprintf('SELECT * FROM %s WHERE id = ?', self::TABLE_NAME_KEYS),
+            [$this->model->getId()]
+        );
 
         if ($data) {
             $data['enabled'] = (bool)$data['enabled'];
@@ -61,9 +64,10 @@ class Dao extends Model\Dao\AbstractDao
         $name = $this->model->getName();
         $storeId = $this->model->getStoreId();
 
-        $stmt = 'SELECT * FROM ' . self::TABLE_NAME_KEYS . ' WHERE name = ' . $this->db->quote($name) . ' and storeId = ' . $storeId;
-
-        $data = $this->db->fetchAssociative($stmt);
+        $data = $this->db->fetchAssociative(
+            sprintf('SELECT * FROM %s WHERE name = ? AND storeId = ?', self::TABLE_NAME_KEYS),
+            [$name, $storeId]
+        );
 
         if ($data) {
             $data['enabled'] = (bool)$data['enabled'];
@@ -116,7 +120,7 @@ class Dao extends Model\Dao\AbstractDao
                     }
                 }
                 if (is_array($value) || is_object($value)) {
-                    $value = $this->model->getType() == 'select' ? json_encode($value) : \OpenDxp\Tool\Serialize::serialize($value);
+                    $value = $this->model->getType() === 'select' ? json_encode($value) : \OpenDxp\Tool\Serialize::serialize($value);
                 }
 
                 $data[$key] = $value;

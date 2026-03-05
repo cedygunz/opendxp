@@ -30,7 +30,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load(): array
     {
-        $emailLogs = $this->db->fetchFirstColumn('SELECT id FROM email_log' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $emailLogs = $this->db->fetchFirstColumn(
+            'SELECT id FROM email_log' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(),
+            $this->model->getConditionVariables(),
+            $this->model->getConditionVariableTypes()
+        );
 
         $emailLogsArray = [];
         foreach ($emailLogs as $log) {
@@ -46,7 +50,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getDataArray(): array
     {
-        return $this->db->fetchAllAssociative('SELECT * FROM email_log ' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        return $this->db->fetchAllAssociative(
+            'SELECT * FROM email_log ' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(),
+            $this->model->getConditionVariables(),
+            $this->model->getConditionVariableTypes()
+        );
     }
 
     /**
@@ -55,7 +63,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount(): int
     {
         try {
-            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM email_log ' . $this->getCondition(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+            return (int) $this->db->fetchOne(
+                'SELECT COUNT(*) FROM email_log ' . $this->getCondition(),
+                $this->model->getConditionVariables(),
+                $this->model->getConditionVariableTypes()
+            );
         } catch (Exception) {
             return 0;
         }

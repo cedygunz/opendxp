@@ -186,8 +186,11 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 'fieldname' => $this->getName(),
             ];
             $this->enrichDataRow($object, $params, $classId, $deleteDescriptor, 'objectId');
-            $conditionParts = Model\DataObject\Service::buildConditionPartsFromDescriptor($deleteDescriptor);
-            $db->executeQuery('DELETE FROM ' . Model\DataObject\Data\UrlSlug::TABLE_NAME . ' WHERE ' . implode(' AND ', $conditionParts));
+            [$conditionParts, $sqlParams] = Model\DataObject\Service::buildConditionPartsFromDescriptor($deleteDescriptor);
+            $db->executeStatement(
+                sprintf('DELETE FROM %s WHERE %s', Model\DataObject\Data\UrlSlug::TABLE_NAME, implode(' AND ', $conditionParts)),
+                $sqlParams
+            );
             // now save the new data
             if (is_array($slugs)) {
                 foreach ($slugs as $slug) {

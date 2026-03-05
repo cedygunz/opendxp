@@ -50,7 +50,8 @@ class Dao extends Model\Dao\AbstractDao
         $classId = $class->getId();
         $table = 'object_metadata_' . $classId;
 
-        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $table . "` (
+        $this->db->executeQuery(sprintf(
+            "CREATE TABLE IF NOT EXISTS `%s` (
               `auto_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
               `id` int(11) UNSIGNED NOT NULL default '0',
               `dest_id` int(11) NOT NULL default '0',
@@ -73,9 +74,12 @@ class Dao extends Model\Dao\AbstractDao
               INDEX `ownername` (`ownername`),
               INDEX `position` (`position`),
               INDEX `index` (`index`),
-              CONSTRAINT `".self::getForeignKeyName($table, 'id').'` FOREIGN KEY (`id`)
+              CONSTRAINT `%s` FOREIGN KEY (`id`)
               REFERENCES objects (`id`) ON DELETE CASCADE
-		) DEFAULT CHARSET=utf8mb4;');
+		) DEFAULT CHARSET=utf8mb4;",
+            $table,
+            self::getForeignKeyName($table, 'id')
+        ));
 
         $this->handleEncryption($class, [$table]);
     }

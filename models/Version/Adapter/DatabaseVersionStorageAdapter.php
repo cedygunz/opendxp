@@ -37,10 +37,13 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
             $contents = stream_get_contents($binaryDataStream);
         }
 
-        $query = 'INSERT INTO ' . self::versionsTableName . '(`id`, `cid`, `ctype`, `metaData`, `binaryData`) VALUES (?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE `metaData` = ?, `binaryData` = ?';
+        $query = sprintf(
+            'INSERT INTO %s (`id`, `cid`, `ctype`, `metaData`, `binaryData`) VALUES (?, ?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE `metaData` = ?, `binaryData` = ?',
+            self::versionsTableName
+        );
 
-        $this->databaseConnection->executeQuery(
+        $this->databaseConnection->executeStatement(
             $query,
             [
                 $version->getId(),
@@ -64,12 +67,14 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
     {
         $dataColumn = $binaryData ? 'binaryData' : 'metaData';
 
-        return $this->databaseConnection->fetchOne('SELECT ' . $dataColumn . ' FROM ' . self::versionsTableName . ' WHERE id = :id AND cid = :cid and ctype = :ctype',
+        return $this->databaseConnection->fetchOne(
+            sprintf('SELECT %s FROM %s WHERE id = :id AND cid = :cid AND ctype = :ctype', $this->databaseConnection->quoteIdentifier($dataColumn), self::versionsTableName),
             [
                 'id' => $id,
                 'cid' => $cId,
                 'ctype' => $cType,
-            ]);
+            ]
+        );
     }
 
     public function loadMetaData(Version $version): ?string

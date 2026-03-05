@@ -34,7 +34,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load(): array
     {
-        $glossarysData = $this->db->fetchFirstColumn('SELECT id FROM glossary' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $glossarysData = $this->db->fetchFirstColumn(
+            'SELECT id FROM glossary' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(),
+            $this->model->getConditionVariables(),
+            $this->model->getConditionVariableTypes()
+        );
 
         $glossary = [];
         foreach ($glossarysData as $glossaryData) {
@@ -51,7 +55,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getDataArray(): array
     {
-        return $this->db->fetchAllAssociative('SELECT * FROM glossary' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        return $this->db->fetchAllAssociative(
+            'SELECT * FROM glossary' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(),
+            $this->model->getConditionVariables(),
+            $this->model->getConditionVariableTypes()
+        );
     }
 
     /**
@@ -60,7 +68,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount(): int
     {
         try {
-            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM glossary ' . $this->getCondition(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+            return (int) $this->db->fetchOne(
+                'SELECT COUNT(*) FROM glossary ' . $this->getCondition(),
+                $this->model->getConditionVariables(),
+                $this->model->getConditionVariableTypes()
+            );
         } catch (Exception) {
             return 0;
         }

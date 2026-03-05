@@ -56,18 +56,23 @@ class Dao extends AbstractDao
 
     public function save(): void
     {
-        $oldFullPath = $this->db->fetchOne('SELECT fullpath FROM search_backend_data WHERE id = :id and maintype = :type FOR UPDATE', [
+        $oldFullPath = $this->db->fetchOne('SELECT fullpath FROM search_backend_data WHERE id = :id AND maintype = :type FOR UPDATE', [
             'id' => $this->model->getId()->getId(),
             'type' => $this->model->getId()->getType(),
         ]);
 
         if ($oldFullPath && $oldFullPath !== $this->model->getFullPath()) {
-            $this->db->executeQuery('UPDATE search_backend_data
-                SET fullpath = replace(fullpath,' . $this->db->quote($oldFullPath . '/') . ',' . $this->db->quote($this->model->getFullPath() . '/') . ')
-                WHERE fullpath LIKE ' . $this->db->quote(Helper::escapeLike($oldFullPath) . '/%') . ' AND maintype = :type',
+            $this->db->executeStatement(
+                'UPDATE search_backend_data
+                    SET fullpath = REPLACE(fullpath, ?, ?)
+                    WHERE fullpath LIKE ? AND maintype = ?',
                 [
-                    'type' => $this->model->getId()->getType(),
-                ]);
+                    $oldFullPath . '/',
+                    $this->model->getFullPath() . '/',
+                    Helper::escapeLike($oldFullPath) . '/%',
+                    $this->model->getId()->getType(),
+                ]
+            );
         }
 
         $data = [

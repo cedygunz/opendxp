@@ -191,7 +191,7 @@ final class Installer extends SettingsStoreAwareInstaller
     private function removeJobRunTable(Schema $schema): void
     {
         if ($schema->hasTable(TableConstants::JOB_RUN_TABLE)) {
-            $this->db->executeStatement('DROP TABLE ' . TableConstants::JOB_RUN_TABLE);
+            $this->db->executeStatement(sprintf('DROP TABLE %s', TableConstants::JOB_RUN_TABLE));
         }
     }
 
@@ -201,7 +201,7 @@ final class Installer extends SettingsStoreAwareInstaller
     private function removeLogTable(Schema $schema): void
     {
         if ($schema->hasTable(TableConstants::ERROR_LOG_TABLE)) {
-            $this->db->executeStatement('DROP TABLE ' . TableConstants::ERROR_LOG_TABLE);
+            $this->db->executeStatement(sprintf('DROP TABLE %s', TableConstants::ERROR_LOG_TABLE));
         }
     }
 

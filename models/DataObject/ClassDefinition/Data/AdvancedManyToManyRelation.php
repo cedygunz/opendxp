@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace OpenDxp\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Exception;
 use OpenDxp;
 use OpenDxp\Db;
@@ -119,7 +120,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
                 $result = $db->fetchFirstColumn(
                     'SELECT ' . $identifier . ' FROM ' . $targetType . 's'
-                    . ' WHERE ' . $identifier . ' IN (' . implode(',', $targetIds) . ')'
+                    . ' WHERE ' . $identifier . ' IN (?)',
+                    [$targetIds],
+                    [ArrayParameterType::INTEGER]
                 );
                 $existingTargets[$targetType] = $result;
             }
@@ -252,7 +255,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                     . $identifier . ' id, '
                     . $typeCol . ' type' . $className
                     . ' ,concat(' . $db->quoteIdentifier($pathCol) . ',' . $db->quoteIdentifier($keyCol) . ') fullpath FROM ' . $targetType . 's'
-                    . ' WHERE ' . $identifier . ' IN (' . implode(',', $targetIds) . ')'
+                    . ' WHERE ' . $identifier . ' IN (?)',
+                    [$targetIds],
+                    [ArrayParameterType::INTEGER]
                 );
 
                 $resultMap = [];
@@ -544,30 +549,44 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                 $ownerName = '/' . $context['containerType'] . '~' . $containerName . '/%';
             }
 
-            $sql = Db\Helper::quoteInto($db, 'id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
-                . Db\Helper::quoteInto($db, 'ownername LIKE ?', $ownerName)
-                . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
-                . ' AND ' . Db\Helper::quoteInto($db, 'position = ?', $position);
+            $qb = $db->createQueryBuilder()
+                ->delete($table)
+                ->where('id = :id')
+                ->andWhere('ownertype = "localizedfield"')
+                ->andWhere('ownername LIKE :ownerName')
+                ->andWhere('fieldname = :fieldname')
+                ->andWhere('position = :position')
+                ->setParameter('id', $objectId)
+                ->setParameter('ownerName', $ownerName)
+                ->setParameter('fieldname', $this->getName())
+                ->setParameter('position', $position);
         } else {
-            $sql = Db\Helper::quoteInto($db, 'id = ?', $objectId) . ' AND ' .
-                Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
-                . ' AND ' . Db\Helper::quoteInto($db, 'position = ?', $position);
+            $qb = $db->createQueryBuilder()
+                ->delete($table)
+                ->where('id = :id')
+                ->andWhere('fieldname = :fieldname')
+                ->andWhere('position = :position')
+                ->setParameter('id', $objectId)
+                ->setParameter('fieldname', $this->getName())
+                ->setParameter('position', $position);
 
             if ($context) {
                 if (!empty($context['fieldname'])) {
-                    $sql .= ' AND ' . Db\Helper::quoteInto($db, 'ownername = ?', $context['fieldname']);
+                    $qb->andWhere('ownername = :ownername')
+                       ->setParameter('ownername', $context['fieldname']);
                 }
 
                 if (!DataObject::isDirtyDetectionDisabled() && $context['containerType']) {
                     if ($object instanceof Localizedfield) {
                         $context['containerType'] = 'localizedfield';
                     }
-                    $sql .= ' AND ' . Db\Helper::quoteInto($db, 'ownertype = ?', $context['containerType']);
+                    $qb->andWhere('ownertype = :ownertype')
+                       ->setParameter('ownertype', $context['containerType']);
                 }
             }
         }
 
-        $db->executeStatement('DELETE FROM ' . $table . ' WHERE ' . $sql);
+        $qb->executeStatement();
 
         if (!empty($multihrefMetadata)) {
             if ($object instanceof DataObject\Localizedfield
@@ -628,19 +647,15 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
             if ($context['containerType'] === 'objectbrick') {
                 $db->executeStatement(
-                    'DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE ' .
-                    Db\Helper::quoteInto($db, 'id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                    . Db\Helper::quoteInto($db, 'ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/%')
-                    . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
+                    sprintf('DELETE FROM object_metadata_%s WHERE id = ? AND ownertype = "localizedfield" AND ownername LIKE ? AND fieldname = ?', $object->getClassId()),
+                    [$object->getId(), '/' . $context['containerType'] . '~' . $containerName . '/%', $this->getName()]
                 );
             } else {
                 $index = $context['index'];
 
                 $db->executeStatement(
-                    'DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE ' .
-                    Db\Helper::quoteInto($db, 'id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                    . Db\Helper::quoteInto($db, 'ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/' . $index . '/%')
-                    . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
+                    sprintf('DELETE FROM object_metadata_%s WHERE id = ? AND ownertype = "localizedfield" AND ownername LIKE ? AND fieldname = ?', $object->getClassId()),
+                    [$object->getId(), '/' . $context['containerType'] . '~' . $containerName . '/' . $index . '/%', $this->getName()]
                 );
             }
         } else {

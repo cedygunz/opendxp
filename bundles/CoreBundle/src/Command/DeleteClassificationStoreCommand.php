@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace OpenDxp\Bundle\CoreBundle\Command;
 
-use Exception;
+use InvalidArgumentException;
 use OpenDxp\Cache;
 use OpenDxp\Console\AbstractCommand;
 use OpenDxp\Db;
@@ -37,9 +37,7 @@ class DeleteClassificationStoreCommand extends AbstractCommand
 {
     protected function configure(): void
     {
-        $this
-            ->addArgument('storeId', InputArgument::REQUIRED, 'The store ID to delete')
-        ;
+        $this->addArgument('storeId', InputArgument::REQUIRED, 'The store ID to delete');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -47,45 +45,40 @@ class DeleteClassificationStoreCommand extends AbstractCommand
         $storeId = $input->getArgument('storeId');
 
         if (!is_numeric($storeId)) {
-            throw new Exception('Invalid store ID');
+            throw new InvalidArgumentException('Invalid store ID');
         }
 
+        $storeId = (int) $storeId;
         $db = Db::get();
 
-        $tableList = $db->fetchAllAssociative("show tables like 'object_classificationstore_data_%'");
+        $tableList = $db->fetchAllAssociative('SHOW TABLES LIKE "object_classificationstore_data_%"');
         foreach ($tableList as $table) {
             $theTable = current($table);
-            $sql = 'delete from ' . $theTable . ' where keyId In (select id from classificationstore_keys where storeId = ' . $db->quote($storeId) . ')';
-            echo $sql . "\n";
-            $db->executeQuery($sql);
+            $output->writeln(sprintf('Deleting classification store data from <info>%s</info>', $theTable));
+            $db->executeStatement(
+                sprintf('DELETE FROM %s WHERE keyId IN (SELECT id FROM classificationstore_keys WHERE storeId = ?)', $theTable),
+                [$storeId]
+            );
         }
 
-        $tableList = $db->fetchAllAssociative("show tables like 'object_classificationstore_groups_%'");
+        $tableList = $db->fetchAllAssociative('SHOW TABLES LIKE "object_classificationstore_groups_%"');
         foreach ($tableList as $table) {
             $theTable = current($table);
-            $sql = 'delete from ' . $theTable . ' where groupId In (select id from classificationstore_groups where storeId = ' . $db->quote($storeId) . ')';
-            echo $sql . "\n";
-            $db->executeQuery($sql);
+            $output->writeln(sprintf('Deleting classification store groups from <info>%s</info>', $theTable));
+            $db->executeStatement(
+                sprintf('DELETE FROM %s WHERE groupId IN (SELECT id FROM classificationstore_groups WHERE storeId = ?)', $theTable),
+                [$storeId]
+            );
         }
 
-        $sql = 'delete from classificationstore_keys where storeId = ' . $db->quote($storeId);
-        echo $sql . "\n";
-        $db->executeQuery($sql);
-
-        $sql = 'delete from classificationstore_groups where storeId = ' . $db->quote($storeId);
-        echo $sql . "\n";
-        $db->executeQuery($sql);
-
-        $sql = 'delete from classificationstore_collections where storeId = ' . $db->quote($storeId);
-        echo $sql . "\n";
-        $db->executeQuery($sql);
-
-        $sql = 'delete from classificationstore_stores where id = ' . $db->quote($storeId);
-        echo $sql . "\n";
-        $db->executeQuery($sql);
+        $output->writeln('Deleting keys, groups, collections and store record');
+        $db->executeStatement('DELETE FROM classificationstore_keys WHERE storeId = ?', [$storeId]);
+        $db->executeStatement('DELETE FROM classificationstore_groups WHERE storeId = ?', [$storeId]);
+        $db->executeStatement('DELETE FROM classificationstore_collections WHERE storeId = ?', [$storeId]);
+        $db->executeStatement('DELETE FROM classificationstore_stores WHERE id = ?', [$storeId]);
 
         Cache::clearAll();
 
-        return 0;
+        return self::SUCCESS;
     }
 }

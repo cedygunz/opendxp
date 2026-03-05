@@ -343,7 +343,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
 
         if (!$this->getId()) {
             $db = Db::get();
-            $maxId = $db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM classes;');
+            $maxId = $db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM classes');
             $maxId = $maxId ? $maxId + 1 : 1;
             $this->setId((string) $maxId);
         }

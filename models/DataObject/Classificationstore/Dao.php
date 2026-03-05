@@ -58,8 +58,10 @@ class Dao extends Model\Dao\AbstractDao
         $dataTable = $this->getDataTableName();
         $fieldname = $this->model->getFieldname();
 
-        $dataExists = $this->db->fetchOne('SELECT `id` FROM `'.$dataTable."` WHERE
-         `id` = '".$objectId."' AND `fieldname` = '".$fieldname."' LIMIT 1");
+        $dataExists = $this->db->fetchOne(
+            sprintf('SELECT `id` FROM `%s` WHERE `id` = ? AND `fieldname` = ? LIMIT 1', $dataTable),
+            [$objectId, $fieldname]
+        );
         if ($dataExists) {
             $this->db->delete($dataTable, ['id' => $objectId, 'fieldname' => $fieldname]);
         }
@@ -81,8 +83,10 @@ class Dao extends Model\Dao\AbstractDao
 
         $groupsTable = $this->getGroupsTableName();
 
-        $dataExists = $this->db->fetchOne('SELECT `id` FROM `'.$groupsTable."` WHERE
-         `id` = '".$objectId."' AND `fieldname` = '".$fieldname."' LIMIT 1");
+        $dataExists = $this->db->fetchOne(
+            sprintf('SELECT `id` FROM `%s` WHERE `id` = ? AND `fieldname` = ? LIMIT 1', $groupsTable),
+            [$objectId, $fieldname]
+        );
         if ($dataExists) {
             $this->db->delete($groupsTable, ['id' => $objectId, 'fieldname' => $fieldname]);
         }
@@ -205,18 +209,20 @@ class Dao extends Model\Dao\AbstractDao
         $fieldname = $this->model->getFieldname();
         $groupsTableName = $this->getGroupsTableName();
 
-        $query = 'SELECT * FROM ' . $groupsTableName . ' WHERE id = ' . $objectId . ' AND fieldname = ' . $this->db->quote($fieldname);
-
-        $data = $this->db->fetchAllAssociative($query);
+        $data = $this->db->fetchAllAssociative(
+            sprintf('SELECT * FROM %s WHERE id = ? AND fieldname = ?', $groupsTableName),
+            [$objectId, $fieldname]
+        );
         $list = [];
 
         foreach ($data as $item) {
             $list[$item['groupId']] = true;
         }
 
-        $query = 'SELECT * FROM ' . $dataTableName . ' WHERE id = ' . $objectId . ' AND fieldname = ' . $this->db->quote($fieldname);
-
-        $data = $this->db->fetchAllAssociative($query);
+        $data = $this->db->fetchAllAssociative(
+            sprintf('SELECT * FROM %s WHERE id = ? AND fieldname = ?', $dataTableName),
+            [$objectId, $fieldname]
+        );
 
         $groupCollectionMapping = [];
 
@@ -276,16 +282,22 @@ class Dao extends Model\Dao\AbstractDao
         $groupsTable = $this->getGroupsTableName();
         $dataTable = $this->getDataTableName();
 
-        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $groupsTable . '` (
+        $this->db->executeQuery(sprintf(
+            "CREATE TABLE IF NOT EXISTS `%s` (
             `id` INT(11) UNSIGNED NOT NULL,
             `groupId` INT(11) UNSIGNED NOT NULL,
             `fieldname` VARCHAR(70) NOT NULL,
             PRIMARY KEY (`id`, `fieldname`, `groupId`),
-            CONSTRAINT `'.self::getForeignKeyName($groupsTable, 'id').'` FOREIGN KEY (`id`) REFERENCES `objects` (`id`) ON DELETE CASCADE,
-            CONSTRAINT `'.self::getForeignKeyName($groupsTable, 'groupId').'` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON DELETE CASCADE
-        ) DEFAULT CHARSET=utf8mb4;');
+            CONSTRAINT `%s` FOREIGN KEY (`id`) REFERENCES `objects` (`id`) ON DELETE CASCADE,
+            CONSTRAINT `%s` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON DELETE CASCADE
+        ) DEFAULT CHARSET=utf8mb4;",
+            $groupsTable,
+            self::getForeignKeyName($groupsTable, 'id'),
+            self::getForeignKeyName($groupsTable, 'groupId')
+        ));
 
-        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $dataTable . '` (
+        $this->db->executeQuery(sprintf(
+            "CREATE TABLE IF NOT EXISTS `%s` (
             `id` INT(11) UNSIGNED NOT NULL,
             `collectionId` BIGINT(20) NULL,
             `groupId` INT(11) UNSIGNED NOT NULL,
@@ -299,9 +311,14 @@ class Dao extends Model\Dao\AbstractDao
             INDEX `keyId` (`keyId`),
             INDEX `language` (`language`),
             INDEX `groupKeys` (`id`, `fieldname`, `groupId`),
-            CONSTRAINT `'.self::getForeignKeyName($dataTable, 'id').'` FOREIGN KEY (`id`) REFERENCES `objects` (`id`) ON DELETE CASCADE,
-            CONSTRAINT `'.self::getForeignKeyName($dataTable, 'id__fieldname__groupId').'` FOREIGN KEY (`id`, `fieldname`, `groupId`) REFERENCES `' . $groupsTable . '` (`id`, `fieldname`, `groupId`) ON DELETE CASCADE
-        ) DEFAULT CHARSET=utf8mb4;');
+            CONSTRAINT `%s` FOREIGN KEY (`id`) REFERENCES `objects` (`id`) ON DELETE CASCADE,
+            CONSTRAINT `%s` FOREIGN KEY (`id`, `fieldname`, `groupId`) REFERENCES `%s` (`id`, `fieldname`, `groupId`) ON DELETE CASCADE
+        ) DEFAULT CHARSET=utf8mb4;",
+            $dataTable,
+            self::getForeignKeyName($dataTable, 'id'),
+            self::getForeignKeyName($dataTable, 'id__fieldname__groupId'),
+            $groupsTable
+        ));
 
         $this->tableDefinitions = [];
 

@@ -39,7 +39,10 @@ class Dao extends Model\Dao\AbstractDao
 
     public function getTranslationSourceId(Document $document): mixed
     {
-        $sourceId = $this->db->fetchOne('SELECT sourceId FROM documents_translations WHERE id = ?', [$document->getId()]);
+        $sourceId = $this->db->fetchOne(
+            'SELECT sourceId FROM documents_translations WHERE id = ?',
+            [$document->getId()]
+        );
         if (!$sourceId) {
             return $document->getId();
         }
@@ -53,12 +56,18 @@ class Dao extends Model\Dao\AbstractDao
     public function getTranslations(Document $document, string $task = 'open'): array
     {
         $sourceId = $this->getTranslationSourceId($document);
-        $data = $this->db->fetchAllAssociative('SELECT id,language FROM documents_translations WHERE sourceId IN(?, ?) UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id = ?', [$sourceId, $document->getId(), $document->getId()]);
+        $data = $this->db->fetchAllAssociative(
+            'SELECT id,language FROM documents_translations WHERE sourceId IN(?, ?) UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id = ?',
+            [$sourceId, $document->getId(), $document->getId()]
+        );
 
         if ($task === 'open') {
             $linkedData = [];
             foreach ($data as $value) {
-                $linkedData = $this->db->fetchAllAssociative('SELECT id,language FROM documents_translations WHERE sourceId = ? UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id = ?', [$value['id'], $value['id']]);
+                $linkedData = $this->db->fetchAllAssociative(
+                    'SELECT id,language FROM documents_translations WHERE sourceId = ? UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id = ?',
+                    [$value['id'], $value['id']]
+                );
             }
 
             if (count($linkedData) > 0) {
@@ -118,7 +127,10 @@ class Dao extends Model\Dao\AbstractDao
             $sourceId = $document->getId();
         }
 
-        $newSourceId = $this->db->fetchOne('SELECT id FROM documents_translations WHERE id = ? AND sourceId = ?', [$targetDocument->getId(), $sourceId]);
+        $newSourceId = $this->db->fetchOne(
+            'SELECT id FROM documents_translations WHERE id = ? AND sourceId = ?',
+            [$targetDocument->getId(), $sourceId]
+        );
 
         if (empty($newSourceId)) {
             $sourceId = $document->getId();

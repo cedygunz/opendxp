@@ -1390,14 +1390,15 @@ class Service extends Model\Element\Service
      */
     public static function buildConditionPartsFromDescriptor(array $descriptor): array
     {
-        $db = Db::get();
         $conditionParts = [];
+        $params = [];
         foreach ($descriptor as $key => $value) {
             $lastChar = is_string($value) ? $value[strlen($value) - 1] : null;
-            $conditionParts[] = $lastChar === '%' ? $key . ' LIKE ' . $db->quote($value) : $key . ' = ' . $db->quote($value);
+            $conditionParts[] = $lastChar === '%' ? $key . ' LIKE ?' : $key . ' = ?';
+            $params[] = $value;
         }
 
-        return $conditionParts;
+        return [$conditionParts, $params];
     }
 
     /**

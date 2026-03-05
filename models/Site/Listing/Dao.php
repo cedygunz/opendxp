@@ -26,12 +26,16 @@ use OpenDxp\Model;
 class Dao extends Model\Listing\Dao\AbstractDao
 {
     /**
-     * Loads a list of thumanils for the specicifies parameters, returns an array of Thumbnail elements
+     * Loads a list of thumbnails for the specified parameters, returns an array of Thumbnail elements
      */
     public function load(): array
     {
         $sites = [];
-        $sitesData = $this->db->fetchFirstColumn('SELECT id FROM sites' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $sitesData = $this->db->fetchFirstColumn(
+            'SELECT id FROM sites' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(),
+            $this->model->getConditionVariables(),
+            $this->model->getConditionVariableTypes()
+        );
 
         foreach ($sitesData as $siteData) {
             $sites[] = Model\Site::getById($siteData);
@@ -45,7 +49,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount(): int
     {
         try {
-            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM sites ' . $this->getCondition(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+            return (int) $this->db->fetchOne(
+                'SELECT COUNT(*) FROM sites ' . $this->getCondition(),
+                $this->model->getConditionVariables(),
+                $this->model->getConditionVariableTypes()
+            );
         } catch (Exception) {
             return 0;
         }

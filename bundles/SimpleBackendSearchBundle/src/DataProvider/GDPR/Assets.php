@@ -56,21 +56,18 @@ class Assets extends DataProvider\Assets
             $conditionParts[] = '( MATCH (`data`,`properties`) AGAINST ("' . $db->quote($queryString) . '" IN BOOLEAN MODE) )';
         }
 
-        $db = Db::get();
+        $conditionParams = [];
 
         $typesPart = '';
         if ($this->config['types']) {
-            $typesList = [];
-            foreach ($this->config['types'] as $type) {
-                $typesList[] = $db->quote($type);
-            }
-            $typesPart = ' AND `type` IN (' . implode(',', $typesList) . ')';
+            $typesPart = ' AND `type` IN (?)';
+            $conditionParams[] = array_values($this->config['types']);
         }
 
         $conditionParts[] = '( maintype = "asset" ' . $typesPart . ')';
 
         $condition = implode(' AND ', $conditionParts);
-        $searcherList->setCondition($condition);
+        $searcherList->setCondition($condition, $conditionParams);
 
         $searcherList->setOffset($offset);
         $searcherList->setLimit($limit);

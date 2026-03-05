@@ -44,6 +44,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     public function getTotalCount(): int
     {
-        return (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM website_settings ' . $this->getCondition(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        return (int) $this->db->fetchOne(
+            'SELECT COUNT(*) as amount FROM website_settings ' . $this->getCondition(),
+            $this->model->getConditionVariables(),
+            $this->model->getConditionVariableTypes()
+        );
     }
 }

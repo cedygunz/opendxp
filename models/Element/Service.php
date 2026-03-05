@@ -25,6 +25,7 @@ use DeepCopy\Matcher\PropertyNameMatcher;
 use DeepCopy\Matcher\PropertyTypeMatcher;
 use DeepCopy\TypeMatcher\TypeMatcher;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Exception;
 use League\Csv\EscapeFormula;
@@ -324,8 +325,11 @@ class Service extends Model\AbstractModel
             // now do the query;
             foreach ($mapping as $elementType => $idList) {
                 $idList = array_keys($mapping[$elementType]);
-                $query = 'SELECT id FROM ' . $elementType . 's WHERE published=1 AND id IN (' . implode(',', $idList) . ');';
-                $publishedIds = $db->fetchFirstColumn($query);
+                $publishedIds = $db->fetchFirstColumn(
+                    sprintf('SELECT id FROM %ss WHERE published = 1 AND id IN (?)', $elementType),
+                    [$idList],
+                    [ArrayParameterType::INTEGER]
+                );
                 $publishedMapping[$elementType] = $publishedIds;
             }
 
@@ -609,20 +613,30 @@ class Service extends Model\AbstractModel
         }
 
         $workspaceCids = [];
-        $userWorkspaces = $db->fetchAllAssociative('SELECT cpath, cid, list FROM users_workspaces_' . $type . ' WHERE userId = ?', [$user->getId()]);
+        $userWorkspaces = $db->fetchAllAssociative(
+            sprintf('SELECT cpath, cid, list FROM users_workspaces_%s WHERE userId = ?', $type),
+            [$user->getId()]
+        );
         // this collects the array that are on user-level, which have top priority
         foreach ($userWorkspaces as $userWorkspace) {
             $workspaceCids[] = $userWorkspace['cid'];
         }
 
         if ($userRoleIds = $user->getRoles()) {
-            $roleWorkspacesSql = 'SELECT cpath, userid, max(list) as list FROM users_workspaces_' . $type . ' WHERE userId IN (' . implode(',', $userRoleIds) . ')';
+            $roleWorkspacesSql = sprintf(
+                'SELECT cpath, userid, MAX(list) as list FROM users_workspaces_%s WHERE userId IN (?)',
+                $type
+            );
+            $roleParams = [$userRoleIds];
+            $roleTypes = [ArrayParameterType::INTEGER];
             if ($workspaceCids) {
-                $roleWorkspacesSql .= ' AND cid NOT IN (' . implode(',', $workspaceCids) . ')';
+                $roleWorkspacesSql .= ' AND cid NOT IN (?)';
+                $roleParams[] = $workspaceCids;
+                $roleTypes[] = ArrayParameterType::INTEGER;
             }
             $roleWorkspacesSql .= ' GROUP BY cpath';
 
-            $roleWorkspaces = $db->fetchAllAssociative($roleWorkspacesSql);
+            $roleWorkspaces = $db->fetchAllAssociative($roleWorkspacesSql, $roleParams, $roleTypes);
         }
 
         $uniquePaths = [];

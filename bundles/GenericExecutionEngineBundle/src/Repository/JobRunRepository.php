@@ -116,9 +116,10 @@ final readonly class JobRunRepository implements JobRunRepositoryInterface
     {
 
         $this->db->executeStatement(
-            'UPDATE ' .
-            TableConstants::JOB_RUN_TABLE .
-            ' SET log = IF(ISNULL(log),:message,CONCAT(log, "\n", :message)) WHERE id = :id',
+            sprintf(
+                'UPDATE %s SET log = IF(ISNULL(log),:message,CONCAT(log, "\n", :message)) WHERE id = :id',
+                TableConstants::JOB_RUN_TABLE
+            ),
             [
                 'id' => $jobRun->getId(),
                 'message' => (new DateTimeImmutable())->format('c') . ': ' . trim($message),

@@ -15,6 +15,8 @@
 
 namespace OpenDxp\Model\Element\Tag;
 
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Exception;
 use OpenDxp\Db\Helper;
 use OpenDxp\Model;
@@ -79,7 +81,10 @@ class Dao extends Model\Dao\AbstractDao
 
             //check for id-path and update it, if path has changed -> update all other tags that have idPath == idPath/id
             if ($originalIdPath && $originalIdPath != $this->model->getIdPath()) {
-                $this->db->executeQuery('UPDATE tags SET idPath = REPLACE(idPath, ?, ?)  WHERE idPath LIKE ?;', [$originalIdPath, $this->model->getIdPath(), Helper::escapeLike($originalIdPath) . $this->model->getId() . '/%']);
+                $this->db->executeStatement(
+                    'UPDATE tags SET idPath = REPLACE(idPath, ?, ?) WHERE idPath LIKE ?',
+                    [$originalIdPath, $this->model->getIdPath(), Helper::escapeLike($originalIdPath) . $this->model->getId() . '/%']
+                );
             }
 
             $this->db->commit();
@@ -102,12 +107,14 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->beginTransaction();
 
         try {
-            $toRemoveTagIds = $this->db->fetchFirstColumn('SELECT id FROM tags WHERE ' . Helper::quoteInto($this->db, 'idPath LIKE ?', Helper::escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
+            $toRemoveTagIds = $this->db->fetchFirstColumn(
+                'SELECT id FROM tags WHERE idPath LIKE ?',
+                [Helper::escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%']
+            );
             $toRemoveTagIds[] = $this->model->getId();
-            $implodedTagIds = implode(',', $toRemoveTagIds);
 
-            $this->db->executeStatement('DELETE FROM tags_assignment WHERE tagid IN (' . $implodedTagIds . ')');
-            $this->db->executeStatement('DELETE FROM tags WHERE id IN (' . $implodedTagIds . ')');
+            $this->db->executeStatement('DELETE FROM tags_assignment WHERE tagid IN (?)', [$toRemoveTagIds], [ArrayParameterType::INTEGER]);
+            $this->db->executeStatement('DELETE FROM tags WHERE id IN (?)', [$toRemoveTagIds], [ArrayParameterType::INTEGER]);
             $this->db->commit();
 
             return $toRemoveTagIds;
@@ -125,7 +132,10 @@ class Dao extends Model\Dao\AbstractDao
     public function getTagsForElement(string $cType, int $cId): array
     {
         $tags = [];
-        $tagIds = $this->db->fetchFirstColumn('SELECT tagid FROM tags_assignment WHERE cid = ? AND ctype = ?', [$cId, $cType]);
+        $tagIds = $this->db->fetchFirstColumn(
+            'SELECT tagid FROM tags_assignment WHERE cid = ? AND ctype = ?',
+            [$cId, $cType]
+        );
 
         foreach ($tagIds as $tagId) {
             $tags[] = Model\Element\Tag::getById($tagId);
@@ -186,11 +196,7 @@ class Dao extends Model\Dao\AbstractDao
     public function batchAssignTagsToElement(string $cType, array $cIds, array $tagIds, bool $replace): void
     {
         if ($replace) {
-            $quotedCIds = [];
-            foreach ($cIds as $cId) {
-                $quotedCIds[] = $this->db->quote($cId);
-            }
-            $this->db->executeStatement('DELETE FROM tags_assignment WHERE ' . 'ctype = ' . $this->db->quote($cType) . ' AND cid IN (' . implode(',', $quotedCIds) . ')');
+            $this->db->executeStatement('DELETE FROM tags_assignment WHERE ctype = ? AND cid IN (?)', [$cType, $cIds], [ParameterType::STRING, ArrayParameterType::INTEGER]);
         }
 
         foreach ($tagIds as $tagId) {
@@ -230,12 +236,9 @@ class Dao extends Model\Dao\AbstractDao
 
         if ($considerChildTags) {
             $select->innerJoin('tags_assignment', 'tags', 'tags', 'tags.id = tags_assignment.tagid');
-            $select->andWhere(
-                '(' .
-                Helper::quoteInto($this->db, 'tags_assignment.tagid = ?', $tag->getId()) . ' OR ' .
-                Helper::quoteInto($this->db, 'tags.idPath LIKE ?', Helper::escapeLike($tag->getFullIdPath()) . '%')
-                . ')'
-            );
+            $select->andWhere('tags_assignment.tagid = :considerTagId OR tags.idPath LIKE :considerTagPath')
+                   ->setParameter('considerTagId', $tag->getId(), ParameterType::INTEGER)
+                   ->setParameter('considerTagPath', Helper::escapeLike($tag->getFullIdPath()) . '%', ParameterType::STRING);
         } else {
             $select->andWhere('tags_assignment.tagid = :tagId')->setParameter('tagId', $tag->getId());
         }
@@ -243,20 +246,16 @@ class Dao extends Model\Dao\AbstractDao
         $select->innerJoin('tags_assignment', $map[$type][0], 'el', 'tags_assignment.cId = el.id');
 
         if ($subtypes !== []) {
-            foreach ($subtypes as $subType) {
-                $quotedSubTypes[] = $this->db->quote($subType);
-            }
-            $select->andWhere('`type` IN (' . implode(',', $quotedSubTypes) . ')');
+            $select->andWhere($select->expr()->in('`type`', ':subtypes'))
+                   ->setParameter('subtypes', $subtypes, ArrayParameterType::STRING);
         }
 
         if ('object' === $type && $classNames !== []) {
-            foreach ($classNames as $cName) {
-                $quotedClassNames[] = $this->db->quote($cName);
-            }
-            $select->andWhere('className IN ( ' .  implode(',', $quotedClassNames) . ' )');
+            $select->andWhere($select->expr()->in('className', ':classNames'))
+                   ->setParameter('classNames', $classNames, ArrayParameterType::STRING);
         }
 
-        $res = $this->db->executeQuery((string) $select, $select->getParameters());
+        $res = $select->executeQuery();
 
         while ($row = $res->fetchAssociative()) {
             $el = $map[$type][1]::getById($row['cid']);

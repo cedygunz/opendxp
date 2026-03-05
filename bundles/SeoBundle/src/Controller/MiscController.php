@@ -54,19 +54,30 @@ class MiscController extends UserAwareController
             $dir = 'DESC';
         }
 
-        $condition = '';
-        if ($filter) {
-            $filter = $db->quote('%' . $filter . '%');
+        $qb = $db->createQueryBuilder()
+            ->select('code', 'uri', '`count`', 'date')
+            ->from('http_error_log')
+            ->orderBy($sort, $dir)
+            ->setFirstResult($offset)
+            ->setMaxResults($limit);
 
-            $conditionParts = [];
-            foreach (['uri', 'code', 'parametersGet'] as $field) {
-                $conditionParts[] = $field . ' LIKE ' . $filter;
-            }
-            $condition = ' WHERE ' . implode(' OR ', $conditionParts);
+        if ($filter) {
+            $qb->where('uri LIKE :filter OR code LIKE :filter OR parametersGet LIKE :filter')
+               ->setParameter('filter', '%' . $filter . '%');
         }
 
-        $logs = $db->fetchAllAssociative('SELECT code,uri,`count`,date FROM http_error_log ' . $condition . ' ORDER BY ' . $sort . ' ' . $dir . ' LIMIT ' . $offset . ',' . $limit);
-        $total = $db->fetchOne('SELECT count(*) FROM http_error_log ' . $condition);
+        $logs = $qb->executeQuery()->fetchAllAssociative();
+
+        $countQb = $db->createQueryBuilder()
+            ->select('COUNT(*)')
+            ->from('http_error_log');
+
+        if ($filter) {
+            $countQb->where('uri LIKE :filter OR code LIKE :filter OR parametersGet LIKE :filter')
+                    ->setParameter('filter', '%' . $filter . '%');
+        }
+
+        $total = $countQb->executeQuery()->fetchOne();
 
         return $this->jsonResponse([
             'items' => $logs,
@@ -101,8 +112,7 @@ class MiscController extends UserAwareController
     {
         $this->checkPermission('http_errors');
 
-        $db = Db::get();
-        $db->executeQuery('TRUNCATE TABLE http_error_log');
+        Db::get()->executeQuery('TRUNCATE TABLE http_error_log');
 
         return $this->jsonResponse([
             'success' => true,

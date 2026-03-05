@@ -112,24 +112,39 @@ class Dao extends Model\Dao\AbstractDao
         $protectedColumns = ['oo_id', 'oo_classId', 'oo_className'];
         $protectedDatastoreColumns = ['oo_id'];
 
-        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $objectTable . "` (
+        $this->db->executeQuery(sprintf(
+            "CREATE TABLE IF NOT EXISTS `%s` (
 			  `oo_id` int(11) UNSIGNED NOT NULL default '0',
-			  `oo_classId` varchar(50) default '" . $this->model->getId() . "',
-			  `oo_className` varchar(255) default '" . $this->model->getName() . "',
+			  `oo_classId` varchar(50) default '%s',
+			  `oo_className` varchar(255) default '%s',
 			  PRIMARY KEY  (`oo_id`),
-			  CONSTRAINT `".self::getForeignKeyName($objectTable, 'oo_id').'` FOREIGN KEY (`oo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
-			) DEFAULT CHARSET=utf8mb4;');
+			  CONSTRAINT `%s` FOREIGN KEY (`oo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
+			) DEFAULT CHARSET=utf8mb4;",
+            $objectTable,
+            $this->model->getId(),
+            $this->model->getName(),
+            self::getForeignKeyName($objectTable, 'oo_id')
+        ));
 
         // update default value of classname columns
-        $this->db->executeQuery('ALTER TABLE `' . $objectTable . "` ALTER COLUMN `oo_className` SET DEFAULT '" . $this->model->getName() . "';");
+        $this->db->executeQuery(sprintf(
+            "ALTER TABLE `%s` ALTER COLUMN `oo_className` SET DEFAULT '%s';",
+            $objectTable,
+            $this->model->getName()
+        ));
 
-        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTable . "` (
+        $this->db->executeQuery(sprintf(
+            "CREATE TABLE IF NOT EXISTS `%s` (
 			  `oo_id` int(11) UNSIGNED NOT NULL default '0',
 			  PRIMARY KEY  (`oo_id`),
-			  CONSTRAINT `".self::getForeignKeyName($objectDatastoreTable, 'oo_id').'` FOREIGN KEY (`oo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
-			) DEFAULT CHARSET=utf8mb4;');
+			  CONSTRAINT `%s` FOREIGN KEY (`oo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
+			) DEFAULT CHARSET=utf8mb4;",
+            $objectDatastoreTable,
+            self::getForeignKeyName($objectDatastoreTable, 'oo_id')
+        ));
 
-        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTableRelation . "` (
+        $this->db->executeQuery(sprintf(
+            "CREATE TABLE IF NOT EXISTS `%s` (
               `id` BIGINT(20) NOT NULL PRIMARY KEY  AUTO_INCREMENT,
               `src_id` int(11) UNSIGNED NOT NULL DEFAULT '0',
               `dest_id` int(11) UNSIGNED NOT NULL DEFAULT '0',
@@ -142,8 +157,11 @@ class Dao extends Model\Dao\AbstractDao
               INDEX `forward_lookup` (`src_id`, `ownertype`, `ownername`, `position`),
               INDEX `reverse_lookup` (`dest_id`, `type`),
               INDEX `fieldname` (`fieldname`),
-			  CONSTRAINT `".self::getForeignKeyName($objectDatastoreTableRelation, 'src_id').'` FOREIGN KEY (`src_id`) REFERENCES objects (`id`) ON DELETE CASCADE
-        ) DEFAULT CHARSET=utf8mb4;');
+			  CONSTRAINT `%s` FOREIGN KEY (`src_id`) REFERENCES objects (`id`) ON DELETE CASCADE
+        ) DEFAULT CHARSET=utf8mb4;",
+            $objectDatastoreTableRelation,
+            self::getForeignKeyName($objectDatastoreTableRelation, 'src_id')
+        ));
 
         $this->handleEncryption($this->model, [$objectTable, $objectDatastoreTable, $objectDatastoreTableRelation]);
 
@@ -205,7 +223,7 @@ class Dao extends Model\Dao\AbstractDao
         // create view
         try {
             //$this->db->executeQuery('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `objects` left JOIN `' . $objectTable . '` ON `objects`.`id` = `' . $objectTable . '`.`oo_id` WHERE `objects`.`classId` = ' . $this->model->getId() . ';');
-            $this->db->executeQuery('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `' . $objectTable . '` JOIN `objects` ON `objects`.`id` = `' . $objectTable . '`.`oo_id`;');
+            $this->db->executeQuery(sprintf('CREATE OR REPLACE VIEW `%s` AS SELECT * FROM `%s` JOIN `objects` ON `objects`.`id` = `%s`.`oo_id`;', $objectView, $objectTable, $objectTable));
         } catch (Exception $e) {
             Logger::debug((string) $e);
         }
@@ -243,47 +261,47 @@ class Dao extends Model\Dao\AbstractDao
         $objectDatastoreTableRelation = 'object_relations_' . $this->model->getId();
         $objectMetadataTable = 'object_metadata_' . $this->model->getId();
 
-        $this->db->executeQuery('DROP TABLE IF EXISTS `' . $objectTable . '`');
-        $this->db->executeQuery('DROP TABLE IF EXISTS `' . $objectDatastoreTable . '`');
-        $this->db->executeQuery('DROP TABLE IF EXISTS `' . $objectDatastoreTableRelation . '`');
-        $this->db->executeQuery('DROP TABLE IF EXISTS `' . $objectMetadataTable . '`');
+        $this->db->executeQuery(sprintf('DROP TABLE IF EXISTS `%s`', $objectTable));
+        $this->db->executeQuery(sprintf('DROP TABLE IF EXISTS `%s`', $objectDatastoreTable));
+        $this->db->executeQuery(sprintf('DROP TABLE IF EXISTS `%s`', $objectDatastoreTableRelation));
+        $this->db->executeQuery(sprintf('DROP TABLE IF EXISTS `%s`', $objectMetadataTable));
 
-        $this->db->executeQuery('DROP VIEW IF EXISTS `object_' . $this->model->getId() . '`');
+        $this->db->executeQuery(sprintf('DROP VIEW IF EXISTS `object_%s`', $this->model->getId()));
 
         // delete data
         $this->db->delete('objects', ['classId' => $this->model->getId()]);
 
         // remove fieldcollection tables
-        $allTables = $this->db->fetchAllAssociative("SHOW TABLES LIKE 'object\_collection\_%\_" . $this->model->getId() . "'");
+        $allTables = $this->db->fetchAllAssociative(sprintf("SHOW TABLES LIKE 'object\_collection\_%%\_%s'", $this->model->getId()));
         foreach ($allTables as $table) {
             $collectionTable = current($table);
-            $this->db->executeQuery('DROP TABLE IF EXISTS `'.$collectionTable.'`');
+            $this->db->executeQuery(sprintf('DROP TABLE IF EXISTS `%s`', $collectionTable));
         }
 
         // remove localized fields tables and views
-        $allViews = $this->db->fetchAllAssociative("SHOW TABLES LIKE 'object\_localized\_" . $this->model->getId() . "\_%'");
+        $allViews = $this->db->fetchAllAssociative(sprintf("SHOW TABLES LIKE 'object\_localized\_%s\_%%'", $this->model->getId()));
         foreach ($allViews as $view) {
             $localizedView = current($view);
-            $this->db->executeQuery('DROP VIEW IF EXISTS `'.$localizedView.'`');
+            $this->db->executeQuery(sprintf('DROP VIEW IF EXISTS `%s`', $localizedView));
         }
 
-        $allTables = $this->db->fetchAllAssociative("SHOW TABLES LIKE 'object\_localized\_query\_" . $this->model->getId() . "\_%'");
+        $allTables = $this->db->fetchAllAssociative(sprintf("SHOW TABLES LIKE 'object\_localized\_query\_%s\_%%'", $this->model->getId()));
         foreach ($allTables as $table) {
             $queryTable = current($table);
-            $this->db->executeQuery('DROP TABLE IF EXISTS `'.$queryTable.'`');
+            $this->db->executeQuery(sprintf('DROP TABLE IF EXISTS `%s`', $queryTable));
         }
 
-        $this->db->executeQuery('DROP TABLE IF EXISTS object_localized_data_' . $this->model->getId());
+        $this->db->executeQuery(sprintf('DROP TABLE IF EXISTS object_localized_data_%s', $this->model->getId()));
 
         // objectbrick tables
-        $allTables = $this->db->fetchAllAssociative("SHOW TABLES LIKE 'object\_brick\_%\_" . $this->model->getId() . "'");
+        $allTables = $this->db->fetchAllAssociative(sprintf("SHOW TABLES LIKE 'object\_brick\_%%\_%s'", $this->model->getId()));
         foreach ($allTables as $table) {
             $brickTable = current($table);
-            $this->db->executeQuery('DROP TABLE IF EXISTS `'.$brickTable.'`');
+            $this->db->executeQuery(sprintf('DROP TABLE IF EXISTS `%s`', $brickTable));
         }
 
-        $this->db->executeQuery('DROP TABLE IF EXISTS object_classificationstore_data_'.$this->model->getId());
-        $this->db->executeQuery('DROP TABLE IF EXISTS object_classificationstore_groups_'.$this->model->getId());
+        $this->db->executeQuery(sprintf('DROP TABLE IF EXISTS object_classificationstore_data_%s', $this->model->getId()));
+        $this->db->executeQuery(sprintf('DROP TABLE IF EXISTS object_classificationstore_groups_%s', $this->model->getId()));
 
         // clean slug table
         DataObject\Data\UrlSlug::handleClassDeleted($this->model->getId());
@@ -296,8 +314,10 @@ class Dao extends Model\Dao\AbstractDao
     {
         $this->db->update('objects', ['className' => $newName], ['classId' => $this->model->getId()]);
 
-        $this->db->executeStatement('update ' . $this->db->quoteIdentifier('object_query_' . $this->model->getId()) .
-        ' set oo_classname = :className', ['className' => $newName]);
+        $this->db->executeStatement(
+            sprintf('UPDATE %s SET oo_classname = :className', $this->db->quoteIdentifier('object_query_' . $this->model->getId())),
+            ['className' => $newName]
+        );
     }
 
     public function getNameByIdIgnoreCase(string $id): ?string

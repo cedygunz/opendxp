@@ -39,7 +39,10 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME_STORES . ' WHERE id = ?', [$this->model->getId()]);
+        $data = $this->db->fetchAssociative(
+            sprintf('SELECT * FROM %s WHERE id = ?', self::TABLE_NAME_STORES),
+            [$this->model->getId()]
+        );
 
         if ($data) {
             $this->assignVariablesToModel($data);
@@ -59,7 +62,10 @@ class Dao extends Model\Dao\AbstractDao
 
         $name = $this->model->getName();
 
-        $data = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME_STORES . ' WHERE name = ?', [$name]);
+        $data = $this->db->fetchAssociative(
+            sprintf('SELECT * FROM %s WHERE name = ?', self::TABLE_NAME_STORES),
+            [$name]
+        );
 
         if ($data) {
             $this->assignVariablesToModel($data);

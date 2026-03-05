@@ -140,8 +140,8 @@ class Sql extends AbstractAdapter
             $type = $filter['type'];
             $operator = $filter['operator'];
             $maxValue = null;
-            if ($type == 'date') {
-                if ($operator == 'eq') {
+            if ($type === 'date') {
+                if ($operator === 'eq') {
                     $maxValue = strtotime($value . '+23 hours 59 minutes');
                 }
                 $value = strtotime($value);
@@ -162,7 +162,7 @@ class Sql extends AbstractAdapter
                         'eq' => '=',
                     ];
 
-                    if ($type == 'date' && $operator == 'eq') {
+                    if ($type === 'date' && $operator === 'eq') {
                         $condition[] = $db->quoteIdentifier($filter['property']) . ' BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxValue);
 
                         break;
@@ -182,12 +182,12 @@ class Sql extends AbstractAdapter
         if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i', $sql, $matches)) {
             $condition = implode(' AND ', $condition);
 
-            $total = 'SELECT COUNT(*) FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
+            $total = sprintf('SELECT COUNT(*) FROM (%s) AS somerandxyz WHERE %s', $sql, $condition);
 
             if ($fields && !$extractAllFields) {
-                $data = 'SELECT `' . implode('`,`', $fields) . '` FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
+                $data = sprintf('SELECT `%s` FROM (%s) AS somerandxyz WHERE %s', implode('`,`', $fields), $sql, $condition);
             } else {
-                $data = 'SELECT * FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
+                $data = sprintf('SELECT * FROM (%s) AS somerandxyz WHERE %s', $sql, $condition);
             }
         } else {
             return null;

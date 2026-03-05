@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace OpenDxp\Bundle\ApplicationLoggerBundle\Maintenance;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use OpenDxp\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use OpenDxp\Config;
@@ -43,7 +44,7 @@ class LogMailMaintenanceTask implements TaskInterface
 
             // getting the enums from priority
             $priorityColumnDefinition = $this->db->fetchAllAssociative(
-                'SHOW COLUMNS FROM ' .ApplicationLoggerDb::TABLE_NAME. " LIKE 'priority'"
+                sprintf("SHOW COLUMNS FROM %s LIKE 'priority'", ApplicationLoggerDb::TABLE_NAME)
             );
 
             // type is the actual enum values
@@ -59,15 +60,14 @@ class LogMailMaintenanceTask implements TaskInterface
                 $logLevels[] = $enumValue[$i];
             }
 
-            $query = 'SELECT * FROM '
-                . ApplicationLoggerDb::TABLE_NAME
-                . ' WHERE maintenanceChecked IS NULL '
-                . 'AND priority IN('
-                . implode(',', $logLevels)
-                . ') '
-                . 'ORDER BY id DESC';
+            $rows = $this->db->fetchAllAssociative(sprintf(
+                    'SELECT * FROM %s WHERE maintenanceChecked IS NULL AND priority IN (?) ORDER BY id DESC',
+                    ApplicationLoggerDb::TABLE_NAME
+                ),
+                [$logLevels],
+                [ArrayParameterType::STRING]
+            );
 
-            $rows = $this->db->fetchAllAssociative($query);
             $limit = 100;
             $rowsProcessed = 0;
 
@@ -103,12 +103,9 @@ class LogMailMaintenanceTask implements TaskInterface
         // flag them as checked, regardless if email notifications are enabled or not
         // otherwise, when activating email notifications, you'll receive all log-messages from the past and not
         // since the point when you enabled the notifications
-        $this->db->executeQuery(
-            'UPDATE '
-            . ApplicationLoggerDb::TABLE_NAME
-            . ' SET maintenanceChecked = 1 '
-            . 'WHERE maintenanceChecked != 1 '
-            . 'OR maintenanceChecked IS NULL'
-        );
+        $this->db->executeStatement(sprintf(
+            'UPDATE %s SET maintenanceChecked = 1 WHERE maintenanceChecked != 1 OR maintenanceChecked IS NULL',
+            ApplicationLoggerDb::TABLE_NAME
+        ));
     }
 }

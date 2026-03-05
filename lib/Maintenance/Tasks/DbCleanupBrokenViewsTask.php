@@ -40,13 +40,13 @@ class DbCleanupBrokenViewsTask implements TaskInterface
 
             if ($type === 'VIEW') {
                 try {
-                    $createStatement = $this->db->fetchAssociative('SHOW FIELDS FROM '.$name);
+                    $createStatement = $this->db->fetchAssociative(sprintf('SHOW FIELDS FROM %s', $name));
                 } catch (Exception $e) {
                     if (str_contains($e->getMessage(), 'references invalid table')) {
                         $this->logger->error('view '.$name.' seems to be a broken one, it will be removed');
                         $this->logger->error('error message was: '.$e->getMessage());
 
-                        $this->db->executeQuery('DROP VIEW '.$name);
+                        $this->db->executeQuery(sprintf('DROP VIEW %s', $name));
                     } else {
                         $this->logger->error((string) $e);
                     }

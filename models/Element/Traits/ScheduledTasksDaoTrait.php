@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace OpenDxp\Model\Element\Traits;
 
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use OpenDxp\Model\Element\Service;
 
 /**
@@ -32,11 +34,19 @@ trait ScheduledTasksDaoTrait
     {
         $type = Service::getElementType($this->model);
         if ($this->model->getId()) {
-            $where = '`cid` = ' . $this->model->getId() . ' AND `ctype` = ' . $this->db->quote($type);
             if ($ignoreIds) {
-                $where .= ' AND `id` NOT IN (' . implode(',', $ignoreIds) . ')';
+                $this->db->executeStatement(
+                    'DELETE FROM schedule_tasks WHERE `cid` = ? AND `ctype` = ? AND `id` NOT IN (?)',
+                    [$this->model->getId(), $type, $ignoreIds],
+                    [ParameterType::INTEGER, ParameterType::STRING, ArrayParameterType::INTEGER]
+                );
+            } else {
+                $this->db->executeStatement(
+                    'DELETE FROM schedule_tasks WHERE `cid` = ? AND `ctype` = ?',
+                    [$this->model->getId(), $type],
+                    [ParameterType::INTEGER, ParameterType::STRING]
+                );
             }
-            $this->db->executeStatement('DELETE FROM schedule_tasks WHERE ' . $where);
         }
     }
 }
