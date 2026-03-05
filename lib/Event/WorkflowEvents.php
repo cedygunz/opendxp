@@ -24,7 +24,7 @@ final class WorkflowEvents
      *
      * @Event("OpenDxp\Event\Workflow\GlobalActionEvent")
      */
-    const string PRE_GLOBAL_ACTION = 'opendxp.workflow.preGlobalAction';
+    public const string PRE_GLOBAL_ACTION = 'opendxp.workflow.preGlobalAction';
 
     /**
      * 	Fired AFTER a global action happens in the workflow. Use this to hook into actions globally and
@@ -32,5 +32,5 @@ final class WorkflowEvents
      *
      * @Event("OpenDxp\Event\Workflow\GlobalActionEvent")
      */
-    const string POST_GLOBAL_ACTION = 'opendxp.workflow.postGlobalAction';
+    public const string POST_GLOBAL_ACTION = 'opendxp.workflow.postGlobalAction';
 }

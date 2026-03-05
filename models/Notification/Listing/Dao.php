@@ -26,7 +26,7 @@ use OpenDxp\Model\Notification;
  */
 class Dao extends AbstractDao
 {
-    const DB_TABLE_NAME = 'notifications';
+    public const string DB_TABLE_NAME = 'notifications';
 
     public function count(): int
     {

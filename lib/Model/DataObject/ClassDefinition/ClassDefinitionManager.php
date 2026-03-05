@@ -21,13 +21,10 @@ use OpenDxp\Model\DataObject\ClassDefinitionInterface;
 
 class ClassDefinitionManager
 {
-    public const SAVED = 'saved';
-
-    public const CREATED = 'created';
-
-    public const SKIPPED = 'skipped';
-
-    public const DELETED = 'deleted';
+    public const string SAVED = 'saved';
+    public const string CREATED = 'created';
+    public const string SKIPPED = 'skipped';
+    public const string DELETED = 'deleted';
 
     /**
      * Delete all classes from db

@@ -31,7 +31,7 @@ use UnexpectedValueException;
  */
 class Dao extends AbstractDao
 {
-    public const DB_TABLE_NAME = 'notifications';
+    public const string DB_TABLE_NAME = 'notifications';
 
     /**
      * @throws NotFoundException

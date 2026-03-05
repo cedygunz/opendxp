@@ -25,7 +25,7 @@ use OpenDxp\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    const TABLE_NAME = 'quantityvalue_units';
+    public const string TABLE_NAME = 'quantityvalue_units';
 
     /**
      * Contains all valid columns in the database table

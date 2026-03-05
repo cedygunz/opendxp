@@ -26,9 +26,8 @@ use Override;
 
 class QuantityValue extends AbstractQuantityValue
 {
-    const DECIMAL_SIZE_DEFAULT = 64;
-
-    const DECIMAL_PRECISION_DEFAULT = 0;
+    public const int DECIMAL_SIZE_DEFAULT = 64;
+    public const int DECIMAL_PRECISION_DEFAULT = 0;
 
     /**
      * @internal

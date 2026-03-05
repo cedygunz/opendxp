@@ -25,17 +25,12 @@ use ReflectionMethod;
 
 class DefinitionModifierTest extends ModelTestCase
 {
-    const _CLASS = 'class';
-
-    const _FIELDCOLLECTION = 'fieldcollection';
-
-    const _OBJECTBRICK = 'objectbrick';
-
-    const LOOP_COUNT = 2;
-
-    const PANEL_NAME_PREFIX = 'panel';
-
-    const DATA_NAME_PREFIX = 'input';
+    public const string _CLASS = 'class';
+    public const string _FIELDCOLLECTION = 'fieldcollection';
+    public const string _OBJECTBRICK = 'objectbrick';
+    public const int LOOP_COUNT = 2;
+    public const string PANEL_NAME_PREFIX = 'panel';
+    public const string DATA_NAME_PREFIX = 'input';
 
     private function getDataToAdd(string $dataName = (self::DATA_NAME_PREFIX . '1')): ClassDefinition\Data\Input
     {

@@ -38,11 +38,9 @@ use TypeError;
 
 class TestDataHelper extends AbstractTestDataHelper
 {
-    const IMAGE = 'sampleimage.jpg';
-
-    const DOCUMENT = 'sampledocument.txt';
-
-    const HOTSPOT_IMAGE = 'hotspot.jpg';
+    public const string IMAGE = 'sampleimage.jpg';
+    public const string DOCUMENT = 'sampledocument.txt';
+    public const string HOTSPOT_IMAGE = 'hotspot.jpg';
 
     public function assertBooleanSelect(Concrete $object, string $field, int $seed = 1): void
     {

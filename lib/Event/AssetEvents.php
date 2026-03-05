@@ -21,12 +21,12 @@ final class AssetEvents
     /**
      * @Event("OpenDxp\Event\Model\AssetEvent")
      */
-    const string PRE_ADD = 'opendxp.asset.preAdd';
+    public const string PRE_ADD = 'opendxp.asset.preAdd';
 
     /**
      * @Event("OpenDxp\Event\Model\AssetEvent")
      */
-    const string POST_ADD = 'opendxp.asset.postAdd';
+    public const string POST_ADD = 'opendxp.asset.postAdd';
 
     /**
      * Arguments:
@@ -34,7 +34,7 @@ final class AssetEvents
      *
      * @Event("OpenDxp\Event\Model\AssetEvent")
      */
-    const string POST_ADD_FAILURE = 'opendxp.asset.postAddFailure';
+    public const string POST_ADD_FAILURE = 'opendxp.asset.postAddFailure';
 
     /**
      * Arguments:
@@ -42,7 +42,7 @@ final class AssetEvents
      *
      * @Event("OpenDxp\Event\Model\AssetEvent")
      */
-    const string PRE_UPDATE = 'opendxp.asset.preUpdate';
+    public const string PRE_UPDATE = 'opendxp.asset.preUpdate';
 
     /**
      * Arguments:
@@ -50,7 +50,7 @@ final class AssetEvents
      *
      * @Event("OpenDxp\Event\Model\AssetEvent")
      */
-    const string PRE_GET_METADATA = 'opendxp.asset.preGetMetadata';
+    public const string PRE_GET_METADATA = 'opendxp.asset.preGetMetadata';
 
     /**
      * Arguments:
@@ -59,7 +59,7 @@ final class AssetEvents
      *
      * @Event("OpenDxp\Event\Model\AssetEvent")
      */
-    const string POST_UPDATE = 'opendxp.asset.postUpdate';
+    public const string POST_UPDATE = 'opendxp.asset.postUpdate';
 
     /**
      * Arguments:
@@ -68,22 +68,22 @@ final class AssetEvents
      *
      * @Event("OpenDxp\Event\Model\AssetEvent")
      */
-    const string POST_UPDATE_FAILURE = 'opendxp.asset.postUpdateFailure';
+    public const string POST_UPDATE_FAILURE = 'opendxp.asset.postUpdateFailure';
 
     /**
      * @Event("OpenDxp\Bundle\AdminBundle\Event\Model\AssetDeleteInfoEvent")
      */
-    const string DELETE_INFO = 'opendxp.asset.deleteInfo';
+    public const string DELETE_INFO = 'opendxp.asset.deleteInfo';
 
     /**
      * @Event("OpenDxp\Event\Model\AssetEvent")
      */
-    const string PRE_DELETE = 'opendxp.asset.preDelete';
+    public const string PRE_DELETE = 'opendxp.asset.preDelete';
 
     /**
      * @Event("OpenDxp\Event\Model\AssetEvent")
      */
-    const string POST_DELETE = 'opendxp.asset.postDelete';
+    public const string POST_DELETE = 'opendxp.asset.postDelete';
 
     /**
      * Arguments:
@@ -91,7 +91,7 @@ final class AssetEvents
      *
      * @Event("OpenDxp\Event\Model\AssetEvent")
      */
-    const string POST_DELETE_FAILURE = 'opendxp.asset.postDeleteFailure';
+    public const string POST_DELETE_FAILURE = 'opendxp.asset.postDeleteFailure';
 
     /**
      * Arguments:
@@ -99,7 +99,7 @@ final class AssetEvents
      *
      * @Event("OpenDxp\Event\Model\AssetEvent")
      */
-    const string POST_LOAD = 'opendxp.asset.postLoad';
+    public const string POST_LOAD = 'opendxp.asset.postLoad';
 
     /**
      * Arguments:
@@ -107,7 +107,7 @@ final class AssetEvents
      *
      * @Event("OpenDxp\Event\Model\AssetEvent")
      */
-    const string PRE_COPY = 'opendxp.asset.preCopy';
+    public const string PRE_COPY = 'opendxp.asset.preCopy';
 
     /**
      * Arguments:
@@ -115,7 +115,7 @@ final class AssetEvents
      *
      * @Event("OpenDxp\Event\Model\AssetEvent")
      */
-    const string POST_COPY = 'opendxp.asset.postCopy';
+    public const string POST_COPY = 'opendxp.asset.postCopy';
 
     /**
      * Fires after the thumbnail was created
@@ -126,7 +126,7 @@ final class AssetEvents
      *
      * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      */
-    const string IMAGE_THUMBNAIL = 'opendxp.asset.image.thumbnail';
+    public const string IMAGE_THUMBNAIL = 'opendxp.asset.image.thumbnail';
 
     /**
      * Fires after the image thumbnail was created
@@ -137,7 +137,7 @@ final class AssetEvents
      *
      * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      */
-    const string VIDEO_IMAGE_THUMBNAIL = 'opendxp.asset.video.image-thumbnail';
+    public const string VIDEO_IMAGE_THUMBNAIL = 'opendxp.asset.video.image-thumbnail';
 
     /**
      * Fires after the image thumbnail was created
@@ -148,12 +148,12 @@ final class AssetEvents
      *
      * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      */
-    const string DOCUMENT_IMAGE_THUMBNAIL = 'opendxp.asset.document.image-thumbnail';
+    public const string DOCUMENT_IMAGE_THUMBNAIL = 'opendxp.asset.document.image-thumbnail';
 
     /**
      * Fires before an asset upload created
      *
      * @Event("OpenDxp\Event\Model\Asset\ResolveUploadTargetEvent")
      */
-    const string RESOLVE_UPLOAD_TARGET = 'opendxp.asset.resolve-upload-target';
+    public const string RESOLVE_UPLOAD_TARGET = 'opendxp.asset.resolve-upload-target';
 }

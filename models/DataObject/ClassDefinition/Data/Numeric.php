@@ -31,9 +31,8 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     use Model\DataObject\Traits\SimpleNormalizerTrait;
     use Model\DataObject\Traits\SimpleComparisonTrait;
 
-    const DECIMAL_SIZE_DEFAULT = 64;
-
-    const DECIMAL_PRECISION_DEFAULT = 0;
+    public const int DECIMAL_SIZE_DEFAULT = 64;
+    public const int DECIMAL_PRECISION_DEFAULT = 0;
 
     public static array $validFilterOperators = [
         '=',

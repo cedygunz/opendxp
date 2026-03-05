@@ -29,7 +29,7 @@ use OpenDxp\Tool\Serialize;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    public const TABLE_NAME_RELATIONS = 'classificationstore_collectionrelations';
+    public const string TABLE_NAME_RELATIONS = 'classificationstore_collectionrelations';
 
     /**
      * @throws NotFoundException

@@ -36,15 +36,15 @@ final class Redirect extends AbstractModel
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    const string TYPE_ENTIRE_URI = 'entire_uri';
+    public const string TYPE_ENTIRE_URI = 'entire_uri';
 
-    const string TYPE_PATH_QUERY = 'path_query';
+    public const string TYPE_PATH_QUERY = 'path_query';
 
-    const string TYPE_PATH = 'path';
+    public const string TYPE_PATH = 'path';
 
-    const string TYPE_AUTO_CREATE = 'auto_create';
+    public const string TYPE_AUTO_CREATE = 'auto_create';
 
-    const array TYPES = [
+    public const array TYPES = [
         self::TYPE_ENTIRE_URI,
         self::TYPE_PATH_QUERY,
         self::TYPE_PATH,

@@ -29,5 +29,5 @@ final class ElementEvents
      *
      * @Event("OpenDxp\Event\Model\ElementEvent")
      */
-    const string ELEMENT_PERMISSION_IS_ALLOWED = 'opendxp.element.permissions.isAllowed';
+    public const string ELEMENT_PERMISSION_IS_ALLOWED = 'opendxp.element.permissions.isAllowed';
 }

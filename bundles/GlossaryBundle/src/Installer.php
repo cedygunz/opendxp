@@ -24,9 +24,9 @@ use Override;
  */
 class Installer extends SettingsStoreAwareInstaller
 {
-    protected const USER_PERMISSIONS_CATEGORY = 'OpenDxp Glossary Bundle';
+    protected const string USER_PERMISSIONS_CATEGORY = 'OpenDxp Glossary Bundle';
 
-    protected const USER_PERMISSIONS = [
+    protected const array USER_PERMISSIONS = [
         'glossary',
     ];
 

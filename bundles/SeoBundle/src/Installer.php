@@ -21,9 +21,9 @@ use Override;
 
 class Installer extends SettingsStoreAwareInstaller
 {
-    protected const USER_PERMISSIONS_CATEGORY = 'OpenDxp Seo Bundle';
+    protected const string USER_PERMISSIONS_CATEGORY = 'OpenDxp Seo Bundle';
 
-    protected const USER_PERMISSIONS = [
+    protected const array USER_PERMISSIONS = [
         'robots.txt',
         'seo_document_editor',
         'http_errors',

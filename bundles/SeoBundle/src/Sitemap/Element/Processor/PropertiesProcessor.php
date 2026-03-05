@@ -28,9 +28,8 @@ use Presta\SitemapBundle\Sitemap\Url\UrlConcrete;
  */
 class PropertiesProcessor implements ProcessorInterface
 {
-    const PROPERTY_CHANGE_FREQUENCY = 'sitemaps_changefreq';
-
-    const PROPERTY_PRIORITY = 'sitemaps_priority';
+    public const string PROPERTY_CHANGE_FREQUENCY = 'sitemaps_changefreq';
+    public const string PROPERTY_PRIORITY = 'sitemaps_priority';
 
     public function process(Url $url, ElementInterface $element, GeneratorContextInterface $context): Url|UrlConcrete|null
     {

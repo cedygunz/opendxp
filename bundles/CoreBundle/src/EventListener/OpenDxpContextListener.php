@@ -35,7 +35,7 @@ class OpenDxpContextListener implements EventSubscriberInterface, LoggerAwareInt
 {
     use LoggerAwareTrait;
 
-    const ATTRIBUTE_OPENDXP_CONTEXT_FORCE_RESOLVING = '_opendxp_context_force_resolving';
+    public const string ATTRIBUTE_OPENDXP_CONTEXT_FORCE_RESOLVING = '_opendxp_context_force_resolving';
 
     public function __construct(
         protected OpenDxpContextResolver $resolver,

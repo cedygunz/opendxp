@@ -21,20 +21,20 @@ final class NotificationEvents
     /**
      * @Event("OpenDxp\Event\Model\NotificationEvent")
      */
-    const string PRE_SAVE = 'opendxp.notification.preSave';
+    public const string PRE_SAVE = 'opendxp.notification.preSave';
 
     /**
      * @Event("OpenDxp\Event\Model\NotificationEvent")
      */
-    const string POST_SAVE = 'opendxp.notification.postSave';
+    public const string POST_SAVE = 'opendxp.notification.postSave';
 
     /**
      * @Event("OpenDxp\Event\Model\NotificationEvent")
      */
-    const string PRE_DELETE = 'opendxp.notification.preDelete';
+    public const string PRE_DELETE = 'opendxp.notification.preDelete';
 
     /**
      * @Event("OpenDxp\Event\Model\NotificationEvent")
      */
-    const string POST_DELETE = 'opendxp.notification.postDelete';
+    public const string POST_DELETE = 'opendxp.notification.postDelete';
 }

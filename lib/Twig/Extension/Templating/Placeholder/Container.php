@@ -46,24 +46,18 @@ class Container extends ArrayObject implements Stringable
 {
     /**
      * Whether or not to override all contents of placeholder
-     *
-     * @const string
      */
-    const SET = 'SET';
+    public const string SET = 'SET';
 
     /**
      * Whether or not to append contents to placeholder
-     *
-     * @const string
      */
-    const APPEND = 'APPEND';
+    public const string APPEND = 'APPEND';
 
     /**
      * Whether or not to prepend contents to placeholder
-     *
-     * @const string
      */
-    const PREPEND = 'PREPEND';
+    public const string PREPEND = 'PREPEND';
 
     /**
      * What text to prefix the placeholder with when rendering

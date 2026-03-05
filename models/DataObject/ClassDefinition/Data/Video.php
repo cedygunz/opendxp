@@ -39,13 +39,10 @@ class Video extends Data implements
     use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\DataWidthTrait;
 
-    public const TYPE_ASSET = 'asset';
-
-    public const TYPE_YOUTUBE = 'youtube';
-
-    public const TYPE_VIMEO = 'vimeo';
-
-    public const TYPE_DAILYMOTION = 'dailymotion';
+    public const string TYPE_ASSET = 'asset';
+    public const string TYPE_YOUTUBE = 'youtube';
+    public const string TYPE_VIMEO = 'vimeo';
+    public const string TYPE_DAILYMOTION = 'dailymotion';
 
     /**
      * @internal

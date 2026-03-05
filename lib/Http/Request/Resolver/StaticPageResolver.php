@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class StaticPageResolver extends AbstractRequestResolver
 {
-    const ATTRIBUTE_OPENDXP_STATIC_PAGE = '_opendxp_static_page';
+    public const string ATTRIBUTE_OPENDXP_STATIC_PAGE = '_opendxp_static_page';
 
     public function hasStaticPageContext(Request $request): bool
     {

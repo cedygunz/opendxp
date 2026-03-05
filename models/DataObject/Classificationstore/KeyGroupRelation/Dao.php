@@ -28,7 +28,7 @@ use OpenDxp\Tool\Serialize;
  */
 class Dao extends AbstractDao
 {
-    public const TABLE_NAME_RELATIONS = 'classificationstore_relations';
+    public const string TABLE_NAME_RELATIONS = 'classificationstore_relations';
 
     /**
      * @throws NotFoundException

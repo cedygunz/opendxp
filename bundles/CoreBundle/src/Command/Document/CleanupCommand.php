@@ -31,7 +31,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class CleanupCommand extends AbstractCommand
 {
-    protected const STANDARD_DOCUMENT_ENUM_TYPES = [
+    protected const array STANDARD_DOCUMENT_ENUM_TYPES = [
         'page',
         'link',
         'snippet',

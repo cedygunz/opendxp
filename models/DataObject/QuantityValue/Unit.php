@@ -29,7 +29,7 @@ class Unit extends Model\AbstractModel implements Stringable
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    const CACHE_KEY = 'quantityvalue_units_table';
+    public const string CACHE_KEY = 'quantityvalue_units_table';
 
     protected ?string $id = null;
 

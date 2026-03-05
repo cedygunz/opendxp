@@ -57,7 +57,7 @@ class EditableHandler implements LoggerAwareInterface
      */
     protected array $brickTemplateCache = [];
 
-    public const ATTRIBUTE_AREABRICK_INFO = '_opendxp_areabrick_info';
+    public const string ATTRIBUTE_AREABRICK_INFO = '_opendxp_areabrick_info';
 
     public function __construct(
         protected AreabrickManagerInterface $brickManager,

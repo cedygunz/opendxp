@@ -26,20 +26,13 @@ class Transition extends \Symfony\Component\Workflow\Transition implements Notes
     use NotesAwareTrait;
     use NotificationTrait;
 
-    public const UNSAVED_CHANGES_BEHAVIOUR_SAVE = 'save';
+    public const string UNSAVED_CHANGES_BEHAVIOUR_SAVE = 'save';
+    public const string UNSAVED_CHANGES_BEHAVIOUR_IGNORE = 'ignore';
+    public const string UNSAVED_CHANGES_BEHAVIOUR_WARN = 'warn';
 
-    public const UNSAVED_CHANGES_BEHAVIOUR_IGNORE = 'ignore';
-
-    public const UNSAVED_CHANGES_BEHAVIOUR_WARN = 'warn';
-
-    /**
-     * @var array
-     */
-    private $options;
+    private array $options;
 
     /**
-     * Transition constructor.
-     *
      * @param string|string[] $froms
      * @param string|string[] $tos
      */

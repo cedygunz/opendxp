@@ -21,30 +21,30 @@ final class ObjectbrickDefinitionEvents
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ObjectbrickDefinitionEvent")
      */
-    const string PRE_ADD = 'opendxp.objectbrick.preAdd';
+    public const string PRE_ADD = 'opendxp.objectbrick.preAdd';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ObjectbrickDefinitionEvent")
      */
-    const string POST_ADD = 'opendxp.objectbrick.postAdd';
+    public const string POST_ADD = 'opendxp.objectbrick.postAdd';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ObjectbrickDefinitionEvent")
      */
-    const string PRE_UPDATE = 'opendxp.objectbrick.preUpdate';
+    public const string PRE_UPDATE = 'opendxp.objectbrick.preUpdate';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ObjectbrickDefinitionEvent")
      */
-    const string POST_UPDATE = 'opendxp.objectbrick.postUpdate';
+    public const string POST_UPDATE = 'opendxp.objectbrick.postUpdate';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ObjectbrickDefinitionEvent")
      */
-    const string PRE_DELETE = 'opendxp.objectbrick.preDelete';
+    public const string PRE_DELETE = 'opendxp.objectbrick.preDelete';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ObjectbrickDefinitionEvent")
      */
-    const string POST_DELETE = 'opendxp.objectbrick.postDelete';
+    public const string POST_DELETE = 'opendxp.objectbrick.postDelete';
 }

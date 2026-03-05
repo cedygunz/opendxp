@@ -27,7 +27,7 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class Xliff12Exporter implements ExporterInterface
 {
-    const DELIMITER = '~-~';
+    public const string DELIMITER = '~-~';
 
     private ?SimpleXMLElement $xliffFile = null;
 

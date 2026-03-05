@@ -21,12 +21,12 @@ final class DocumentEvents
     /**
      * @Event("OpenDxp\Event\Model\DocumentEvent")
      */
-    const string PRE_ADD = 'opendxp.document.preAdd';
+    public const string PRE_ADD = 'opendxp.document.preAdd';
 
     /**
      * @Event("OpenDxp\Event\Model\DocumentEvent")
      */
-    const string POST_ADD = 'opendxp.document.postAdd';
+    public const string POST_ADD = 'opendxp.document.postAdd';
 
     /**
      * Arguments:
@@ -34,7 +34,7 @@ final class DocumentEvents
      *
      * @Event("OpenDxp\Event\Model\DocumentEvent")
      */
-    const string POST_ADD_FAILURE = 'opendxp.document.postAddFailure';
+    public const string POST_ADD_FAILURE = 'opendxp.document.postAddFailure';
 
     /**
      * Arguments:
@@ -42,7 +42,7 @@ final class DocumentEvents
      *
      * @Event("OpenDxp\Event\Model\DocumentEvent")
      */
-    const string PRE_UPDATE = 'opendxp.document.preUpdate';
+    public const string PRE_UPDATE = 'opendxp.document.preUpdate';
 
     /**
      * Arguments:
@@ -51,7 +51,7 @@ final class DocumentEvents
      *
      * @Event("OpenDxp\Event\Model\DocumentEvent")
      */
-    const string POST_UPDATE = 'opendxp.document.postUpdate';
+    public const string POST_UPDATE = 'opendxp.document.postUpdate';
 
     /**
      * Arguments:
@@ -60,22 +60,22 @@ final class DocumentEvents
      *
      * @Event("OpenDxp\Event\Model\DocumentEvent")
      */
-    const string POST_UPDATE_FAILURE = 'opendxp.document.postUpdateFailure';
+    public const string POST_UPDATE_FAILURE = 'opendxp.document.postUpdateFailure';
 
     /**
      * @Event("OpenDxp\Event\Model\DocumentDeleteInfoEvent")
      */
-    const string DELETE_INFO = 'opendxp.document.deleteInfo';
+    public const string DELETE_INFO = 'opendxp.document.deleteInfo';
 
     /**
      * @Event("OpenDxp\Event\Model\DocumentEvent")
      */
-    const string PRE_DELETE = 'opendxp.document.preDelete';
+    public const string PRE_DELETE = 'opendxp.document.preDelete';
 
     /**
      * @Event("OpenDxp\Event\Model\DocumentEvent")
      */
-    const string POST_DELETE = 'opendxp.document.postDelete';
+    public const string POST_DELETE = 'opendxp.document.postDelete';
 
     /**
      * Arguments:
@@ -83,7 +83,7 @@ final class DocumentEvents
      *
      * @Event("OpenDxp\Event\Model\DocumentEvent")
      */
-    const string POST_DELETE_FAILURE = 'opendxp.document.postDeleteFailure';
+    public const string POST_DELETE_FAILURE = 'opendxp.document.postDeleteFailure';
 
     /**
      * Arguments:
@@ -91,7 +91,7 @@ final class DocumentEvents
      *
      * @Event("OpenDxp\Event\Model\DocumentEvent")
      */
-    const string POST_LOAD = 'opendxp.document.postLoad';
+    public const string POST_LOAD = 'opendxp.document.postLoad';
 
     /**
      * Arguments:
@@ -99,7 +99,7 @@ final class DocumentEvents
      *
      * @Event("OpenDxp\Event\Model\DocumentEvent")
      */
-    const string PRE_COPY = 'opendxp.document.preCopy';
+    public const string PRE_COPY = 'opendxp.document.preCopy';
 
     /**
      * Arguments:
@@ -107,35 +107,35 @@ final class DocumentEvents
      *
      * @Event("OpenDxp\Event\Model\DocumentEvent")
      */
-    const string POST_COPY = 'opendxp.document.postCopy';
+    public const string POST_COPY = 'opendxp.document.postCopy';
 
     /**
      * The EDITABLE_NAME event is triggered when a document editable name is built.
      *
      * @Event("OpenDxp\Event\Model\Document\EditableNameEvent")
      */
-    const string EDITABLE_NAME = 'opendxp.document.editable.name';
+    public const string EDITABLE_NAME = 'opendxp.document.editable.name';
 
     /**
      * The RENDERER_PRE_RENDER event is triggered before the DocumentRenderer renders a document
      *
      * @Event("OpenDxp\Event\Model\DocumentEvent")
      */
-    const string RENDERER_PRE_RENDER = 'opendxp.document.renderer.pre_render';
+    public const string RENDERER_PRE_RENDER = 'opendxp.document.renderer.pre_render';
 
     /**
      * The RENDERER_POST_RENDER event is triggered after the DocumentRenderer rendered a document
      *
      * @Event("OpenDxp\Event\Model\DocumentEvent")
      */
-    const string RENDERER_POST_RENDER = 'opendxp.document.renderer.post_render';
+    public const string RENDERER_POST_RENDER = 'opendxp.document.renderer.post_render';
 
     /**
      * The INCLUDERENDERER_PRE_RENDER event is triggered before the IncludeRenderer renders an include
      *
      * @Event("OpenDxp\Event\Model\DocumentEvent")
      */
-    const string INCLUDERENDERER_PRE_RENDER = 'opendxp.document.IncludeRenderer.pre_render';
+    public const string INCLUDERENDERER_PRE_RENDER = 'opendxp.document.IncludeRenderer.pre_render';
 
     /**
      * Arguments:
@@ -144,15 +144,15 @@ final class DocumentEvents
      *
      * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      */
-    const string EDITABLE_RENDERLET_PRE_RENDER = 'opendxp.document.editable.renderlet.pre_render';
+    public const string EDITABLE_RENDERLET_PRE_RENDER = 'opendxp.document.editable.renderlet.pre_render';
 
     /**
      * @Event("OpenDxp\Event\Model\DocumentEvent")
      */
-    const string PAGE_POST_SAVE_ACTION = 'opendxp.document.page.post_save_action';
+    public const string PAGE_POST_SAVE_ACTION = 'opendxp.document.page.post_save_action';
 
     /**
      * @Event("OpenDxp\Event\Model\DocumentEvent")
      */
-    const string POST_MOVE_ACTION = 'opendxp.document.post_move_action';
+    public const string POST_MOVE_ACTION = 'opendxp.document.post_move_action';
 }

@@ -27,7 +27,7 @@ use OpenDxp\Model\Tool\SettingsStore;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    const TABLE_NAME = 'settings_store';
+    public const string TABLE_NAME = 'settings_store';
 
     public function set(string $id, float|bool|int|string $data, string $type = SettingsStore::TYPE_STRING, ?string $scope = null): bool
     {

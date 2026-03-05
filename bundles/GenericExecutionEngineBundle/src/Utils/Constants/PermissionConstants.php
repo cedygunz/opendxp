@@ -24,7 +24,6 @@ class PermissionConstants
     /**
      * Permission have a max length of 50 chars!
      */
-    public const GEE_JOB_RUN = 'gee_job_run_permission';
-
-    public const GEE_SEE_ALL_JOB_RUNS = 'gee_see_all_job_runs_permission';
+    public const string GEE_JOB_RUN = 'gee_job_run_permission';
+    public const string GEE_SEE_ALL_JOB_RUNS = 'gee_see_all_job_runs_permission';
 }

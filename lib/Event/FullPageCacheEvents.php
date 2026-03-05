@@ -26,14 +26,14 @@ final class FullPageCacheEvents
      *
      * @Event("OpenDxp\Event\Cache\FullPage\IgnoredSessionKeysEvent")
      */
-    const string IGNORED_SESSION_KEYS = 'opendxp.cache.full_page.ignored_session_keys';
+    public const string IGNORED_SESSION_KEYS = 'opendxp.cache.full_page.ignored_session_keys';
 
     /**
      * Fired to determine if a response should be cached.
      *
      * @Event("OpenDxp\Event\Cache\FullPage\CacheResponseEvent")
      */
-    const string CACHE_RESPONSE = 'opendxp.cache.full_page.cache_response';
+    public const string CACHE_RESPONSE = 'opendxp.cache.full_page.cache_response';
 
     /**
      * Fired before the response is written to cache. Can be used to set or purge
@@ -41,7 +41,7 @@ final class FullPageCacheEvents
      *
      * @Event("OpenDxp\Event\Cache\FullPage\PrepareResponseEvent")
      */
-    const string PREPARE_RESPONSE = 'opendxp.cache.full_page.prepare_response';
+    public const string PREPARE_RESPONSE = 'opendxp.cache.full_page.prepare_response';
 
     /**
      * Fired before the response is written to cache. Can be used to add tags
@@ -49,5 +49,5 @@ final class FullPageCacheEvents
      *
      * @Event("OpenDxp\Event\Cache\FullPage\PrepareTagsEvent")
      */
-    const string PREPARE_TAGS = 'opendxp.cache.full_page.prepare_tags';
+    public const string PREPARE_TAGS = 'opendxp.cache.full_page.prepare_tags';
 }

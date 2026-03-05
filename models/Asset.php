@@ -75,7 +75,7 @@ class Asset extends Element\AbstractElement
     use ScheduledTasksTrait;
     use TemporaryFileHelperTrait;
 
-    public const CUSTOM_SETTING_PROCESSING_FAILED = 'opendxp-asset-processing-failed';
+    public const string CUSTOM_SETTING_PROCESSING_FAILED = 'opendxp-asset-processing-failed';
 
     /**
      * @internal

@@ -25,11 +25,11 @@ use Override;
  */
 class Installer extends SettingsStoreAwareInstaller
 {
-    protected const SETTINGS_STORE_SCOPE = 'opendxp_staticroutes';
+    protected const string SETTINGS_STORE_SCOPE = 'opendxp_staticroutes';
 
-    protected const USER_PERMISSION_CATEGORY = 'OpenDxp Static Routes Bundle';
+    protected const string USER_PERMISSION_CATEGORY = 'OpenDxp Static Routes Bundle';
 
-    protected const USER_PERMISSIONS = [
+    protected const array USER_PERMISSIONS = [
         'routes',
     ];
 

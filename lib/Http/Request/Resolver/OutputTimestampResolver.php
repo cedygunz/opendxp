@@ -24,7 +24,7 @@ namespace OpenDxp\Http\Request\Resolver;
  */
 class OutputTimestampResolver extends AbstractRequestResolver
 {
-    const ATTRIBUTE_OPENDXP_OUTPUT_TIMESTAMP = '_opendxp_output_timestamp';
+    public const string ATTRIBUTE_OPENDXP_OUTPUT_TIMESTAMP = '_opendxp_output_timestamp';
 
     protected bool $timestampWasQueried = false;
 

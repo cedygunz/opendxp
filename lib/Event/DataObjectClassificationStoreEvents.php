@@ -21,120 +21,120 @@ final class DataObjectClassificationStoreEvents
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\CollectionConfigEvent")
      */
-    const string COLLECTION_CONFIG_PRE_ADD = 'opendxp.dataobject.classificationstore.collectionConfig.preAdd';
+    public const string COLLECTION_CONFIG_PRE_ADD = 'opendxp.dataobject.classificationstore.collectionConfig.preAdd';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\CollectionConfigEvent")
      */
-    const string COLLECTION_CONFIG_POST_ADD = 'opendxp.dataobject.classificationstore.collectionConfig.postAdd';
+    public const string COLLECTION_CONFIG_POST_ADD = 'opendxp.dataobject.classificationstore.collectionConfig.postAdd';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\CollectionConfigEvent")
      */
-    const string COLLECTION_CONFIG_PRE_UPDATE = 'opendxp.dataobject.classificationstore.collectionConfig.preUpdate';
+    public const string COLLECTION_CONFIG_PRE_UPDATE = 'opendxp.dataobject.classificationstore.collectionConfig.preUpdate';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\CollectionConfigEvent")
      */
-    const string COLLECTION_CONFIG_POST_UPDATE = 'opendxp.dataobject.classificationstore.collectionConfig.postUpdate';
+    public const string COLLECTION_CONFIG_POST_UPDATE = 'opendxp.dataobject.classificationstore.collectionConfig.postUpdate';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\CollectionConfigEvent")
      */
-    const string COLLECTION_CONFIG_PRE_DELETE = 'opendxp.dataobject.classificationstore.collectionConfig.preDelete';
+    public const string COLLECTION_CONFIG_PRE_DELETE = 'opendxp.dataobject.classificationstore.collectionConfig.preDelete';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\CollectionConfigEvent")
      */
-    const string COLLECTION_CONFIG_POST_DELETE = 'opendxp.dataobject.classificationstore.collectionConfig.postDelete';
+    public const string COLLECTION_CONFIG_POST_DELETE = 'opendxp.dataobject.classificationstore.collectionConfig.postDelete';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\GroupConfigEvent")
      */
-    const string GROUP_CONFIG_PRE_ADD = 'opendxp.dataobject.classificationstore.groupConfig.preAdd';
+    public const string GROUP_CONFIG_PRE_ADD = 'opendxp.dataobject.classificationstore.groupConfig.preAdd';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\GroupConfigEvent")
      */
-    const string GROUP_CONFIG_POST_ADD = 'opendxp.dataobject.classificationstore.groupConfig.postAdd';
+    public const string GROUP_CONFIG_POST_ADD = 'opendxp.dataobject.classificationstore.groupConfig.postAdd';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\GroupConfigEvent")
      */
-    const string GROUP_CONFIG_PRE_UPDATE = 'opendxp.dataobject.classificationstore.groupConfig.preUpdate';
+    public const string GROUP_CONFIG_PRE_UPDATE = 'opendxp.dataobject.classificationstore.groupConfig.preUpdate';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\GroupConfigEvent")
      */
-    const string GROUP_CONFIG_POST_UPDATE = 'opendxp.dataobject.classificationstore.groupConfig.postUpdate';
+    public const string GROUP_CONFIG_POST_UPDATE = 'opendxp.dataobject.classificationstore.groupConfig.postUpdate';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\GroupConfigEvent")
      */
-    const string GROUP_CONFIG_PRE_DELETE = 'opendxp.dataobject.classificationstore.groupConfig.preDelete';
+    public const string GROUP_CONFIG_PRE_DELETE = 'opendxp.dataobject.classificationstore.groupConfig.preDelete';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\GroupConfigEvent")
      */
-    const string GROUP_CONFIG_POST_DELETE = 'opendxp.dataobject.classificationstore.groupConfig.postDelete';
+    public const string GROUP_CONFIG_POST_DELETE = 'opendxp.dataobject.classificationstore.groupConfig.postDelete';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\KeyConfigEvent")
      */
-    const string KEY_CONFIG_PRE_ADD = 'opendxp.dataobject.classificationstore.keyConfig.preAdd';
+    public const string KEY_CONFIG_PRE_ADD = 'opendxp.dataobject.classificationstore.keyConfig.preAdd';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\KeyConfigEvent")
      */
-    const string KEY_CONFIG_POST_ADD = 'opendxp.dataobject.classificationstore.keyConfig.postAdd';
+    public const string KEY_CONFIG_POST_ADD = 'opendxp.dataobject.classificationstore.keyConfig.postAdd';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\KeyConfigEvent")
      */
-    const string KEY_CONFIG_PRE_UPDATE = 'opendxp.dataobject.classificationstore.keyConfig.preUpdate';
+    public const string KEY_CONFIG_PRE_UPDATE = 'opendxp.dataobject.classificationstore.keyConfig.preUpdate';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\KeyConfigEvent")
      */
-    const string KEY_CONFIG_POST_UPDATE = 'opendxp.dataobject.classificationstore.keyConfig.postUpdate';
+    public const string KEY_CONFIG_POST_UPDATE = 'opendxp.dataobject.classificationstore.keyConfig.postUpdate';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\KeyConfigEvent")
      */
-    const string KEY_CONFIG_PRE_DELETE = 'opendxp.dataobject.classificationstore.keyConfig.preDelete';
+    public const string KEY_CONFIG_PRE_DELETE = 'opendxp.dataobject.classificationstore.keyConfig.preDelete';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\KeyConfigEvent")
      */
-    const string KEY_CONFIG_POST_DELETE = 'opendxp.dataobject.classificationstore.keyConfig.postDelete';
+    public const string KEY_CONFIG_POST_DELETE = 'opendxp.dataobject.classificationstore.keyConfig.postDelete';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\StoreConfigEvent")
      */
-    const string STORE_CONFIG_PRE_ADD = 'opendxp.dataobject.classificationstore.storeConfig.preAdd';
+    public const string STORE_CONFIG_PRE_ADD = 'opendxp.dataobject.classificationstore.storeConfig.preAdd';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\StoreConfigEvent")
      */
-    const string STORE_CONFIG_POST_ADD = 'opendxp.dataobject.classificationstore.storeConfig.postAdd';
+    public const string STORE_CONFIG_POST_ADD = 'opendxp.dataobject.classificationstore.storeConfig.postAdd';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\StoreConfigEvent")
      */
-    const string STORE_CONFIG_PRE_UPDATE = 'opendxp.dataobject.classificationstore.storeConfig.preUpdate';
+    public const string STORE_CONFIG_PRE_UPDATE = 'opendxp.dataobject.classificationstore.storeConfig.preUpdate';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\StoreConfigEvent")
      */
-    const string STORE_CONFIG_POST_UPDATE = 'opendxp.dataobject.classificationstore.storeConfig.postUpdate';
+    public const string STORE_CONFIG_POST_UPDATE = 'opendxp.dataobject.classificationstore.storeConfig.postUpdate';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\StoreConfigEvent")
      */
-    const string STORE_CONFIG_PRE_DELETE = 'opendxp.dataobject.classificationstore.storeConfig.preDelete';
+    public const string STORE_CONFIG_PRE_DELETE = 'opendxp.dataobject.classificationstore.storeConfig.preDelete';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObject\ClassificationStore\StoreConfigEvent")
      */
-    const string STORE_CONFIG_POST_DELETE = 'opendxp.dataobject.classificationstore.storeConfig.postDelete';
+    public const string STORE_CONFIG_POST_DELETE = 'opendxp.dataobject.classificationstore.storeConfig.postDelete';
 }

@@ -21,12 +21,12 @@ final class DataObjectEvents
     /**
      * @Event("OpenDxp\Event\Model\DataObjectEvent")
      */
-    const string PRE_ADD = 'opendxp.dataobject.preAdd';
+    public const string PRE_ADD = 'opendxp.dataobject.preAdd';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObjectEvent")
      */
-    const string POST_ADD = 'opendxp.dataobject.postAdd';
+    public const string POST_ADD = 'opendxp.dataobject.postAdd';
 
     /**
      * Arguments:
@@ -34,7 +34,7 @@ final class DataObjectEvents
      *
      * @Event("OpenDxp\Event\Model\DataObjectEvent")
      */
-    const string POST_ADD_FAILURE = 'opendxp.dataobject.postAddFailure';
+    public const string POST_ADD_FAILURE = 'opendxp.dataobject.postAddFailure';
 
     /**
      * Arguments:
@@ -42,7 +42,7 @@ final class DataObjectEvents
      *
      * @Event("OpenDxp\Event\Model\DataObjectEvent")
      */
-    const string PRE_UPDATE = 'opendxp.dataobject.preUpdate';
+    public const string PRE_UPDATE = 'opendxp.dataobject.preUpdate';
 
     /**
      * Arguments:
@@ -52,7 +52,7 @@ final class DataObjectEvents
      *
      * @Event("OpenDxp\Event\Model\DataObjectEvent")
      */
-    const string PRE_UPDATE_VALIDATION_EXCEPTION = 'opendxp.dataobject.preUpdateValidationException';
+    public const string PRE_UPDATE_VALIDATION_EXCEPTION = 'opendxp.dataobject.preUpdateValidationException';
 
     /**
      * Arguments:
@@ -61,7 +61,7 @@ final class DataObjectEvents
      *
      * @Event("OpenDxp\Event\Model\DataObjectEvent")
      */
-    const string POST_UPDATE = 'opendxp.dataobject.postUpdate';
+    public const string POST_UPDATE = 'opendxp.dataobject.postUpdate';
 
     /**
      * Arguments:
@@ -70,22 +70,22 @@ final class DataObjectEvents
      *
      * @Event("OpenDxp\Event\Model\DataObjectEvent")
      */
-    const string POST_UPDATE_FAILURE = 'opendxp.dataobject.postUpdateFailure';
+    public const string POST_UPDATE_FAILURE = 'opendxp.dataobject.postUpdateFailure';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObjectDeleteInfoEvent")
      */
-    const string DELETE_INFO = 'opendxp.dataobject.deleteInfo';
+    public const string DELETE_INFO = 'opendxp.dataobject.deleteInfo';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObjectEvent")
      */
-    const string PRE_DELETE = 'opendxp.dataobject.preDelete';
+    public const string PRE_DELETE = 'opendxp.dataobject.preDelete';
 
     /**
      * @Event("OpenDxp\Event\Model\DataObjectEvent")
      */
-    const string POST_DELETE = 'opendxp.dataobject.postDelete';
+    public const string POST_DELETE = 'opendxp.dataobject.postDelete';
 
     /**
      * Arguments:
@@ -93,7 +93,7 @@ final class DataObjectEvents
      *
      * @Event("OpenDxp\Event\Model\DataObjectEvent")
      */
-    const string POST_DELETE_FAILURE = 'opendxp.dataobject.postDeleteFailure';
+    public const string POST_DELETE_FAILURE = 'opendxp.dataobject.postDeleteFailure';
 
     /**
      * Arguments:
@@ -101,7 +101,7 @@ final class DataObjectEvents
      *
      * @Event("OpenDxp\Event\Model\DataObjectEvent")
      */
-    const string POST_LOAD = 'opendxp.dataobject.postLoad';
+    public const string POST_LOAD = 'opendxp.dataobject.postLoad';
 
     /**
      * Arguments:
@@ -109,7 +109,7 @@ final class DataObjectEvents
      *
      * @Event("OpenDxp\Event\Model\DataObjectEvent")
      */
-    const string PRE_COPY = 'opendxp.dataobject.preCopy';
+    public const string PRE_COPY = 'opendxp.dataobject.preCopy';
 
     /**
      * Arguments:
@@ -117,7 +117,7 @@ final class DataObjectEvents
      *
      * @Event("OpenDxp\Event\Model\DataObjectEvent")
      */
-    const string POST_COPY = 'opendxp.dataobject.postCopy';
+    public const string POST_COPY = 'opendxp.dataobject.postCopy';
 
     /**
      * Arguments:
@@ -130,5 +130,5 @@ final class DataObjectEvents
      *
      * @Event("OpenDxp\Event\Model\DataObjectEvent")
      */
-    const string POST_CSV_ITEM_EXPORT = 'opendxp.dataobject.postCsvItemExport';
+    public const string POST_CSV_ITEM_EXPORT = 'opendxp.dataobject.postCsvItemExport';
 }

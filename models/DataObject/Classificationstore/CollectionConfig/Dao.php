@@ -25,11 +25,10 @@ use OpenDxp\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    const TABLE_NAME_COLLECTIONS = 'classificationstore_collections';
+    public const string TABLE_NAME_COLLECTIONS = 'classificationstore_collections';
 
     /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
-     *
      *
      * @throws Model\Exception\NotFoundException
      */

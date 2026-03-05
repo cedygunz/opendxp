@@ -44,13 +44,9 @@ final class Config extends AbstractModel implements JsonSerializable
     use LocateFileTrait;
 
     public const string PROPERTY_ID = 'id';
-
     public const string PROPERTY_GROUP = 'group';
-
     public const string PROPERTY_USE_TRAITS = 'useTraits';
-
     public const string PROPERTY_IMPLEMENTS_INTERFACES = 'implementsInterfaces';
-
     public const string PROPERTY_SELECT_OPTIONS = 'selectOptions';
 
     protected string $id;
