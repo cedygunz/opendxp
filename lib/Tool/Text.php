@@ -62,7 +62,7 @@ class Text
                 $oldTag = $matches[0][$i];
 
                 if ($element instanceof Element\ElementInterface) {
-                    if ($matches[1][$i] == 'a') {
+                    if ($matches[1][$i] === 'a') {
                         $linkAttr = 'href';
                         $path = $element->getFullPath();
 
@@ -97,7 +97,7 @@ class Text
                                 $path = null;
                             }
                         }
-                    } elseif ($matches[1][$i] == 'img') {
+                    } elseif ($matches[1][$i] === 'img') {
                         $linkAttr = 'src';
 
                         // only for images

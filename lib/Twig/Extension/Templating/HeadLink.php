@@ -405,7 +405,7 @@ class HeadLink extends CacheBusterAware
     protected function _isDuplicateStylesheet(string $uri): bool
     {
         foreach ($this->getContainer() as $item) {
-            if (($item->rel == 'stylesheet') && ($item->href == $uri)) {
+            if (($item->rel === 'stylesheet') && ($item->href == $uri)) {
                 return true;
             }
         }

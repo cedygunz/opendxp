@@ -263,7 +263,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
                 $brick->setFieldname($this->getName());
 
-                if ($collectionRaw['data'] == 'deleted') {
+                if ($collectionRaw['data'] === 'deleted') {
                     $brick->setDoDelete(true);
                 } else {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {

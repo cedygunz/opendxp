@@ -375,7 +375,7 @@ class Service extends Model\Element\Service
                 $document->setSourceId($rewriteConfig['document'][(int) $document->getSourceId()]);
             }
         } elseif ($document instanceof Document\Link) {
-            if (array_key_exists('document', $rewriteConfig) && $document->getLinktype() === 'internal' && $document->getInternalType() == 'document' && array_key_exists((int) $document->getInternal(), $rewriteConfig['document'])) {
+            if (array_key_exists('document', $rewriteConfig) && $document->getLinktype() === 'internal' && $document->getInternalType() === 'document' && array_key_exists((int) $document->getInternal(), $rewriteConfig['document'])) {
                 $document->setInternal($rewriteConfig['document'][(int) $document->getInternal()]);
             }
         }

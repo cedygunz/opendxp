@@ -280,7 +280,7 @@ class Select extends Data implements
             $options = $optionsProvider->getOptions($context, $this);
             $this->setOptions($options);
 
-            if (isset($params['purpose']) && $params['purpose'] == 'editmode') {
+            if (isset($params['purpose']) && $params['purpose'] === 'editmode') {
                 return $data;
             }
 

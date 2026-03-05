@@ -199,7 +199,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                     $blockElement = new DataObject\Data\BlockElement($blockElementRaw['name'], $blockElementRaw['type'], $blockElementRaw['data']);
 
-                    if ($blockElementRaw['type'] == 'localizedfields') {
+                    if ($blockElementRaw['type'] === 'localizedfields') {
                         /** @var DataObject\Localizedfield|null $data */
                         $data = $blockElementRaw['data'];
                         if ($data) {

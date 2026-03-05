@@ -711,13 +711,13 @@ class Imagick extends Adapter
         if (is_file($image)) {
             $newImage = new \Imagick();
 
-            if ($mode == 'asTexture') {
+            if ($mode === 'asTexture') {
                 $newImage->newImage($this->getWidth(), $this->getHeight(), new ImagickPixel());
                 $texture = new \Imagick($image);
                 $newImage = $newImage->textureImage($texture);
             } else {
                 $newImage->readimage($image);
-                if ($mode == 'cropTopLeft') {
+                if ($mode === 'cropTopLeft') {
                     $newImage->cropImage($this->getWidth(), $this->getHeight(), 0, 0);
                 } else {
                     // default behavior (fit)

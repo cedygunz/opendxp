@@ -138,7 +138,7 @@ class Dao extends Model\Dao\AbstractDao
                     if (is_array($value)) {
                         $value = implode(',', $value);
                     }
-                } elseif ($key == 'twoFactorAuthentication') {
+                } elseif ($key === 'twoFactorAuthentication') {
                     $value = json_encode($value);
                 }
                 $data[$key] = $value;

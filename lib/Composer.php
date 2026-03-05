@@ -98,7 +98,7 @@ class Composer
     {
         /** @var UpdateOperation $operation */
         $operation = $event->getOperation();
-        if ($operation->getInitialPackage()->getName() == 'open-dxp/opendxp') {
+        if ($operation->getInitialPackage()->getName() === 'open-dxp/opendxp') {
             $operation->getInitialPackage()->getSourceReference();
             $operation->getInitialPackage()->getDistReference();
 

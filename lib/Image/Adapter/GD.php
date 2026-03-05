@@ -246,9 +246,9 @@ class GD extends Adapter
 
             $newImg = $this->createImage($this->getWidth(), $this->getHeight());
 
-            if ($mode == 'cropTopLeft') {
+            if ($mode === 'cropTopLeft') {
                 imagecopyresampled($newImg, $backgroundImage, 0, 0, 0, 0, $this->getWidth(), $this->getHeight(), $this->getWidth(), $this->getHeight());
-            } elseif ($mode == 'asTexture') {
+            } elseif ($mode === 'asTexture') {
                 imagesettile($newImg, $backgroundImage);
                 imagefilledrectangle($newImg, 0, 0, $this->getWidth(), $this->getHeight(), IMG_COLOR_TILED);
             } else {

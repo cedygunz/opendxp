@@ -306,7 +306,7 @@ class UrlSlug implements OwnerAwareFieldInterface
                 if ($brickDef) {
                     $fd = $brickDef->getFieldDefinition($this->getFieldname());
                 }
-            } elseif ($this->getOwnertype() == 'fieldcollection') {
+            } elseif ($this->getOwnertype() === 'fieldcollection') {
                 $ownerName = $this->getOwnername();
                 $getter = 'get' . ucfirst($ownerName);
 

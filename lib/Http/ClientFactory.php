@@ -37,7 +37,7 @@ class ClientFactory
             RequestOptions::VERIFY => CaBundle::getSystemCaRootBundlePath(),
         ];
 
-        if (($this->config['httpclient']['adapter'] ?? null) == 'Proxy') {
+        if (($this->config['httpclient']['adapter'] ?? null) === 'Proxy') {
             $authorization = '';
             if (!empty($this->config['httpclient']['proxy_user'])) {
                 $authorization = $this->config['httpclient']['proxy_user'] . ':' . $this->config['httpclient']['proxy_pass'] . '@';

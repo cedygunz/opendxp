@@ -242,7 +242,7 @@ class Video extends Data implements
     #[Override]
     public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
-        if ($data && $data->getType() == 'asset' && $data->getData() instanceof Asset) {
+        if ($data && $data->getType() === 'asset' && $data->getData() instanceof Asset) {
             return '<img src="/admin/asset/get-video-thumbnail?id=' . $data->getData()->getId() . '&width=100&height=100&aspectratio=true" />';
         }
 
@@ -430,7 +430,7 @@ class Video extends Data implements
 
             $data = $value->getData();
 
-            if ($data && $value->getType() == 'asset') {
+            if ($data && $value->getType() === 'asset') {
                 $result['data'] = [
                     'type' => Model\Element\Service::getElementType($data),
                     'id' => $data->getId(),

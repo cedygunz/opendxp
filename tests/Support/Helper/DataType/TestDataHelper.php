@@ -153,7 +153,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $expected->setDate(2000, 12, 24);
 
         //set time for datetime isEqual comparison
-        if ($field == 'datetime') {
+        if ($field === 'datetime') {
             $expected->setTime((int)$value->format('H'), (int)$value->format('i'), (int)$value->format('s'));
         }
 
@@ -1104,7 +1104,7 @@ class TestDataHelper extends AbstractTestDataHelper
     public function fillGender(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
-        $value = $seed % 2 == 0 ? 'male' : 'female';
+        $value = $seed % 2 === 0 ? 'male' : 'female';
         $object->$setter($value);
     }
 
@@ -1300,7 +1300,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $objects = $this->getObjectList("`type` = 'object'");
 
         if ($language) {
-            if ($language == 'de') {
+            if ($language === 'de') {
                 $objects = array_slice($objects, 0, 6);
             } else {
                 $objects = array_slice($objects, 0, 5);

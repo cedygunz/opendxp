@@ -190,7 +190,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             $thumbConfig = Asset\Image\Thumbnail\Config::getByAutoDetect($config['thumbnail']);
             if ($thumbConfig) {
                 foreach ($thumbConfig->getItems() as $item) {
-                    if ($item['method'] == 'cover') {
+                    if ($item['method'] === 'cover') {
                         $config['focal_point_context_menu_item'] = true;
                         $this->config['focal_point_context_menu_item'] = true;
 

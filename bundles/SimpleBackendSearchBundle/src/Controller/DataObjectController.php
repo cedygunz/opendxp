@@ -110,7 +110,7 @@ class DataObjectController extends UserAwareController
 
                         $getter = 'get'.ucfirst($visibleField);
                         $visibleFieldValue = $object->$getter();
-                        if (count($classes) > 1 && $visibleField == 'key') {
+                        if (count($classes) > 1 && $visibleField === 'key') {
                             $visibleFieldValue .= ' ('.$object->getClassName().')';
                         }
 

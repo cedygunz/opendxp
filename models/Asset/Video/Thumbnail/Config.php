@@ -317,7 +317,7 @@ final class Config extends Model\AbstractModel
                 continue;
             }
             foreach ($transformation['arguments'] as $key => $value) {
-                if ($key == 'width' || $key == 'height') {
+                if ($key === 'width' || $key === 'height') {
                     $dimensions[$key] = $value;
                 }
             }

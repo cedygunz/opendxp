@@ -571,22 +571,22 @@ final class Config extends Model\AbstractModel
                     if (in_array($transformation['method'], ['resize', 'cover', 'frame', 'crop'])) {
                         $dimensions['width'] = $arg['width'];
                         $dimensions['height'] = $arg['height'];
-                    } elseif ($transformation['method'] == '1x1_pixel') {
+                    } elseif ($transformation['method'] === '1x1_pixel') {
                         return [
                             'width' => 1,
                             'height' => 1,
                         ];
-                    } elseif ($transformation['method'] == 'scaleByWidth') {
+                    } elseif ($transformation['method'] === 'scaleByWidth') {
                         if ($arg['width'] <= $dimensions['width'] || $asset->isVectorGraphic() || $forceResize) {
                             $dimensions['height'] = round(($arg['width'] / $dimensions['width']) * $dimensions['height'], 0);
                             $dimensions['width'] = $arg['width'];
                         }
-                    } elseif ($transformation['method'] == 'scaleByHeight') {
+                    } elseif ($transformation['method'] === 'scaleByHeight') {
                         if ($arg['height'] < $dimensions['height'] || $asset->isVectorGraphic() || $forceResize) {
                             $dimensions['width'] = round(($arg['height'] / $dimensions['height']) * $dimensions['width'], 0);
                             $dimensions['height'] = $arg['height'];
                         }
-                    } elseif ($transformation['method'] == 'contain') {
+                    } elseif ($transformation['method'] === 'contain') {
                         $x = $dimensions['width'] / $arg['width'];
                         $y = $dimensions['height'] / $arg['height'];
 
@@ -601,7 +601,7 @@ final class Config extends Model\AbstractModel
                             $dimensions['width'] = round(($arg['height'] / $dimensions['height']) * $dimensions['width'], 0);
                             $dimensions['height'] = $arg['height'];
                         }
-                    } elseif ($transformation['method'] == 'cropPercent') {
+                    } elseif ($transformation['method'] === 'cropPercent') {
                         $dimensions['width'] = ceil($dimensions['width'] * ($arg['width'] / 100));
                         $dimensions['height'] = ceil($dimensions['height'] * ($arg['height'] / 100));
                     } elseif (in_array($transformation['method'], ['rotate', 'trim'])) {
@@ -625,7 +625,7 @@ final class Config extends Model\AbstractModel
                     continue;
                 }
                 foreach ($transformation['arguments'] as $key => $value) {
-                    if ($key == 'width' || $key == 'height') {
+                    if ($key === 'width' || $key === 'height') {
                         $dimensions[$key] = $value;
                     }
                 }
