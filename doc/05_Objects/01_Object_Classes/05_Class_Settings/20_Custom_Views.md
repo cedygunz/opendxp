@@ -204,7 +204,7 @@ opendxp:
     custom_views:
         definitions:
             186632eb-5ad3-6ac6-61f8-7a75e64f2204:
-                ...
+                # ...
                 treeContextMenu:
                     asset:
                         items:
@@ -227,7 +227,7 @@ opendxp:
                             lockAndPropagate: true
                             unlockAndPropagate: true
                             reload: true
-                ...
+                # ...
 ```
 
 ![Custom Views](../../../img/classes-custom-views5.png)

@@ -17,12 +17,12 @@ Open Source Data & Digital Experience Platform
 
 [![Packagist](https://img.shields.io/packagist/v/open-dxp/opendxp.svg)](https://packagist.org/packages/open-dxp/opendxp)
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat)](LICENSE.md)
-[![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/open-dxp/opendxp)
 
 * [Get started with OpenDXP 1.0](doc/23_Installation_and_Upgrade/09_Upgrade_Notes/README.md#get-started-with-opendxp-10)
 * [Documentation](doc)
 * [Issue Tracker](https://github.com/open-dxp/opendxp/issues) - Report bugs or suggest new features
 * [Forums](https://github.com/orgs/open-dxp/discussions) - Community support and discussions
+* 🤖 [Testing with AI (Claude)](doc/19_Development_Tools_and_Details/50_Testing_with_AI.md) - Write, run and fix tests with Claude Code
 
 ## Contribute  
 **Bug fixes:** please create a pull request including a step by step description to reproduce the problem  

@@ -27,7 +27,7 @@ use Monolog\Logger;
 use OpenDxp\Cache\Core\CoreCacheHandler;
 use OpenDxp\Cache\Core\WriteLock;
 use OpenDxp\Tests\Support\Helper\OpenDxp;
-use PHPUnit_Framework_MockObject_MockObject;
+use PHPUnit\Framework\MockObject\MockObject;
 use ReflectionClass;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Cache\CacheItem;
@@ -36,7 +36,7 @@ abstract class AbstractCoreHandlerTest extends Unit
 {
     protected TagAwareAdapterInterface $cache;
 
-    protected CoreCacheHandler|PHPUnit_Framework_MockObject_MockObject $handler;
+    protected CoreCacheHandler|MockObject $handler;
 
     protected WriteLock $writeLock;
 
@@ -114,13 +114,13 @@ abstract class AbstractCoreHandlerTest extends Unit
         return $writeLock;
     }
 
-    protected function createHandlerMock(): PHPUnit_Framework_MockObject_MockObject|CoreCacheHandler
+    protected function createHandlerMock(): MockObject|CoreCacheHandler
     {
         $mockMethods = ['isCli'];
 
-        /** @var CoreCacheHandler|PHPUnit_Framework_MockObject_MockObject $handler */
+        /** @var CoreCacheHandler|MockObject $handler */
         $handler = $this->getMockBuilder(CoreCacheHandler::class)
-            ->setMethods($mockMethods)
+            ->onlyMethods($mockMethods)
             ->setConstructorArgs([
                 $this->cache,
                 $this->writeLock,

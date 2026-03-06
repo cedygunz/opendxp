@@ -57,6 +57,8 @@ final class Site extends AbstractModel
 
     protected bool $redirectToMainDomain = false;
 
+    protected ?array $customSettings = null;
+
     protected ?int $creationDate = null;
 
     protected ?int $modificationDate = null;
@@ -335,6 +337,33 @@ final class Site extends AbstractModel
     public function getRedirectToMainDomain(): bool
     {
         return $this->redirectToMainDomain;
+    }
+
+    /**
+     * @bundle-override open-dxp/admin-bundle
+     *
+     * Normal usage outside that bundle is discouraged.
+     */
+    public function setCustomSettings(array|string|null $customSettings): void
+    {
+        if (is_string($customSettings)) {
+            $customSettings = Serialize::unserialize($customSettings);
+        }
+
+        $this->customSettings = $customSettings;
+    }
+
+    public function getCustomSettings(?string $scope = null): array
+    {
+        if ($this->customSettings === null) {
+            return [];
+        }
+
+        if ($scope !== null) {
+            return array_key_exists($scope, $this->customSettings) ? $this->customSettings[$scope] : [];
+        }
+
+        return $this->customSettings;
     }
 
     /**

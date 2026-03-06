@@ -31,9 +31,11 @@ class Dao extends Model\Dao\AbstractDao
     public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE id = ?', [$id]);
+
         if (!$data) {
             throw new NotFoundException(sprintf('Unable to load site with ID `%s`', $id));
         }
+
         $this->assignVariablesToModel($data);
     }
 
@@ -43,9 +45,11 @@ class Dao extends Model\Dao\AbstractDao
     public function getByRootId(int $id): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE rootId = ?', [$id]);
+
         if (!$data) {
             throw new NotFoundException(sprintf('Unable to load site with ID `%s`', $id));
         }
+
         $this->assignVariablesToModel($data);
     }
 
@@ -54,47 +58,47 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByDomain(string $domain): void
     {
+        // 1. exact match
         $data = $this->db->fetchAssociative(
             'SELECT * FROM sites WHERE mainDomain = ? OR domains LIKE ?',
             [$domain, '%"' . $domain . '"%']
         );
-        if (!$data) {
-            // check for wildcards
-            // @TODO: refactor this to be more clear
-            $sitesRaw = $this->db->fetchAllAssociative('SELECT id,domains FROM sites');
-            $wildcardDomains = [];
-            foreach ($sitesRaw as $site) {
-                if (!empty($site['domains']) && strpos($site['domains'], '*')) {
-                    $siteDomains = unserialize($site['domains']);
-                    if (is_array($siteDomains) && count($siteDomains) > 0) {
-                        foreach ($siteDomains as $siteDomain) {
-                            if (str_contains($siteDomain, '*')) {
-                                $siteDomain = str_replace('.*', '*', $siteDomain); // backward compatibility
-                                $wildcardDomains[$siteDomain] = $site['id'];
-                            }
-                        }
-                    }
-                }
+
+        if ($data !== false) {
+            $this->assignVariablesToModel($data);
+            return;
+        }
+
+        // 2. wildcard match
+        $sites = $this->db->fetchAllAssociative(
+            'SELECT * FROM sites WHERE domains LIKE ?',
+            ['%*%']
+        );
+
+        foreach ($sites as $site) {
+            $domains = \OpenDxp\Tool\Serialize::unserialize($site['domains']);
+
+            if (!is_array($domains)) {
+                continue;
             }
 
-            foreach ($wildcardDomains as $wildcardDomain => $siteId) {
-                $wildcardDomain = preg_quote($wildcardDomain, '#');
-                $wildcardDomain = str_replace('\\*', '.*', $wildcardDomain);
-                if (preg_match('#^' . $wildcardDomain . '$#', $domain)) {
-                    $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE id = ?', [$siteId]);
+            foreach ($domains as $siteDomain) {
+                if (!$this->isWildcardDomain($siteDomain)) {
+                    continue;
                 }
-            }
 
-            if (!$data) {
-                throw new NotFoundException('there is no site for the requested domain: `' . $domain . '´');
+                if ($this->matchesWildcardDomain($siteDomain, $domain)) {
+                    $this->assignVariablesToModel($site);
+                    return;
+                }
             }
         }
-        $this->assignVariablesToModel($data);
+
+        throw new NotFoundException(
+            sprintf('there is no site for the requested domain: `%s`', $domain)
+        );
     }
 
-    /**
-     * Save object to database
-     */
     public function save(): void
     {
         if (!$this->model->getId()) {
@@ -104,9 +108,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->update();
     }
 
-    /**
-     * Create a new record for the object in database
-     */
     public function create(): void
     {
         $ts = time();
@@ -116,9 +117,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->setId((int) $this->db->lastInsertId());
     }
 
-    /**
-     * Save changes to database, it's a good idea to use save() instead
-     */
     public function update(): void
     {
         $ts = time();
@@ -144,9 +142,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->clearDependentCache();
     }
 
-    /**
-     * Deletes site from database
-     */
     public function delete(): void
     {
         $this->db->delete('sites', ['id' => $this->model->getId()]);
@@ -154,5 +149,21 @@ class Dao extends Model\Dao\AbstractDao
         Model\DataObject\Data\UrlSlug::handleSiteDeleted($this->model->getId());
 
         $this->model->clearDependentCache();
+    }
+
+    private function isWildcardDomain(string $domain): bool
+    {
+        return str_contains($domain, '*');
+    }
+
+    private function matchesWildcardDomain(string $pattern, string $domain): bool
+    {
+        // backward compatibility
+        $pattern = str_replace('.*', '*', $pattern);
+
+        $regex = preg_quote($pattern, '#');
+        $regex = str_replace('\*', '.*', $regex);
+
+        return (bool) preg_match('#^' . $regex . '$#', $domain);
     }
 }
