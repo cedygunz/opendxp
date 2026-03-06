@@ -339,6 +339,11 @@ final class Site extends AbstractModel
         return $this->redirectToMainDomain;
     }
 
+    /**
+     * @bundle-override open-dxp/admin-bundle
+     *
+     * Normal usage outside that bundle is discouraged.
+     */
     public function setCustomSettings(array|string|null $customSettings): void
     {
         if (is_string($customSettings)) {

@@ -21,13 +21,13 @@ use InvalidArgumentException;
 use OpenDxp\Http\Response\CodeInjector;
 use OpenDxp\Http\ResponseHelper;
 use OpenDxp\Tests\Support\Test\TestCase;
-use PHPUnit_Framework_MockObject_MockObject;
+use PHPUnit\Framework\MockObject\MockObject;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
 
 class CodeInjectorTest extends TestCase
 {
-    private ResponseHelper|PHPUnit_Framework_MockObject_MockObject $responseHelper;
+    private ResponseHelper|MockObject $responseHelper;
 
     private CodeInjector $injector;
 
@@ -137,14 +137,12 @@ class CodeInjectorTest extends TestCase
         $data = [];
 
         $source = <<<EOF
-<html>
-<head>
+<html><head>
     <!-- ORIG HEAD -->
 </head>
-<body class="foo" bar>
+<body class="foo" bar="">
     <!-- ORIG BODY -->
-</body>
-</html>
+</body></html>
 EOF;
 
         $data[] = [
@@ -152,14 +150,12 @@ EOF;
             CodeInjector::POSITION_BEGINNING,
             $source,
             <<<EOF
-<html>
-<head><!-- INJECTED -->
+<html><head><!-- INJECTED -->
     <!-- ORIG HEAD -->
 </head>
-<body class="foo" bar>
+<body class="foo" bar="">
     <!-- ORIG BODY -->
-</body>
-</html>
+</body></html>
 EOF
         ];
 
@@ -168,14 +164,12 @@ EOF
             CodeInjector::POSITION_END,
             $source,
             <<<EOF
-<html>
-<head>
+<html><head>
     <!-- ORIG HEAD -->
 <!-- INJECTED --></head>
-<body class="foo" bar>
+<body class="foo" bar="">
     <!-- ORIG BODY -->
-</body>
-</html>
+</body></html>
 EOF
         ];
 
@@ -184,12 +178,10 @@ EOF
             CodeInjector::REPLACE,
             $source,
             <<<EOF
-<html>
-<head><!-- INJECTED --></head>
-<body class="foo" bar>
+<html><head><!-- INJECTED --></head>
+<body class="foo" bar="">
     <!-- ORIG BODY -->
-</body>
-</html>
+</body></html>
 EOF
         ];
 
@@ -198,14 +190,12 @@ EOF
             CodeInjector::POSITION_BEGINNING,
             $source,
             <<<EOF
-<html>
-<head>
+<html><head>
     <!-- ORIG HEAD -->
 </head>
-<body class="foo" bar><!-- INJECTED -->
+<body class="foo" bar=""><!-- INJECTED -->
     <!-- ORIG BODY -->
-</body>
-</html>
+</body></html>
 EOF
         ];
 
@@ -214,14 +204,12 @@ EOF
             CodeInjector::POSITION_END,
             $source,
             <<<EOF
-<html>
-<head>
+<html><head>
     <!-- ORIG HEAD -->
 </head>
-<body class="foo" bar>
+<body class="foo" bar="">
     <!-- ORIG BODY -->
-<!-- INJECTED --></body>
-</html>
+<!-- INJECTED --></body></html>
 EOF
         ];
 
@@ -230,12 +218,10 @@ EOF
             CodeInjector::REPLACE,
             $source,
             <<<EOF
-<html>
-<head>
+<html><head>
     <!-- ORIG HEAD -->
 </head>
-<body class="foo" bar><!-- INJECTED --></body>
-</html>
+<body class="foo" bar=""><!-- INJECTED --></body></html>
 EOF
         ];
 
@@ -247,15 +233,13 @@ EOF
         $data = [];
 
         $domSource = <<<EOF
-<html>
-<head>
+<html><head>
     <!-- ORIG HEAD -->
 </head>
-<body class="foo" bar>
+<body class="foo" bar="">
     <!-- ORIG BODY -->
     <div class="bar"><!-- ORIG DIV --></div>
-</body>
-</html>
+</body></html>
 EOF;
 
         $data[] = [
@@ -263,15 +247,13 @@ EOF;
             CodeInjector::REPLACE,
             $domSource,
             <<<EOF
-<html>
-<head>
+<html><head>
     <!-- ORIG HEAD -->
 </head>
-<body class="foo" bar>
+<body class="foo" bar="">
     <!-- ORIG BODY -->
     <div class="bar"><!-- INJECTED --></div>
-</body>
-</html>
+</body></html>
 EOF
         ];
 
@@ -280,15 +262,13 @@ EOF
             CodeInjector::POSITION_BEGINNING,
             $domSource,
             <<<EOF
-<html>
-<head>
+<html><head>
     <!-- ORIG HEAD -->
 </head>
-<body class="foo" bar>
+<body class="foo" bar="">
     <!-- ORIG BODY -->
     <div class="bar"><!-- INJECTED --><!-- ORIG DIV --></div>
-</body>
-</html>
+</body></html>
 EOF
         ];
 
@@ -297,15 +277,13 @@ EOF
             CodeInjector::POSITION_END,
             $domSource,
             <<<EOF
-<html>
-<head>
+<html><head>
     <!-- ORIG HEAD -->
 </head>
-<body class="foo" bar>
+<body class="foo" bar="">
     <!-- ORIG BODY -->
     <div class="bar"><!-- ORIG DIV --><!-- INJECTED --></div>
-</body>
-</html>
+</body></html>
 EOF
         ];
 

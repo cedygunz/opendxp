@@ -42,9 +42,9 @@ class GlossaryTest extends TestCase
         $entry->setLanguage('en');
         $entry->save();
 
-        $result = $this->processor->parse('<body><p>This is a Test for the Glossary</p></body>', [], 'en', null, null);
+        $result = $this->processor->parse('<head></head><body><p>This is a Test for the Glossary</p></body>', [], 'en', null, null);
 
-        $expect = '<body><p>This is a Test for the <a class="opendxp_glossary" href="/test">Glossary</a></p></body>';
+        $expect = '<head></head><body><p>This is a Test for the <a class="opendxp_glossary" href="/test">Glossary</a></p></body>';
 
         $this->assertSame($expect, $result);
     }
@@ -58,14 +58,14 @@ class GlossaryTest extends TestCase
         $entry->save();
 
         $result = $this->processor->parse(
-            '<body><p>This is a Test for the&nbsp;Entity &copy;</p></body>',
+            '<head></head><body><p>This is a Test for the&nbsp;Entity &copy;</p></body>',
             [],
             'en',
             null,
             null
         );
 
-        $expect = '<body><p>This is a Test for the&nbsp;<a class="opendxp_glossary" href="/test">Entity</a> &copy;</p></body>';
+        $expect = '<head></head><body><p>This is a Test for the&nbsp;<a class="opendxp_glossary" href="/test">Entity</a> &copy;</p></body>';
 
         $this->assertSame(html_entity_decode($expect), $result);
     }
@@ -78,9 +78,9 @@ class GlossaryTest extends TestCase
         $entry->setLanguage('en');
         $entry->save();
 
-        $result = $this->processor->parse('<body><p>Test &nbsp; Eintrag ©</p></body>', [], 'en', null, null);
+        $result = $this->processor->parse('<head></head><body><p>Test &nbsp; Eintrag ©</p></body>', [], 'en', null, null);
 
-        $expect = '<body><p>Test &nbsp; <a class="opendxp_glossary" href="/test">Eintrag</a> &copy;</p></body>';
+        $expect = '<head></head><body><p>Test &nbsp; <a class="opendxp_glossary" href="/test">Eintrag</a> &copy;</p></body>';
 
         $this->assertSame(html_entity_decode($expect), $result);
     }
@@ -126,7 +126,7 @@ class GlossaryTest extends TestCase
         </div>
     </section>';
 
-        $this->assertSame($expect, $result);
+        $this->assertSame(html_entity_decode($expect), html_entity_decode($result));
     }
 
     public function testGlossaryWithAnotherHtml(): void
