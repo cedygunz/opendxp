@@ -375,6 +375,7 @@ CREATE TABLE `sites` (
   `errorDocument` varchar(255) DEFAULT NULL,
   `localizedErrorDocuments` text,
   `redirectToMainDomain` tinyint(1) DEFAULT NULL,
+  `customSettings` text NULL,
   `creationDate` int(11) unsigned DEFAULT '0',
   `modificationDate` int(11) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
