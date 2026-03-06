@@ -66,6 +66,7 @@ class Dao extends Model\Dao\AbstractDao
 
         if ($data !== false) {
             $this->assignVariablesToModel($data);
+
             return;
         }
 
@@ -89,6 +90,7 @@ class Dao extends Model\Dao\AbstractDao
 
                 if ($this->matchesWildcardDomain($siteDomain, $domain)) {
                     $this->assignVariablesToModel($site);
+
                     return;
                 }
             }
