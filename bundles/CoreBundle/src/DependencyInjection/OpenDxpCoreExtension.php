@@ -98,10 +98,6 @@ final class OpenDxpCoreExtension extends ConfigurableExtension implements Prepen
             $container->setParameter('router.request_context.host', $config['general']['domain']);
         }
 
-        // expose the configured domain as a standalone parameter so GeneralHostResolver
-        // can use it as a fallback independent of router.request_context.host
-        $container->setParameter('opendxp.general_domain', $domain);
-
         $loader = new YamlFileLoader(
             $container,
             new FileLocator(__DIR__ . '/../../config')

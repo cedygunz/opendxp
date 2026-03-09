@@ -16,15 +16,15 @@ declare(strict_types=1);
 
 namespace OpenDxp\Http\Request\Host;
 
+use OpenDxp\SystemSettingsConfig;
+
 final class GeneralHostResolver
 {
     /**
      * @param iterable<GeneralHostProviderInterface> $providers
      */
-    public function __construct(
-        private readonly string $configuredDomain,
-        private readonly iterable $providers = [],
-    ) {
+    public function __construct(private readonly iterable $providers = [])
+    {
     }
 
     /**
@@ -39,6 +39,14 @@ final class GeneralHostResolver
             }
         }
 
-        return $this->configuredDomain !== '' ? $this->configuredDomain : null;
+        return $this->getFallBackHost();
+    }
+
+    private function getFallBackHost(): ?string{
+
+        $systemConfig = SystemSettingsConfig::get()['general'];
+
+        return $systemConfig['domain'] ?? null;
+
     }
 }

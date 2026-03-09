@@ -28,7 +28,6 @@ services:
 
     OpenDxp\Http\Request\Host\GeneralHostResolver:
         arguments:
-            $configuredDomain: '%opendxp.general_domain%'
             $providers: !tagged_iterator opendxp.general_host_provider
 
     #

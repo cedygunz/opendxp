@@ -24,9 +24,7 @@ namespace OpenDxp\Http\Request\Host;
  * If no provider returns a value, the static `opendxp.general.domain` config is used as fallback.
  *
  * The optional $context array may carry arbitrary caller-supplied information, e.g.:
- *   ['source' => $consoleInput]
  *   ['source' => $request]
- *   ['source' => $site]
  */
 interface GeneralHostProviderInterface
 {

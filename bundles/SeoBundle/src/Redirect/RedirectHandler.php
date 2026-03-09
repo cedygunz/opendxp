@@ -21,7 +21,6 @@ use OpenDxp\Bundle\SeoBundle\Event\Model\RedirectEvent;
 use OpenDxp\Bundle\SeoBundle\Event\RedirectEvents;
 use OpenDxp\Bundle\SeoBundle\Model\Redirect;
 use OpenDxp\Cache;
-use OpenDxp\Config;
 use OpenDxp\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use OpenDxp\Helper\StringHelper;
 use OpenDxp\Http\Request\Host\GeneralHostResolver;
@@ -56,7 +55,6 @@ final class RedirectHandler
     public function __construct(
         private RequestHelper $requestHelper,
         private SiteResolver $siteResolver,
-        private Config $config,
         LockFactory $lockFactory,
         private LoggerInterface $logger,
         private LoggerInterface $redirectLogger,
