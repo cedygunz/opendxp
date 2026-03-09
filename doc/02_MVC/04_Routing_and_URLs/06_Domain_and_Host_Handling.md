@@ -48,20 +48,13 @@ using the following priority order:
    The first provider that returns a non-null, non-empty string wins.
 2. **Static fallback** – the value of `opendxp.general.domain` from config (YAML / env).
 
-### Context
+### Passing Context to Providers
 
-All call sites may optionally pass a `$context` array to give providers additional information about
-the current execution environment:
+`resolve()` passes an optional `$context` array.
 
 ```php
-// in a web request
 $host = $this->generalHostResolver->resolve(['source' => $request]);
-
-// in a CLI command
-$host = $this->generalHostResolver->resolve(['source' => $input]);
 ```
-
-Providers receive the same array and may use it however they see fit. Unknown keys are silently ignored.
 
 ## Implementing a Custom Provider
 
