@@ -42,7 +42,8 @@ final class GeneralHostResolver
         return $this->getFallBackHost();
     }
 
-    private function getFallBackHost(): ?string{
+    private function getFallBackHost(): ?string
+    {
 
         $systemConfig = SystemSettingsConfig::get()['general'];
 
