@@ -21,6 +21,7 @@ use OpenDxp;
 use OpenDxp\Document\Editable\EditableUsageResolver;
 use OpenDxp\Event\DocumentEvents;
 use OpenDxp\Event\Model\DocumentEvent;
+use OpenDxp\Http\Request\Host\GeneralHostResolver;
 use OpenDxp\Http\RequestHelper;
 use OpenDxp\Logger;
 use OpenDxp\Messenger\VersionDeleteMessage;
@@ -545,7 +546,9 @@ abstract class PageSnippet extends Model\Document
         }
 
         if (!$hostname) {
-            $hostname = \OpenDxp\Config::getSystemConfiguration('general')['domain'];
+            /** @var GeneralHostResolver $generalHostResolver */
+            $generalHostResolver = OpenDxp::getContainer()->get(GeneralHostResolver::class);
+            $hostname = $generalHostResolver->resolve();
             if (empty($hostname) && !$hostname = \OpenDxp\Tool::getHostname()) {
                 throw new Exception('No hostname available');
             }
