@@ -24,6 +24,7 @@ use OpenDxp\Cache;
 use OpenDxp\Config;
 use OpenDxp\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use OpenDxp\Helper\StringHelper;
+use OpenDxp\Http\Request\Host\GeneralHostResolver;
 use OpenDxp\Http\Request\Resolver\SiteResolver;
 use OpenDxp\Http\RequestHelper;
 use OpenDxp\Model\Document;
@@ -58,7 +59,8 @@ final class RedirectHandler
         private Config $config,
         LockFactory $lockFactory,
         private LoggerInterface $logger,
-        private LoggerInterface $redirectLogger
+        private LoggerInterface $redirectLogger,
+        private GeneralHostResolver $generalHostResolver,
     ) {
         $this->lock = $lockFactory->createLock(self::class);
     }
@@ -174,7 +176,7 @@ final class RedirectHandler
                 }
             } else {
                 $site = Site::getByDomain($request->getHost());
-                $redirectDomain = $site instanceof Site ? $request->getHost() : $this->config['general']['domain'];
+                $redirectDomain = $site instanceof Site ? $request->getHost() : $this->generalHostResolver->resolve(['source' => $request]);
 
                 if ($redirectDomain) {
                     // prepend the host and scheme to avoid infinite loops when using "domain" redirects

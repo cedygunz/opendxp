@@ -21,6 +21,17 @@ services:
         public: false
 
     #
+    # GENERAL HOST RESOLVER
+    #
+    # Resolves the installation-wide "general" host.
+    #
+
+    OpenDxp\Http\Request\Host\GeneralHostResolver:
+        arguments:
+            $configuredDomain: '%opendxp.general_domain%'
+            $providers: !tagged_iterator opendxp.general_host_provider
+
+    #
     # REQUEST RESOLVERS
     #
     # Read/write/normalize defined request attributes (e.g. document)

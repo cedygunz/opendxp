@@ -93,3 +93,10 @@ The functionality should be pretty self-explanatory:
 
 #### Document Preview Navigation with Sites
 Please keep in mind that when previewing documents that have links to different Sites, the navigation may not be working properly due the Iframe Content Security Policies and Cross-origin resource sharing (CORS) policy, please set your own security rules accordingly to your own needs.
+
+
+## General Domain in Multi-Site Setups
+
+When no request is available (e.g. in CLI commands) OpenDXP needs a fallback "general" domain that is
+independent of any specific site. See [Domain and Host Handling](./06_Domain_and_Host_Handling.md) for
+configuration options, including how to drive this value from site custom settings in the backoffice.

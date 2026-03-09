@@ -18,6 +18,7 @@ namespace OpenDxp\Bundle\CoreBundle\EventListener\Frontend;
 
 use OpenDxp\Bundle\CoreBundle\EventListener\Traits\OpenDxpContextAwareTrait;
 use OpenDxp\Config;
+use OpenDxp\Http\Request\Host\GeneralHostResolver;
 use OpenDxp\Http\Request\Resolver\OpenDxpContextResolver;
 use OpenDxp\Http\Request\Resolver\SiteResolver;
 use OpenDxp\Http\RequestHelper;
@@ -46,7 +47,8 @@ class RoutingListener implements EventSubscriberInterface
     public function __construct(
         protected RequestHelper $requestHelper,
         protected SiteResolver $siteResolver,
-        protected Config $config
+        protected Config $config,
+        protected GeneralHostResolver $generalHostResolver,
     ) {
     }
 
@@ -90,8 +92,6 @@ class RoutingListener implements EventSubscriberInterface
 
         // redirect to the main domain if specified
         $this->handleMainDomainRedirect($event);
-        if ($event->hasResponse()) {
-        }
     }
 
     /**
@@ -177,14 +177,14 @@ class RoutingListener implements EventSubscriberInterface
 
     private function resolveConfigDomainRedirectHost(Request $request): ?string
     {
-        $hostRedirect = null;
-
         $systemConfig = SystemSettingsConfig::get();
-        $gc = $systemConfig['general'];
-        if (isset($gc['redirect_to_maindomain']) && $gc['redirect_to_maindomain'] === true && isset($gc['domain']) && $gc['domain'] !== $request->getHost()) {
-            return $gc['domain'];
+        if (isset($systemConfig['general']['redirect_to_maindomain']) && $systemConfig['general']['redirect_to_maindomain'] === true) {
+            $domain = $this->generalHostResolver->resolve(['source' => $request]);
+            if ($domain !== null && $domain !== $request->getHost()) {
+                return $domain;
+            }
         }
 
-        return $hostRedirect;
+        return null;
     }
 }

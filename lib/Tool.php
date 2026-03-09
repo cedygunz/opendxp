@@ -20,6 +20,7 @@ use Exception;
 use GuzzleHttp\RequestOptions;
 use Locale;
 use OpenDxp;
+use OpenDxp\Http\Request\Host\GeneralHostResolver;
 use OpenDxp\Http\RequestHelper;
 use OpenDxp\Localization\LocaleServiceInterface;
 use OpenDxp\Model\Element;
@@ -335,10 +336,10 @@ final class Tool
         $request = self::resolveRequest($request);
 
         if (!$request instanceof \Symfony\Component\HttpFoundation\Request || !$request->getHost()) {
-            $config = SystemSettingsConfig::get()['general'];
-            $domain = $config['domain'];
+            /** @var GeneralHostResolver $generalHostResolver */
+            $generalHostResolver = OpenDxp::getContainer()->get(GeneralHostResolver::class);
 
-            return $domain ?: null;
+            return $generalHostResolver->resolve(['source' => $request]);
         }
 
         return $request->getHost();
@@ -380,10 +381,10 @@ final class Tool
             }
         }
 
-        // get it from System settings
         if (!$hostname || $hostname === 'localhost') {
-            $systemConfig = SystemSettingsConfig::get()['general'];
-            $hostname = $systemConfig['domain'] ?? null;
+            /** @var GeneralHostResolver $generalHostResolver */
+            $generalHostResolver = OpenDxp::getContainer()->get(GeneralHostResolver::class);
+            $hostname = $generalHostResolver->resolve(['source' => $request]);
 
             if (!$hostname) {
                 Logger::warn('Couldn\'t determine HTTP Host. No Domain set in "Settings" -> "System" -> "Website" -> "Domain"');

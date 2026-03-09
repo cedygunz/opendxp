@@ -20,11 +20,11 @@ namespace OpenDxp\Document;
 use Exception;
 use OpenDxp;
 use OpenDxp\Document\Renderer\DocumentRendererInterface;
+use OpenDxp\Http\Request\Host\GeneralHostResolver;
 use OpenDxp\Http\Request\Resolver\StaticPageResolver;
 use OpenDxp\Logger;
 use OpenDxp\Model\Document;
 use OpenDxp\Model\Site;
-use OpenDxp\SystemSettingsConfig;
 use OpenDxp\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
 
@@ -33,7 +33,7 @@ class StaticPageGenerator
     public function __construct(
         protected DocumentRendererInterface $documentRenderer,
         private readonly LockFactory $lockFactory,
-        protected SystemSettingsConfig $settingsConfig
+        private readonly GeneralHostResolver $generalHostResolver,
     ) {
     }
 
@@ -49,11 +49,10 @@ class StaticPageGenerator
 
         $useMainDomain = \OpenDxp\Config::getSystemConfiguration('documents')['static_page_generator']['use_main_domain'];
         if ($useMainDomain) {
-            $systemConfig = $this->settingsConfig->getSystemSettingsConfig();
-            $mainDomain = '/' . $systemConfig['general']['domain'];
+            $mainDomain = '/' . ($this->generalHostResolver->resolve() ?? '');
             $returnPath = '';
             $pathInfo = pathinfo($path);
-            if ($pathInfo['dirname'] != '') {
+            if ($pathInfo['dirname'] !== '') {
                 $directories = explode('/', $pathInfo['dirname']);
                 $directories = array_filter($directories);
                 $pathString = '';

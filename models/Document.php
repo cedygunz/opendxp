@@ -23,13 +23,13 @@ use OpenDxp\Cache\RuntimeCache;
 use OpenDxp\Event\DocumentEvents;
 use OpenDxp\Event\FrontendEvents;
 use OpenDxp\Event\Model\DocumentEvent;
+use OpenDxp\Http\Request\Host\GeneralHostResolver;
 use OpenDxp\Logger;
 use OpenDxp\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use OpenDxp\Model\Document\Listing;
 use OpenDxp\Model\Element\DuplicateFullPathException;
 use OpenDxp\Model\Element\ElementInterface;
 use OpenDxp\Model\Exception\NotFoundException;
-use OpenDxp\SystemSettingsConfig;
 use OpenDxp\Tool;
 use OpenDxp\Tool\Frontend as FrontendTool;
 use Override;
@@ -719,7 +719,6 @@ class Document extends Element\AbstractElement
                 }
 
                 if (!$link) {
-                    $config = SystemSettingsConfig::get()['general'];
                     $scheme = 'http://';
                     if ($request) {
                         $scheme = $request->getScheme() . '://';
@@ -735,8 +734,13 @@ class Document extends Element\AbstractElement
                         }
                     }
 
-                    if (!$link && !empty($config['domain']) && !($this instanceof WrapperInterface)) {
-                        $link = $scheme . $config['domain'] . $this->getRealFullPath();
+                    if (!$link && !$this instanceof WrapperInterface) {
+                        /** @var GeneralHostResolver $generalHostResolver */
+                        $generalHostResolver = OpenDxp::getContainer()->get(GeneralHostResolver::class);
+                        $domain = $generalHostResolver->resolve();
+                        if (!empty($domain)) {
+                            $link = $scheme . $domain . $this->getRealFullPath();
+                        }
                     }
                 }
             }

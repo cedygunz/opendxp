@@ -18,6 +18,7 @@ namespace OpenDxp\Bundle\StaticRoutesBundle\Routing\Staticroute;
 
 use OpenDxp\Bundle\StaticRoutesBundle\Model\Staticroute;
 use OpenDxp\Config;
+use OpenDxp\Http\Request\Host\GeneralHostResolver;
 use OpenDxp\Model\Site;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -55,8 +56,11 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
      */
     protected array $localeParams = [];
 
-    public function __construct(protected RequestContext $context, protected Config $config)
-    {
+    public function __construct(
+        protected RequestContext $context,
+        protected Config $config,
+        protected GeneralHostResolver $generalHostResolver,
+    ) {
     }
 
     public function setContext(RequestContext $context): void
@@ -123,8 +127,8 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
                         'route' => $name,
                     ]);
                 }
-            } elseif ($needsHostname && !empty($this->config['general']['domain'])) {
-                $hostname = $this->config['general']['domain'];
+            } elseif ($needsHostname) {
+                $hostname = $this->generalHostResolver->resolve();
             }
         }
 
