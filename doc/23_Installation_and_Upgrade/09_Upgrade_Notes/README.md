@@ -1,5 +1,30 @@
 # Upgrade Notes
 
+## OpenDXP 1.3.0
+- Bugfix: Fix Video Processor when TmpStore is missing
+- Improvement: Use try-finally for disable/enable versioning
+- Improvement: Refactor SQL queries: enforce parameterized bindings and consistent style
+- Improvement: Refactor constants
+- New Feature: add site custom settings
+- New Feature: Introduce `GeneralHostResolver` service for centralized domain resolution, see [docs](../../02_MVC/04_Routing_and_URLs)
+
+## OpenDXP 1.2.2
+- Bugfix: Update upgrade notes and handle migration cleanup in CoreBundle
+- Bugfix: Update IgnoreCoreTablesFilterListener
+
+## OpenDXP 1.2.1
+- Improvement: DataObject\Listing: Add missing PhpDocs
+- Bugfix: Snippets will be cached with wrong links
+- Bugfix: Make translations sortable by dates
+- Improvement: `Translator::checkForEmptyTranslation()` - getValidLanguages needs to accept domain parameter
+- Improvement: Use preferred tile.openstreetmap.org URL
+- Improvement: Add IgnoreCoreTablesFilterListener
+- Improvement: Improve Generic Execution Engine Entities & Manager 
+- Improvement: [ApplicationLogger] standardize quotes and improve code readability in js files 
+- Improvement: update FOSJsRoutingBundle routing resource to use PHP configuration
+- Improvement: Replace deprecated Doctrine DBAL query introspection methods
+- Improvement: Update version references
+
 ## OpenDXP 1.2.0
 
 ### [Core]
