@@ -18,11 +18,14 @@ Open Source Data & Digital Experience Platform
 
 ***
 
-OpenDXP is an open source platform combining **PIM · DAM · Headless CMS · Composable Commerce** — API-first, built on Symfony.
+<h3>Open source platform combining PIM · DAM · Headless CMS · Composable Commerce</h3>
+
+API-first, built on Symfony — 100% open source, community-driven.
 
 <table>
   <tr>
     <td valign="top" width="33%">
+      <br>
       <picture>
         <source srcset="./doc/img/icon-core-framework-dark.svg" media="(prefers-color-scheme: dark)" />
         <source srcset="./doc/img/icon-core-framework.svg" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" />
@@ -30,27 +33,30 @@ OpenDXP is an open source platform combining **PIM · DAM · Headless CMS · Com
       </picture><br>
       <h4>Core Framework</h4>
       <p>Installation, configuration and the complete API reference for the OpenDXP platform.</p>
-      <a href="https://docs.opendxp.io/docs/core-framework">Browse Documentation →</a><br>
+      <a href="https://docs.opendxp.io/docs/core-framework">Browse Documentation →</a><br><br>
     </td>
     <td valign="top" width="33%">
+      <br>
       <picture>
         <source srcset="./doc/img/icon-core-bundles-dark.svg" media="(prefers-color-scheme: dark)" />
         <source srcset="./doc/img/icon-core-bundles.svg" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" />
         <img src="./doc/img/icon-core-bundles.svg" alt="" />
       </picture><br>
       <h4>Core Bundles</h4>
-      <p>Official bundles extending the core: Search, E-Commerce, Data Hub and more.</p>
-      <a href="https://docs.opendxp.io/docs/core-bundles">Browse Documentation →</a><br>
+      <p>Official bundles extending the core: Search, Marketing, Data Hub and more.</p>
+      <br>
+      <a href="https://docs.opendxp.io/docs/core-bundles">Browse Documentation →</a><br><br>
     </td>
     <td valign="top" width="33%">
+      <br>
       <picture>
         <source srcset="./doc/img/icon-feature-bundles-dark.svg" media="(prefers-color-scheme: dark)" />
         <source srcset="./doc/img/icon-feature-bundles.svg" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" />
         <img src="./doc/img/icon-feature-bundles.svg" alt="" />
       </picture><br>
       <h4>Feature Bundles</h4>
-      <p>Community-driven feature bundles — FormBuilder, Toolbox, Headless, SEO and many more.</p>
-      <a href="https://docs.opendxp.io/docs/bundles">Browse Documentation →</a><br>
+      <p>Empowering feature bundles: FormBuilder, Toolbox, Headless, SEO and many more.</p>
+      <a href="https://docs.opendxp.io/docs/bundles">Browse Documentation →</a><br><br>
     </td>
   </tr>
 </table>
@@ -60,21 +66,25 @@ OpenDXP is an open source platform combining **PIM · DAM · Headless CMS · Com
 ## Core Features and Highlights
 OpenDXP provides a codebase that enables:
 
-### Simultaneous Data Modeling and UI Configuration
+<h3><picture><source srcset="./doc/img/icon-data-modeling-dark.svg" media="(prefers-color-scheme: dark)" /><source srcset="./doc/img/icon-data-modeling.svg" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" /><img src="./doc/img/icon-data-modeling.svg" width="20" height="20" alt="" /></picture>&nbsp; Simultaneous Data Modeling and UI Configuration</h3>
+
 OpenDXP supports defining data structures (e.g., MDM/PIM) and configuring editorial UIs in parallel.
 Unstructured web content can be handled via templates; structured data can be managed with a graphical class editor.
 Data is persisted by the application according to the project's configuration.
 
-### Flexible Framework and Extensibility
+<h3><picture><source srcset="./doc/img/icon-extensibility-dark.svg" media="(prefers-color-scheme: dark)" /><source srcset="./doc/img/icon-extensibility.svg" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" /><img src="./doc/img/icon-extensibility.svg" width="20" height="20" alt="" /></picture>&nbsp; Flexible Framework and Extensibility</h3>
+
 OpenDXP uses the Symfony framework.
 Functionality can be extended via Symfony components and custom bundles.
 APIs allow integration with various frontend stacks.
 
-### Combined Functional Areas
+<h3><picture><source srcset="./doc/img/icon-combined-areas-dark.svg" media="(prefers-color-scheme: dark)" /><source srcset="./doc/img/icon-combined-areas.svg" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" /><img src="./doc/img/icon-combined-areas.svg" width="20" height="20" alt="" /></picture>&nbsp; Combined Functional Areas</h3>
+
 The application includes functionality for MDM/PIM, DAM, and Web‑CMS within the same codebase.
 Depending on solution architecture, this setup can reduce additional integration work (e.g., separate APIs, import/export, synchronization).
 
-### Administration Interface
+<h3><picture><source srcset="./doc/img/icon-admin-dark.svg" media="(prefers-color-scheme: dark)" /><source srcset="./doc/img/icon-admin.svg" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" /><img src="./doc/img/icon-admin.svg" width="20" height="20" alt="" /></picture>&nbsp; Administration Interface</h3>
+
 The administration interface is provided by the [admin-bundle](https://github.com/open-dxp/admin-bundle) and available for editorial workflows.
 Configuration options can be adjusted to align UI behavior with project requirements.
 
