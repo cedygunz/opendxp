@@ -44,7 +44,6 @@ API-first, built on Symfony — 100% open source, community-driven.
       </picture><br>
       <h4>Core Bundles</h4>
       <p>Official bundles extending the core: Search, Marketing, Data Hub and more.</p>
-      <br>
       <a href="https://docs.opendxp.io/docs/core-bundles">Browse Documentation →</a><br><br>
     </td>
     <td valign="top" width="33%">
@@ -55,7 +54,7 @@ API-first, built on Symfony — 100% open source, community-driven.
         <img src="./doc/img/icon-feature-bundles.svg" alt="" />
       </picture><br>
       <h4>Feature Bundles</h4>
-      <p>Empowering feature bundles: FormBuilder, Toolbox, Headless, SEO and many more.</p>
+      <p>Empowering feature bundles: FormBuilder, Headless, E-Commerce and many more.</p>
       <a href="https://docs.opendxp.io/docs/bundles">Browse Documentation →</a><br><br>
     </td>
   </tr>
@@ -100,19 +99,19 @@ cd ./my-project
 ./vendor/bin/opendxp-install
 ```
 
-[Full installation guide →](doc/01_Getting_Started/README.md)
+[Full installation guide →](https://docs.opendxp.io/docs/core-framework/Getting_Started/)
 
 ---
 
 ## Resources
 
-| | |
-|---|---|
-| [Documentation](https://docs.opendxp.io/) | Full platform & bundle docs |
-| [Issue Tracker](https://github.com/open-dxp/opendxp/issues) | Report bugs or request features |
-| [Discussions](https://github.com/orgs/open-dxp/discussions) | Community support |
-| [Upgrade Notes](https://docs.opendxp.io/docs/core-framework/Installation_and_Upgrade/Upgrade_Notes/#get-started-with-opendxp-10) | Get started with OpenDXP 1.0 |
-| [Testing with AI (Claude)](doc/19_Development_Tools_and_Details/50_Testing_with_AI.md) | Write, run and fix tests with Claude Code |
+|                                                                                                                                  |                                           |
+|----------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------|
+| [Documentation](https://docs.opendxp.io/)                                                                                        | Full platform & bundle docs               |
+| [Issue Tracker](https://github.com/open-dxp/opendxp/issues)                                                                      | Report bugs or request features           |
+| [Discussions](https://github.com/orgs/open-dxp/discussions)                                                                      | Community support                         |
+| [Upgrade Notes](https://docs.opendxp.io/docs/core-framework/Installation_and_Upgrade/Upgrade_Notes/#get-started-with-opendxp-10) | Get started with OpenDXP 1.0              |
+| [Testing with AI (Claude)](doc/19_Development_Tools_and_Details/50_Testing_with_AI.md)                                           | Write, run and fix tests with Claude Code |
 
 ## Contributing
 
