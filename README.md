@@ -2,6 +2,9 @@
 
 Open Source Data & Digital Experience Platform
 
+[![Packagist](https://img.shields.io/packagist/v/open-dxp/opendxp.svg)](https://packagist.org/packages/open-dxp/opendxp)
+[![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat)](LICENSE.md)
+
 ***
 
 ## Disclaimer
@@ -15,44 +18,80 @@ Open Source Data & Digital Experience Platform
 
 ***
 
-[![Packagist](https://img.shields.io/packagist/v/open-dxp/opendxp.svg)](https://packagist.org/packages/open-dxp/opendxp)
-[![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat)](LICENSE.md)
+<h3>Open source platform combining PIM · DAM · Headless CMS · Composable Commerce</h3>
 
-* [Get started with OpenDXP 1.0](doc/23_Installation_and_Upgrade/09_Upgrade_Notes/README.md#get-started-with-opendxp-10)
-* [Documentation](doc)
-* [Issue Tracker](https://github.com/open-dxp/opendxp/issues) - Report bugs or suggest new features
-* [Forums](https://github.com/orgs/open-dxp/discussions) - Community support and discussions
-* 🤖 [Testing with AI (Claude)](doc/19_Development_Tools_and_Details/50_Testing_with_AI.md) - Write, run and fix tests with Claude Code
+API-first, built on Symfony — 100% open source, community-driven.
 
-## Contribute  
-**Bug fixes:** please create a pull request including a step by step description to reproduce the problem  
-**Security vulnerabilities:** please see our [security policy](https://github.com/open-dxp/opendxp/security/policy)
-  
+<table>
+  <tr>
+    <td valign="top" width="33%">
+      <br>
+      <picture>
+        <source srcset="./doc/img/icon-core-framework-dark.svg" media="(prefers-color-scheme: dark)" />
+        <source srcset="./doc/img/icon-core-framework.svg" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" />
+        <img src="./doc/img/icon-core-framework.svg" alt="" />
+      </picture><br>
+      <h4>Core Framework</h4>
+      <p>Installation, configuration and the complete API reference for the OpenDXP platform.</p>
+      <a href="https://docs.opendxp.io/docs/core-framework">Browse Documentation →</a><br><br>
+    </td>
+    <td valign="top" width="33%">
+      <br>
+      <picture>
+        <source srcset="./doc/img/icon-core-bundles-dark.svg" media="(prefers-color-scheme: dark)" />
+        <source srcset="./doc/img/icon-core-bundles.svg" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" />
+        <img src="./doc/img/icon-core-bundles.svg" alt="" />
+      </picture><br>
+      <h4>Core Bundles</h4>
+      <p>Official bundles extending the core: Search, Marketing, Data Hub and more.</p>
+      <a href="https://docs.opendxp.io/docs/core-bundles">Browse Documentation →</a><br><br>
+    </td>
+    <td valign="top" width="33%">
+      <br>
+      <picture>
+        <source srcset="./doc/img/icon-feature-bundles-dark.svg" media="(prefers-color-scheme: dark)" />
+        <source srcset="./doc/img/icon-feature-bundles.svg" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" />
+        <img src="./doc/img/icon-feature-bundles.svg" alt="" />
+      </picture><br>
+      <h4>Feature Bundles</h4>
+      <p>Empowering feature bundles: FormBuilder, Headless, E-Commerce and many more.</p>
+      <a href="https://docs.opendxp.io/docs/bundles">Browse Documentation →</a><br><br>
+    </td>
+  </tr>
+</table>
+
+---
+
 ## Core Features and Highlights
-OpenDXP provides a codebase that enables: 
+OpenDXP provides a codebase that enables:
 
-### Simultaneous Data Modeling and UI Configuration 
+<h3><picture><source srcset="./doc/img/icon-data-modeling-dark.svg" media="(prefers-color-scheme: dark)" /><source srcset="./doc/img/icon-data-modeling.svg" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" /><img src="./doc/img/icon-data-modeling.svg" width="20" height="20" alt="" /></picture>&nbsp; Simultaneous Data Modeling and UI Configuration</h3>
+
 OpenDXP supports defining data structures (e.g., MDM/PIM) and configuring editorial UIs in parallel.
-Unstructured web content can be handled via templates; structured data can be managed with a graphical class editor. 
-Data is persisted by the application according to the project’s configuration. 
+Unstructured web content can be handled via templates; structured data can be managed with a graphical class editor.
+Data is persisted by the application according to the project's configuration.
 
-### Flexible Framework and Extensibility 
+<h3><picture><source srcset="./doc/img/icon-extensibility-dark.svg" media="(prefers-color-scheme: dark)" /><source srcset="./doc/img/icon-extensibility.svg" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" /><img src="./doc/img/icon-extensibility.svg" width="20" height="20" alt="" /></picture>&nbsp; Flexible Framework and Extensibility</h3>
+
 OpenDXP uses the Symfony framework.
-Functionality can be extended via Symfony components and custom bundles. 
-APIs allow integration with various frontend stacks. 
+Functionality can be extended via Symfony components and custom bundles.
+APIs allow integration with various frontend stacks.
 
-### Combined Functional Areas 
+<h3><picture><source srcset="./doc/img/icon-combined-areas-dark.svg" media="(prefers-color-scheme: dark)" /><source srcset="./doc/img/icon-combined-areas.svg" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" /><img src="./doc/img/icon-combined-areas.svg" width="20" height="20" alt="" /></picture>&nbsp; Combined Functional Areas</h3>
+
 The application includes functionality for MDM/PIM, DAM, and Web‑CMS within the same codebase.
-Depending on solution architecture, this setup can reduce additional integration work (e.g., separate APIs, import/export, synchronization). 
+Depending on solution architecture, this setup can reduce additional integration work (e.g., separate APIs, import/export, synchronization).
 
-### Administration Interface 
-The administration interface is available for editorial workflows. 
-Configuration options can be adjusted to align UI behavior with project requirements. 
+<h3><picture><source srcset="./doc/img/icon-admin-dark.svg" media="(prefers-color-scheme: dark)" /><source srcset="./doc/img/icon-admin.svg" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" /><img src="./doc/img/icon-admin.svg" width="20" height="20" alt="" /></picture>&nbsp; Administration Interface</h3>
 
-***
+The administration interface is provided by the [admin-bundle](https://github.com/open-dxp/admin-bundle) and available for editorial workflows.
+Configuration options can be adjusted to align UI behavior with project requirements.
+
+---
 
 ## Getting Started
-_**Only three commands to start!**_
+
+Three commands to install a working skeleton application:
 
 ```bash
 COMPOSER_MEMORY_LIMIT=-1 composer create-project open-dxp/skeleton ./my-project
@@ -60,7 +99,25 @@ cd ./my-project
 ./vendor/bin/opendxp-install
 ```
 
-This will install an empty skeleton application. [Click here for more installation options and a detailed guide](doc/01_Getting_Started/README.md)
+[Full installation guide →](https://docs.opendxp.io/docs/core-framework/Getting_Started/)
+
+---
+
+## Resources
+
+|                                                                                                                                  |                                           |
+|----------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------|
+| [Documentation](https://docs.opendxp.io/)                                                                                        | Full platform & bundle docs               |
+| [Issue Tracker](https://github.com/open-dxp/opendxp/issues)                                                                      | Report bugs or request features           |
+| [Discussions](https://github.com/orgs/open-dxp/discussions)                                                                      | Community support                         |
+| [Upgrade Notes](https://docs.opendxp.io/docs/core-framework/Installation_and_Upgrade/Upgrade_Notes/#get-started-with-opendxp-10) | Get started with OpenDXP 1.0              |
+| [Testing with AI (Claude)](doc/19_Development_Tools_and_Details/50_Testing_with_AI.md)                                           | Write, run and fix tests with Claude Code |
+
+## Contributing
+
+**Bug fixes:** open a pull request including a step-by-step description to reproduce the problem.
+**Security vulnerabilities:** see our [security policy](https://github.com/open-dxp/opendxp/security/policy).
+
 
 ## Supported Versions
 Support of a minor version of OpenDXP packages ends with the release of the next minor version.

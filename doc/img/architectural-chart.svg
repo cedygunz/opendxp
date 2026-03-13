@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 580">
+  <defs>
+    <style>text { font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; }</style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="580" fill="#0f172a"/>
+
+  <!-- ===== SECTION BRACKET (right edge) ===== -->
+  <line x1="1152" y1="16"  x2="1152" y2="552" stroke="#334155" stroke-width="1"/>
+  <line x1="1152" y1="16"  x2="1162" y2="16"  stroke="#334155" stroke-width="1"/>
+  <line x1="1152" y1="76"  x2="1162" y2="76"  stroke="#334155" stroke-width="1"/>
+  <line x1="1152" y1="90"  x2="1162" y2="90"  stroke="#334155" stroke-width="1"/>
+  <line x1="1152" y1="480" x2="1162" y2="480" stroke="#334155" stroke-width="1"/>
+  <line x1="1152" y1="492" x2="1162" y2="492" stroke="#334155" stroke-width="1"/>
+  <line x1="1152" y1="552" x2="1162" y2="552" stroke="#334155" stroke-width="1"/>
+
+  <!-- Section labels -->
+  <text x="1150" y="46"  font-size="10" fill="#94a3b8" text-anchor="middle" dominant-baseline="central" transform="rotate(-90,1178,46)">Presentation &amp; Interfaces</text>
+  <text x="1178" y="285" font-size="11" fill="#94a3b8" text-anchor="middle" dominant-baseline="central" transform="rotate(-90,1178,285)">Application</text>
+  <text x="1178" y="522" font-size="10" fill="#94a3b8" text-anchor="middle" dominant-baseline="central" transform="rotate(-90,1178,522)">Persistence</text>
+
+  <!-- ===== ROW 1: PRESENTATION (y=16, h=60) ===== -->
+  <rect x="16"  y="16" width="274" height="60" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="153" y="46" font-size="13" fill="#e2e8f0" text-anchor="middle" dominant-baseline="central">Browser</text>
+
+  <rect x="300" y="16" width="274" height="60" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="437" y="46" font-size="13" fill="#e2e8f0" text-anchor="middle" dominant-baseline="central">API Clients</text>
+
+  <rect x="584" y="16" width="274" height="60" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="721" y="46" font-size="13" fill="#e2e8f0" text-anchor="middle" dominant-baseline="central">Frontend Applications</text>
+
+  <rect x="868" y="16" width="274" height="60" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="1005" y="46" font-size="13" fill="#e2e8f0" text-anchor="middle" dominant-baseline="central">CLI Commands</text>
+
+  <!-- ===== APPLICATION OUTER BLOCK (y=90, h=390) ===== -->
+  <rect x="16" y="90" width="1127" height="390" rx="8" fill="#131c2e" stroke="#1e293b" stroke-width="1.5"/>
+
+  <!-- Sub-label: MVC & APIs -->
+  <rect x="24" y="98" width="64" height="110" rx="4" fill="#0a1628"/>
+  <text x="56" y="153" font-size="10" fill="#60a5fa" text-anchor="middle" dominant-baseline="central" transform="rotate(-90,56,153)">MVC &amp; APIs</text>
+
+  <!-- Sub-label: Core Extensions -->
+  <rect x="24" y="216" width="64" height="110" rx="4" fill="#0a1628"/>
+  <text x="56" y="271" font-size="10" fill="#60a5fa" text-anchor="middle" dominant-baseline="central" transform="rotate(-90,56,271)">Core Extensions</text>
+
+  <!-- 7 Blue extension columns (x=96, w=98, gap=8, h=228) -->
+  <rect x="96"  y="98" width="98" height="228" rx="4" fill="#1e40af"/>
+  <text x="145" y="212" font-size="11" fill="white" text-anchor="middle" dominant-baseline="central" transform="rotate(-90,145,212)">Admin Backend</text>
+
+  <rect x="202" y="98" width="98" height="228" rx="4" fill="#1e40af"/>
+  <text x="251" y="212" font-size="11" fill="white" text-anchor="middle" dominant-baseline="central" transform="rotate(-90,251,212)">Datahub</text>
+
+  <rect x="308" y="98" width="98" height="228" rx="4" fill="#1e40af"/>
+  <text x="357" y="212" font-size="11" fill="white" text-anchor="middle" dominant-baseline="central" transform="rotate(-90,357,212)">Perspective</text>
+
+  <rect x="414" y="98" width="98" height="228" rx="4" fill="#1e40af"/>
+  <text x="463" y="212" font-size="10" fill="white" text-anchor="middle" dominant-baseline="central" transform="rotate(-90,463,212)">E-Commerce Framework</text>
+
+  <rect x="520" y="98" width="98" height="228" rx="4" fill="#1e40af"/>
+  <text x="569" y="212" font-size="11" fill="white" text-anchor="middle" dominant-baseline="central" transform="rotate(-90,569,212)">Reporting</text>
+
+  <rect x="626" y="98" width="98" height="228" rx="4" fill="#1e40af"/>
+  <text x="675" y="212" font-size="11" fill="white" text-anchor="middle" dominant-baseline="central" transform="rotate(-90,675,212)">Personalization</text>
+
+  <rect x="732" y="98" width="98" height="228" rx="4" fill="#1e40af"/>
+  <text x="781" y="212" font-size="11" fill="white" text-anchor="middle" dominant-baseline="central" transform="rotate(-90,781,212)">And many more…</text>
+
+  <!-- 3 Custom columns (x=842, w=93, gap=8, h=228) -->
+  <rect x="842"  y="98" width="93" height="228" rx="4" fill="#9a3412"/>
+  <text x="888.5" y="212" font-size="11" fill="white" text-anchor="middle" dominant-baseline="central" transform="rotate(-90,888.5,212)">Custom Extensions</text>
+
+  <rect x="943"  y="98" width="93" height="228" rx="4" fill="#9a3412"/>
+  <text x="989.5" y="212" font-size="11" fill="white" text-anchor="middle" dominant-baseline="central" transform="rotate(-90,989.5,212)">Apps / Website</text>
+
+  <rect x="1044" y="98" width="93" height="228" rx="4" fill="#9a3412"/>
+  <text x="1090.5" y="212" font-size="11" fill="white" text-anchor="middle" dominant-baseline="central" transform="rotate(-90,1090.5,212)">Custom Bundles</text>
+
+  <!-- ===== OPENDXP CORE BLOCK (y=334, h=138) ===== -->
+  <rect x="24" y="334" width="1111" height="138" rx="6" fill="#141f05" stroke="#4d6b12" stroke-width="1"/>
+
+  <!-- OpenDXP Core left label (user brand color) -->
+  <rect x="32" y="342" width="64" height="122" rx="4" fill="#e6ff2a"/>
+  <text x="64" y="403" font-size="10" fill="black" text-anchor="middle" dominant-baseline="central" transform="rotate(-90,64,403)">OpenDXP Core</text>
+
+  <!-- Event Driven PHP API bar (user brand color) -->
+  <rect x="104" y="342" width="1023" height="30" rx="4" fill="#e6ff2a"/>
+  <text x="615.5" y="357" font-size="12" fill="black" text-anchor="middle" dominant-baseline="central">Event Driven PHP API</text>
+
+  <!-- i18n group -->
+  <rect x="104" y="380" width="360" height="84" rx="4" fill="#a3cc00" stroke="#4d6b12" stroke-width="0.5"/>
+  <rect x="112" y="388" width="32"  height="68" rx="3" fill="#e6ff2a"/>
+  <text x="128" y="422" font-size="9" fill="black" text-anchor="middle" dominant-baseline="central" transform="rotate(-90,128,422)">i18n</text>
+  <rect x="152" y="388" width="100" height="68" rx="3" fill="#e6ff2a"/>
+  <text x="202" y="422" font-size="12" fill="black" text-anchor="middle" dominant-baseline="central">Documents</text>
+  <rect x="260" y="388" width="96"  height="68" rx="3" fill="#e6ff2a"/>
+  <text x="308" y="422" font-size="12" fill="black" text-anchor="middle" dominant-baseline="central">Objects</text>
+  <rect x="364" y="388" width="92"  height="68" rx="3" fill="#e6ff2a"/>
+  <text x="410" y="422" font-size="12" fill="black" text-anchor="middle" dominant-baseline="central">Assets</text>
+
+  <!-- Versioning -->
+  <rect x="472" y="380" width="210" height="84" rx="4" fill="#e6ff2a"/>
+  <text x="577" y="422" font-size="12" fill="black" text-anchor="middle" dominant-baseline="central">Versioning</text>
+
+  <!-- Workflows -->
+  <rect x="690" y="380" width="210" height="84" rx="4" fill="#e6ff2a"/>
+  <text x="795" y="422" font-size="12" fill="black" text-anchor="middle" dominant-baseline="central">Workflows</text>
+
+  <!-- Scheduling -->
+  <rect x="908" y="380" width="219" height="84" rx="4" fill="#e6ff2a"/>
+  <text x="1017.5" y="422" font-size="12" fill="black" text-anchor="middle" dominant-baseline="central">Scheduling</text>
+
+  <!-- ===== ROW 4: PERSISTENCE (y=492, h=60) ===== -->
+  <rect x="16"  y="492" width="274" height="60" rx="6" fill="#14532d"/>
+  <text x="153" y="522" font-size="13" fill="#d1fae5" text-anchor="middle" dominant-baseline="central">Database</text>
+
+  <rect x="300" y="492" width="274" height="60" rx="6" fill="#14532d"/>
+  <text x="437" y="522" font-size="13" fill="#d1fae5" text-anchor="middle" dominant-baseline="central">Filesystem / Flysystem</text>
+
+  <rect x="584" y="492" width="274" height="60" rx="6" fill="#14532d"/>
+  <text x="721" y="522" font-size="13" fill="#d1fae5" text-anchor="middle" dominant-baseline="central">Cache-System</text>
+
+  <rect x="868" y="492" width="274" height="60" rx="6" fill="#14532d"/>
+  <text x="1005" y="522" font-size="13" fill="#d1fae5" text-anchor="middle" dominant-baseline="central">Search Indices</text>
+</svg>
