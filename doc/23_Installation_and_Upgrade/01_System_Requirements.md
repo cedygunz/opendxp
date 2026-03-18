@@ -15,7 +15,7 @@ For production, we highly recommend a *nix based system.
 - Nginx
 
 
-### PHP >=8.1 \<8.4
+### PHP >=8.3 \<8.5
 Both **mod_php** and **FCGI (FPM)** are supported.  
 
 #### Required Settings and Modules & Extensions
