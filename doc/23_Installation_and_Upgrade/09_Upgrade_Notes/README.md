@@ -6,7 +6,7 @@
 - Improvement: Refactor SQL queries: enforce parameterized bindings and consistent style
 - Improvement: Refactor constants
 - New Feature: add site custom settings
-- New Feature: Introduce `GeneralHostResolver` service for centralized domain resolution, see [docs](../../02_MVC/04_Routing_and_URLs)
+- New Feature: Introduce `GeneralHostResolver` service for centralized domain resolution, see [docs](../../02_MVC/04_Routing_and_URLs/06_Domain_and_Host_Handling.md)
 
 ## OpenDXP 1.2.2
 - Bugfix: Update upgrade notes and handle migration cleanup in CoreBundle
