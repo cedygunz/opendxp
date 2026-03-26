@@ -704,7 +704,7 @@ class Document extends Element\AbstractElement
 
             if ((Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this))
                 || $differentDomain) {
-                if ($mainRequest && ($mainDocument = $mainRequest->get(DynamicRouter::CONTENT_KEY)) && $mainDocument instanceof WrapperInterface) {
+                if ($mainRequest && ($mainDocument = $mainRequest->attributes->get(DynamicRouter::CONTENT_KEY)) && $mainDocument instanceof WrapperInterface) {
                     $hardlinkPath = '';
                     $hardlink = $mainDocument->getHardLinkSource();
                     $hardlinkTarget = $hardlink->getSourceDocument();
