@@ -26,6 +26,7 @@ use DeepCopy\Matcher\PropertyTypeMatcher;
 use DeepCopy\TypeMatcher\TypeMatcher;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Exception;
 use League\Csv\EscapeFormula;
@@ -595,7 +596,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * find all elements which the user may not list and therefore may never be shown to the user.
+     * Find all elements which the user may not list and therefore may never be shown to the user.
      * A user may have custom workspaces and/or may inherit those from their role(s), if any.
      *
      * @param string $type asset|object|document
@@ -606,74 +607,67 @@ class Service extends Model\AbstractModel
      */
     public static function findForbiddenPaths(string $type, Model\User $user): array
     {
-        $db = Db::get();
-
         if ($user->isAdmin()) {
             return ['forbidden' => [], 'allowed' => ['/']];
         }
 
-        $workspaceCids = [];
-        $userWorkspaces = $db->fetchAllAssociative(
-            sprintf('SELECT cpath, cid, list FROM users_workspaces_%s WHERE userId = ?', $type),
-            [$user->getId()]
-        );
-        // this collects the array that are on user-level, which have top priority
-        foreach ($userWorkspaces as $userWorkspace) {
-            $workspaceCids[] = $userWorkspace['cid'];
-        }
+        $db = Db::get();
+        $userId = $user->getId();
+        $roleIds = array_map('intval', $user->getRoles() ?? []);
 
-        if ($userRoleIds = $user->getRoles()) {
-            $roleWorkspacesSql = sprintf(
-                'SELECT cpath, userid, MAX(list) as list FROM users_workspaces_%s WHERE userId IN (?)',
-                $type
+        if ($roleIds) {
+            // Single query: user permissions take precedence over role permissions.
+            // COALESCE picks the user value if present, otherwise falls back to MAX over roles.
+            $rows = $db->fetchAllAssociative(
+                sprintf(
+                    'SELECT cpath,
+                        COALESCE(
+                            MAX(CASE WHEN userId = ? THEN list END),
+                            MAX(CASE WHEN userId IN (?) THEN list END)
+                        ) AS list
+                    FROM users_workspaces_%s
+                    WHERE userId = ? OR userId IN (?)
+                    GROUP BY cpath
+                    ORDER BY cpath ASC',
+                    $type
+                ),
+                [$userId, $roleIds, $userId, $roleIds],
+                [ParameterType::INTEGER, ArrayParameterType::INTEGER, ParameterType::INTEGER, ArrayParameterType::INTEGER]
             );
-            $roleParams = [$userRoleIds];
-            $roleTypes = [ArrayParameterType::INTEGER];
-            if ($workspaceCids) {
-                $roleWorkspacesSql .= ' AND cid NOT IN (?)';
-                $roleParams[] = $workspaceCids;
-                $roleTypes[] = ArrayParameterType::INTEGER;
-            }
-            $roleWorkspacesSql .= ' GROUP BY cpath';
-
-            $roleWorkspaces = $db->fetchAllAssociative($roleWorkspacesSql, $roleParams, $roleTypes);
+        } else {
+            $rows = $db->fetchAllAssociative(
+                sprintf('SELECT cpath, list FROM users_workspaces_%s WHERE userId = ? ORDER BY cpath ASC', $type),
+                [$userId]
+            );
         }
 
-        $uniquePaths = [];
-        foreach ([...$userWorkspaces, ...$roleWorkspaces ?? []] as $workspace) {
-            $uniquePaths[$workspace['cpath']] = $workspace['list'];
+        $uniquePaths = array_map('intval', array_column($rows, 'list', 'cpath'));
+
+        if (empty($uniquePaths)) {
+            return ['forbidden' => ['/' => []], 'allowed' => []];
         }
-        ksort($uniquePaths);
 
-        //TODO: above this should be all in one query (eg. instead of ksort, use sql sort) but had difficulties making the `group by` working properly to let user permissions take precedence
-
-        $totalPaths = count($uniquePaths);
-
+        $paths = array_keys($uniquePaths);
+        $total = count($paths);
         $forbidden = [];
         $allowed = [];
-        if ($totalPaths > 0) {
-            $uniquePathsKeys = array_keys($uniquePaths);
-            for ($index = 0; $index < $totalPaths; $index++) {
-                $path = $uniquePathsKeys[$index];
-                if ($uniquePaths[$path] == 0) {
-                    $forbidden[$path] = [];
-                    for ($findIndex = $index + 1; $findIndex < $totalPaths; $findIndex++) { //NB: the starting index is the last index we got
-                        $findPath = $uniquePathsKeys[$findIndex];
-                        if (str_contains($findPath, $path)) { //it means that we found a children
-                            if ($uniquePaths[$findPath] == 1) {
-                                $forbidden[$path][] = $findPath;
-                                //adding list=1 children
-                            }
-                        } else {
-                            break;
-                        }
-                    }
-                } else {
-                    $allowed[] = $path;
+
+        for ($i = 0; $i < $total; $i++) {
+            $path = $paths[$i];
+            if ($uniquePaths[$path] !== 0) {
+                $allowed[] = $path;
+                continue;
+            }
+
+            $forbidden[$path] = [];
+            for ($j = $i + 1; $j < $total; $j++) {
+                if (!str_starts_with($paths[$j], $path)) {
+                    break;
+                }
+                if ($uniquePaths[$paths[$j]] === 1) {
+                    $forbidden[$path][] = $paths[$j];
                 }
             }
-        } else {
-            $forbidden['/'] = [];
         }
 
         return ['forbidden' => $forbidden, 'allowed' => $allowed];
