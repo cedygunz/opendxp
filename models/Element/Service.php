@@ -613,7 +613,7 @@ class Service extends Model\AbstractModel
 
         $db = Db::get();
         $userId = $user->getId();
-        $roleIds = array_map('intval', $user->getRoles() ?? []);
+        $roleIds = array_map('intval', $user->getRoles());
 
         if ($roleIds) {
             // Single query: user permissions take precedence over role permissions.
