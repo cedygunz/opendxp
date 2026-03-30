@@ -21,7 +21,7 @@ use OpenDxp\Model\Element\Service;
 use OpenDxp\Tests\Support\Test\TestCase;
 use OpenDxp\Tests\Support\Util\TestHelper;
 
-class ServiceTest extends TestCase
+class ServiceCloneTest extends TestCase
 {
     public function testCloneMe(): void
     {
