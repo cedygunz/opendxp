@@ -542,15 +542,16 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         $name = $params['name'] . '__id';
         $prefix = $params['brickPrefix'] ?? '';
         if (preg_match('/^(asset|object|document)\|(\d+)/', $value, $matches)) {
+            $db = \OpenDxp\Db::get();
             $typeField = $params['name'] . '__type';
-            $typeCondition = '`' . $typeField . '` = ' . "'" . $matches[1] . "'";
+            $typeCondition = $prefix . $db->quoteIdentifier($typeField) . ' = ' . $db->quote($matches[1]);
             $value = $matches[2];
 
-            return '(' . $prefix . $typeCondition . ' AND ' . $prefix
-                . $this->getRelationFilterCondition($value, $operator, $name) . ')';
+            return '(' . $typeCondition . ' AND '
+                . $this->getRelationFilterCondition($value, $operator, $name, $prefix) . ')';
         }
 
-        return $this->getRelationFilterCondition($value, $operator, $name);
+        return $this->getRelationFilterCondition($value, $operator, $name, $prefix);
     }
 
     public function getVisibleFields(): ?string

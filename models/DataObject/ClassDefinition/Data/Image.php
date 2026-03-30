@@ -276,8 +276,9 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
         $name = $params['name'] ?: $this->name;
+        $brickPrefix = !empty($params['brickPrefix']) ? $params['brickPrefix'] : '';
 
-        return $this->getRelationFilterCondition($value, $operator, $name);
+        return $this->getRelationFilterCondition($value, $operator, $name, $brickPrefix);
     }
 
     public function getColumnType(): string
