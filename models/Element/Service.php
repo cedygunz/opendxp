@@ -656,6 +656,7 @@ class Service extends Model\AbstractModel
             $path = $paths[$i];
             if ($uniquePaths[$path] !== 0) {
                 $allowed[] = $path;
+
                 continue;
             }
 

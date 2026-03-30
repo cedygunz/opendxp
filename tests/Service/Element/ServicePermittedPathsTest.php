@@ -16,17 +16,19 @@ declare(strict_types=1);
 
 namespace OpenDxp\Tests\Service\Element;
 
+use InvalidArgumentException;
 use OpenDxp\Db;
 use OpenDxp\Model\Asset;
 use OpenDxp\Model\Document\Page;
-use OpenDxp\Model\User;
 use OpenDxp\Model\Element\Service;
+use OpenDxp\Model\User;
 use OpenDxp\Tests\Support\Test\TestCase;
 use OpenDxp\Tests\Support\Util\TestHelper;
 
 class ServicePermittedPathsTest extends TestCase
 {
     protected User $adminUser;
+
     protected User $regularUser;
 
     protected function needsDb(): bool
@@ -416,7 +418,7 @@ class ServicePermittedPathsTest extends TestCase
                 return $document->getId();
             })(),
 
-            default => throw new \InvalidArgumentException("Unknown type: $type"),
+            default => throw new InvalidArgumentException("Unknown type: $type"),
         };
     }
 
@@ -440,5 +442,4 @@ class ServicePermittedPathsTest extends TestCase
     {
         return Service::findForbiddenPaths($type, $user);
     }
-
 }
