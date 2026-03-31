@@ -30,6 +30,7 @@ final readonly class TwigEnvironmentConfigurator
      * The inner configurator is typed as object because the decorator chain
      * may contain a third-party configurator (e.g. symfony/ux-twig-component)
      * that does not implement a common interface.
+     *
      * @see https://github.com/symfony/symfony/issues/63808
      */
     public function __construct(
