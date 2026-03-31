@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace OpenDxp\Twig;
 
 use OpenDxp\Model\Document\Editable;
-use Symfony\Bundle\TwigBundle\DependencyInjection\Configurator\EnvironmentConfigurator;
 use Twig\Environment;
 use Twig\Runtime\EscaperRuntime;
 
@@ -27,14 +26,22 @@ use Twig\Runtime\EscaperRuntime;
  */
 final readonly class TwigEnvironmentConfigurator
 {
+    /**
+     * The inner configurator is typed as object because the decorator chain
+     * may contain a third-party configurator (e.g. symfony/ux-twig-component)
+     * that does not implement a common interface.
+     * @see https://github.com/symfony/symfony/issues/63808
+     */
     public function __construct(
-        private EnvironmentConfigurator $decorated,
+        private object $inner,
     ) {
     }
 
     public function configure(Environment $environment): void
     {
-        $this->decorated->configure($environment);
+        if (method_exists($this->inner, 'configure')) {
+            $this->inner->configure($environment);
+        }
 
         $environment->getRuntime(EscaperRuntime::class)->addSafeClass(Editable::class, ['html']);
     }
