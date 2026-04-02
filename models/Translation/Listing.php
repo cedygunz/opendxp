@@ -33,6 +33,7 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @internal
+     * @deprecated since OpenDXP 1.3 and will be removed in 2.0.
      *
      * @var int maximum number of cacheable items
      */
@@ -105,13 +106,23 @@ class Listing extends Model\Listing\AbstractListing
         return $this->setData($translations);
     }
 
+    /**
+     * @deprecated since OpenDXP 1.3 and will be removed in 2.0.
+     */
     public static function getCacheLimit(): int
     {
+        trigger_deprecation('open-dxp/opendxp', '1.3', 'Calling "%s::getCacheLimit()" is deprecated and will be removed in 2.0.', self::class);
+
         return self::$cacheLimit;
     }
 
+    /**
+     * @deprecated since OpenDXP 1.3 and will be removed in 2.0.
+     */
     public static function setCacheLimit(int $cacheLimit): void
     {
+        trigger_deprecation('open-dxp/opendxp', '1.3', 'Calling "%s::setCacheLimit()" is deprecated and will be removed in 2.0.', self::class);
+
         self::$cacheLimit = $cacheLimit;
     }
 }
