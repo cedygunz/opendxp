@@ -33,6 +33,7 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @internal
+     *
      * @deprecated since OpenDXP 1.3 and will be removed in 2.0.
      *
      * @var int maximum number of cacheable items
