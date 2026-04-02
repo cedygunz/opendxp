@@ -227,6 +227,25 @@ class TranslatorTest extends TestCase
         $this->assertArrayNotHasKey('fr', $translationValues);
     }
 
+    public function testListingSetConditionWithDifferentParamsReturnsCorrectResults(): void
+    {
+        $list1 = new Translation\Listing();
+        $list1->setDomain('messages');
+        $list1->setCondition('`key` LIKE ?', ['simple%']);
+        $results1 = $list1->getTranslations();
+
+        $this->assertCount(1, $results1);
+        $this->assertEquals('simple_key', $results1[0]->getKey());
+
+        $list2 = new Translation\Listing();
+        $list2->setDomain('messages');
+        $list2->setCondition('`key` LIKE ?', ['fallback%']);
+        $results2 = $list2->getTranslations();
+
+        $this->assertCount(1, $results2);
+        $this->assertEquals('fallback_key', $results2[0]->getKey());
+    }
+
     public function testCacheGetsInvalidatedOnSave(): void
     {
         $translationsListing = new Translation\Listing();
