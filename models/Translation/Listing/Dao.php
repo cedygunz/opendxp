@@ -64,10 +64,19 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $queryBuilder = $this->getQueryBuilder('*');
         $cacheKey = $this->getDatabaseTableName().'_data_' . md5((string)$queryBuilder);
-        if (!empty($this->model->getConditionParams()) || !$translations = Cache::load($cacheKey)) {
+
+        $translations = Cache::load($cacheKey);
+        $hasCondition = !empty($this->model->getConditionParams()) || $this->model->getConditionVariablesFromSetCondition() !== null;
+
+        if ($hasCondition || !$translations) {
             $translations = [];
             $queryBuilder->setMaxResults(null); //retrieve all results
-            $translationsData = $this->db->fetchAllAssociative($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
+
+            $translationsData = $this->db->fetchAllAssociative(
+                $queryBuilder->getSql(),
+                $queryBuilder->getParameters(),
+                $queryBuilder->getParameterTypes()
+            );
 
             foreach ($translationsData as $t) {
                 if (!isset($translations[$t['key']])) {
@@ -88,7 +97,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
                 $translations[$t['key']]->setModificationDate($t['modificationDate']);
             }
 
-            if (empty($this->model->getConditionParams())) {
+            if (!$hasCondition) {
                 Cache::save($translations, $cacheKey, ['translator', 'translate'], null, 999);
             }
         }
@@ -113,18 +122,31 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $queryBuilder = $this->getQueryBuilder($this->getDatabaseTableName() . '.key');
         $cacheKey = $this->getDatabaseTableName().'_data_' . md5((string)$queryBuilder);
 
-        if (!empty($this->model->getConditionParams()) || !$translations = Cache::load($cacheKey)) {
+        $translations = Cache::load($cacheKey);
+        $hasCondition = !empty($this->model->getConditionParams()) || $this->model->getConditionVariablesFromSetCondition() !== null;
+
+        if ($hasCondition || !$translations) {
             $translations = [];
-            $translationsData = $this->db->fetchAllAssociative($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
+
+            $translationsData = $this->db->fetchAllAssociative(
+                $queryBuilder->getSql(),
+                $queryBuilder->getParameters(),
+                $queryBuilder->getParameterTypes()
+            );
+
             foreach ($translationsData as $t) {
-                $transObj = Model\Translation::getByKey(id: $t['key'], domain: $this->model->getDomain(), languages: $this->model->getLanguages());
+                $transObj = Model\Translation::getByKey(
+                    id: $t['key'],
+                    domain: $this->model->getDomain(),
+                    languages: $this->model->getLanguages()
+                );
 
                 if ($transObj) {
                     $translations[] = $transObj;
                 }
             }
 
-            if (empty($this->model->getConditionParams())) {
+            if (!$hasCondition) {
                 Cache::save($translations, $cacheKey, ['translator', 'translate'], null, 999);
             }
         }
