@@ -28,21 +28,22 @@ trait RelationFilterConditionParser
     /**
      * Parses filter value of a relation field and creates the filter condition
      */
-    public function getRelationFilterCondition(?string $value, string $operator, string $name): string
+    public function getRelationFilterCondition(?string $value, string $operator, string $name, string $brickPrefix = ''): string
     {
         $db = \OpenDxp\Db::get();
-        $result = $db->quoteIdentifier($name) . ' IS NULL';
+        $key = $brickPrefix . $db->quoteIdentifier($name);
+        $result = $key . ' IS NULL';
         if ($value === null || $value === 'null') {
             return $result;
         }
         if ($operator === '=') {
-            return $db->quoteIdentifier($name) . ' = ' . $db->quote($value);
+            return $key . ' = ' . $db->quote($value);
         }
         $values = explode(',', $value);
-        $fieldConditions = array_map(function ($value) use ($name, $db) {
+        $fieldConditions = array_map(function ($value) use ($key, $db) {
             $quotedValue = $db->quote('%,' . Helper::escapeLike($value) . ',%');
 
-            return $db->quoteIdentifier($name) . ' LIKE ' . $quotedValue . ' ';
+            return $key . ' LIKE ' . $quotedValue . ' ';
         }, array_filter($values));
         if ($fieldConditions !== []) {
             return '(' . implode(' AND ', $fieldConditions) . ')';

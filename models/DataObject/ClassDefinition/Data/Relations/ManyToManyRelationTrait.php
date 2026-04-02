@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace OpenDxp\Model\DataObject\ClassDefinition\Data\Relations;
 
-use OpenDxp\Db;
 use OpenDxp\Model\DataObject;
 use OpenDxp\Model\DataObject\Concrete;
 use OpenDxp\Model\DataObject\Fieldcollection\Data\AbstractData;
@@ -86,31 +85,9 @@ trait ManyToManyRelationTrait
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
-        $prefix = '';
         $name = $params['name'] ?: $this->name;
+        $brickPrefix = !empty($params['brickPrefix']) ? $params['brickPrefix'] : '';
 
-        if ($params['brickPrefix']) {
-            $prefix = $params['brickPrefix'];
-            // The brick prefix might be quoted and with a dot suffix, if so, removing the first
-            // and second last character to unquote
-            $quoteIdentifierSymbol  = substr(Db::get()->quoteIdentifier(''), 0, 1);
-
-            if (
-                substr($prefix, 0, 1) === $quoteIdentifierSymbol &&
-                substr($prefix, -2, 1) === $quoteIdentifierSymbol &&
-                str_ends_with($prefix, '.')
-            ) {
-                // Case: `db`.
-                $prefix = substr($prefix, 1, -2) . '.';
-            } elseif (
-                substr($prefix, 0, 1) === $quoteIdentifierSymbol &&
-                substr($prefix, -1) === $quoteIdentifierSymbol
-            ) {
-                // Case: `db`
-                $prefix = substr($prefix, 1, -1);
-            }
-        }
-
-        return $this->getRelationFilterCondition($value, $operator, $prefix . $name);
+        return $this->getRelationFilterCondition($value, $operator, $name, $brickPrefix);
     }
 }

@@ -764,16 +764,10 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     #[Override]
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
-        $prefix = '';
         $name = $params['name'] ?: $this->name;
+        $brickPrefix = !empty($params['brickPrefix']) ? $params['brickPrefix'] : '';
 
-        if ($params['brickPrefix']) {
-            // The brick prefix is always quoted and with a dot suffix, so removing the first
-            // and second last character to unquote
-            $prefix = substr($params['brickPrefix'], 1, -2) . substr($params['brickPrefix'], -1);
-        }
-
-        return $this->getRelationFilterCondition($value, $operator, $prefix . $name);
+        return $this->getRelationFilterCondition($value, $operator, $name, $brickPrefix);
     }
 
     public function getQueryColumnType(): string
