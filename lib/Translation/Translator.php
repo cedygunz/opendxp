@@ -181,7 +181,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
                 $catalogue = new MessageCatalogue($locale, $data);
 
-                Cache::save($catalogue, $cacheKey, ['translator', 'translator_website', 'translate'], null, 999);
+                Cache::save($catalogue, $cacheKey, ['translator', 'translate'], null, 999);
             }
 
             $this->getCatalogue($locale)->addCatalogue($catalogue);
