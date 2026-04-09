@@ -18,6 +18,7 @@ namespace OpenDxp\Tests\Service\Element;
 use OpenDxp\Model\Element\AbstractElement;
 use OpenDxp\Model\Element\Service;
 use OpenDxp\Tests\Support\Test\TestCase;
+use OpenDxp\Tests\Support\Util\TestHelper;
 use ReflectionClass;
 
 final class AbstractElementValidatePathLengthTest extends TestCase
@@ -32,24 +33,42 @@ final class AbstractElementValidatePathLengthTest extends TestCase
      */
     private const MAX_VALID_KEY_LENGTH = 255;
 
+    protected function needsDb(): bool
+    {
+        return true;
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        TestHelper::cleanUp();
+    }
+
+    public function tearDown(): void
+    {
+        TestHelper::cleanUp();
+        parent::tearDown();
+    }
+
     /**
-     * Creates a test element with a specified path length.
+     * Creates a test element with a specified path length using TestHelper.
      */
     private function createElementWithPathLength(int $pathLength): AbstractElement
     {
-        return new class($pathLength) extends AbstractElement {
-            private int $pathLength;
-
-            public function __construct(int $pathLength)
-            {
-                $this->pathLength = $pathLength;
-            }
-
-            public function getRealFullPath(): string
-            {
-                return str_repeat('a', $this->pathLength);
-            }
-        };
+        // Create a real persisted object using TestHelper
+        $element = TestHelper::createEmptyObject('pathlen-test-', true);
+        
+        // Build a key that matches the desired path length
+        // Path format: /parent_path/key, so we adjust the key length accordingly
+        $basePath = $element->getRealPath(); // e.g., "/"
+        $remainingLength = $pathLength - mb_strlen($basePath, 'UTF-8');
+        
+        if ($remainingLength > 0) {
+            $key = str_repeat('a', $remainingLength);
+            $element->setKey($key);
+        }
+        
+        return $element;
     }
 
     /**
