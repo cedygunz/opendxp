@@ -36,6 +36,7 @@ use Override;
 use ReflectionClass;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \OpenDxp\Model\Document\Dao getDao()
@@ -684,63 +685,9 @@ class Document extends Element\AbstractElement
 
         $requestStack = OpenDxp::getContainer()->get('request_stack');
         $mainRequest = $requestStack->getMainRequest();
-        $request = $requestStack->getCurrentRequest();
 
-        // @TODO please forgive me, this is the dirtiest hack I've ever made :(
-        // if you got confused by this functionality drop me a line and I'll buy you some beers :)
-
-        // this is for the case that a link points to a document outside of the current site
-        // in this case we look for a hardlink in the current site which points to the current document
-        // why this could happen: we have 2 sites, in one site there's a hardlink to the other site and on a page inside
-        // the hardlink there are snippets embedded and this snippets have links pointing to a document which is also
-        // inside the hardlink scope, but this is an ID link, so we cannot rewrite the link the usual way because in the
-        // snippet / link we don't know anymore that whe a inside a hardlink wrapped document
         if (!$link && Tool::isFrontend()) {
-            $differentDomain = false;
-            $site = FrontendTool::getSiteForDocument($this);
-            if (Tool::isFrontendRequestByAdmin() && $site instanceof Site) {
-                $differentDomain = $site->getMainDomain() != $request->getHost();
-            }
-
-            if ((Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this))
-                || $differentDomain) {
-                if ($mainRequest && ($mainDocument = $mainRequest->attributes->get(DynamicRouter::CONTENT_KEY)) && $mainDocument instanceof WrapperInterface) {
-                    $hardlinkPath = '';
-                    $hardlink = $mainDocument->getHardLinkSource();
-                    $hardlinkTarget = $hardlink->getSourceDocument();
-                    if ($hardlinkTarget) {
-                        $hardlinkPath = preg_replace('@^' . preg_quote(Site::getCurrentSite()->getRootPath(), '@') . '@', '', $hardlink->getRealFullPath());
-
-                        $link = preg_replace('@^' . preg_quote($hardlinkTarget->getRealFullPath(), '@') . '@', $hardlinkPath, $this->getRealFullPath());
-                    }
-                    if (!str_contains($link, $hardlinkPath) && !str_contains($this->getRealFullPath(), Site::getCurrentSite()->getRootDocument()->getRealFullPath())) {
-                        $link = null;
-                    }
-                }
-
-                if (!$link) {
-                    $scheme = sprintf('%s://', Tool::getRequestScheme($request));
-
-                    if ($site && $site->getMainDomain()) {
-                        // check if current document is the root of the different site, if so, preg_replace below doesn't work, so just return /
-                        if ($site->getRootDocument()->getId() === $this->getId()) {
-                            $link = $scheme . $site->getMainDomain() . '/';
-                        } else {
-                            $link = $scheme . $site->getMainDomain() .
-                                preg_replace('@^' . $site->getRootPath() . '/@', '/', $this->getRealFullPath());
-                        }
-                    }
-
-                    if (!$link && !$this instanceof WrapperInterface) {
-                        /** @var GeneralHostResolver $generalHostResolver */
-                        $generalHostResolver = OpenDxp::getContainer()->get(GeneralHostResolver::class);
-                        $domain = $generalHostResolver->resolve();
-                        if (!empty($domain)) {
-                            $link = $scheme . $domain . $this->getRealFullPath();
-                        }
-                    }
-                }
-            }
+            $link = $this->resolveCrossSiteFullPath($requestStack->getCurrentRequest(), $mainRequest);
         }
 
         if (!$link) {
@@ -754,6 +701,113 @@ class Document extends Element\AbstractElement
         }
 
         return $this->prepareFrontendPath($link);
+    }
+
+    /**
+     * Resolves the full path for a document that lives outside the current site.
+     *
+     * Two cases exist:
+     *
+     * Case 1 — Hardlink rewrite
+     *   The main request is rendering a hardlink-wrapped page (WrapperInterface).
+     *   Snippets on that page load linked documents via Document::getById(), which
+     *   always returns the real (unwrapped) source document — losing the hardlink
+     *   context. Without this method, those documents would produce paths pointing
+     *   to the source site instead of the current (hardlink) site.
+     *
+     *   Example tree:
+     *     Site A: domain-a.com => /site-a/en/section/
+     *     Site B: domain-b.com => /site-b/
+     *       Hardlink: /site-b/hl => /site-a/en/section (childrenFromSource)
+     *
+     *   Rendering domain-b.com/hl/page (WrapperInterface in main request):
+     *     - Snippet embeds a link to /site-a/en/section/subpage (by ID)
+     *     - Document::getById() returns the real document (no hardlink context)
+     *     - This method detects the WrapperInterface in the main request and
+     *       rewrites /site-a/en/section/subpage => /hl/subpage
+     *
+     * Case 2 — Absolute URL fallback
+     *   No hardlink context exists. The document belongs to a different site with
+     *   its own domain. Returns an absolute URL to that domain.
+     *   Falls back to GeneralHostResolver if no site domain is configured.
+     *
+     */
+    private function resolveCrossSiteFullPath(?Request $request, ?Request $mainRequest): ?string
+    {
+        $differentDomain = false;
+        $site = FrontendTool::getSiteForDocument($this);
+
+        if (Tool::isFrontendRequestByAdmin() && $site instanceof Site && $request !== null) {
+            $differentDomain = $site->getMainDomain() !== $request->getHost();
+        }
+
+        if (!$differentDomain && (!Site::isSiteRequest() || FrontendTool::isDocumentInCurrentSite($this))) {
+            return null;
+        }
+
+        // Case 1: Rewrite the path into the active hardlink scope of the current site.
+        $mainDocument = $mainRequest?->attributes->get(DynamicRouter::CONTENT_KEY);
+        if ($mainDocument instanceof WrapperInterface) {
+            $hardlink = $mainDocument->getHardLinkSource();
+            $hardlinkTarget = $hardlink->getSourceDocument();
+
+            if ($hardlinkTarget !== null) {
+                // Strip the current site root from the hardlink path.
+                // e.g. /site-b/hl => /hl (after stripping /site-b)
+                $hardlinkPath = preg_replace(
+                    sprintf('@^%s@', preg_quote(Site::getCurrentSite()->getRootPath(), '@')),
+                    '',
+                    $hardlink->getRealFullPath()
+                );
+
+                // Replace the hardlink-target prefix with the hardlink path.
+                // e.g. /site-a/en/section/subpage => /hl/subpage
+                $link = preg_replace(
+                    sprintf('@^%s@', preg_quote($hardlinkTarget->getRealFullPath(), '@')),
+                    $hardlinkPath,
+                    $this->getRealFullPath()
+                );
+
+                if (str_contains($link, $hardlinkPath)) {
+                    return $link;
+                }
+
+                // Rewrite did not match: document is not under the hardlink target.
+                // However, if the document is under the current site root (edge case with overlapping hardlink configurations),
+                // pass through unchanged.
+                if (str_contains($this->getRealFullPath(), Site::getCurrentSite()->getRootDocument()->getRealFullPath())) {
+                    return null;
+                }
+            }
+        }
+
+        // Case 2.1: Absolute URL using the document's own site domain.
+        $scheme = sprintf('%s://', Tool::getRequestScheme($request));
+
+        if ($site instanceof Site && $site->getMainDomain()) {
+
+            if ($site->getRootDocument()->getId() === $this->getId()) {
+                return sprintf('%s%s/', $scheme, $site->getMainDomain());
+            }
+
+            $pattern = sprintf('@^%s/@', preg_quote($site->getRootPath(), '@'));
+            $path = preg_replace($pattern, '/', $this->getRealFullPath());
+
+            return $scheme . $site->getMainDomain() . $path;
+        }
+
+        // Case 2.2: Absolute URL via GeneralHostResolver
+        if (!$this instanceof WrapperInterface) {
+            /** @var GeneralHostResolver $generalHostResolver */
+            $generalHostResolver = OpenDxp::getContainer()->get(GeneralHostResolver::class);
+            $domain = $generalHostResolver->resolve();
+
+            if (!empty($domain)) {
+                return sprintf('%s%s%s', $scheme, $domain, $this->getRealFullPath());
+            }
+        }
+
+        return null;
     }
 
     private function prepareFrontendPath(string $path): string
