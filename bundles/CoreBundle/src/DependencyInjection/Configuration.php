@@ -256,6 +256,11 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                     ->defaultFalse()
                 ->end()
+                ->enumNode('default_scheme')
+                    ->info('Default URL scheme used when no request context is available (e.g. CLI, mail rendering).')
+                    ->values(['http', 'https'])
+                    ->defaultValue('http')
+                ->end()
             ->end();
     }
 

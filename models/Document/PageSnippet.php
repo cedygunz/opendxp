@@ -536,12 +536,12 @@ abstract class PageSnippet extends Model\Document
     public function getUrl(?string $hostname = null, ?string $scheme = null): string
     {
         if (!$scheme) {
-            $scheme = 'http://';
+            $scheme = sprintf('%s://', OpenDxp::getContainer()->getParameter('opendxp.general.default_scheme'));
 
             /** @var RequestHelper $requestHelper */
             $requestHelper = OpenDxp::getContainer()->get(RequestHelper::class);
             if ($requestHelper->hasMainRequest()) {
-                $scheme = $requestHelper->getMainRequest()->getScheme() . '://';
+                $scheme = sprintf('%s://', $requestHelper->getMainRequest()->getScheme());
             }
         }
 

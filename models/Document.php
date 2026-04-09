@@ -719,9 +719,9 @@ class Document extends Element\AbstractElement
                 }
 
                 if (!$link) {
-                    $scheme = 'http://';
+                    $scheme = sprintf('%s://', OpenDxp::getContainer()->getParameter('opendxp.general.default_scheme'));
                     if ($request) {
-                        $scheme = $request->getScheme() . '://';
+                        $scheme = sprintf('%s://', $request->getScheme());
                     }
 
                     if ($site && $site->getMainDomain()) {

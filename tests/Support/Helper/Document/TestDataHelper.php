@@ -104,7 +104,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertInstanceOf(Embed::class, $editable);
         $value = $editable->getUrl();
 
-        $this->assertEquals('http://someurl' . $seed, $value);
+        $this->assertEquals('https://someurl' . $seed, $value);
     }
 
     public function assertImage(PageSnippet $pagesnippet, string $field, int $seed = 1, array $params = []): void
@@ -403,7 +403,7 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $editable = new Embed();
         $editable->setName($field);
-        $editable->setDataFromEditmode(['url' => 'http://someurl' . $seed]);
+        $editable->setDataFromEditmode(['url' => 'https://someurl' . $seed]);
         $page->setEditable($editable);
     }
 
