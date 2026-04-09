@@ -959,7 +959,7 @@ class Service extends Model\AbstractModel
         }
 
         // key should not end (or start) with space after cut
-        return trim(mb_substr($key, 0, 255));
+        return trim(mb_substr($key, 0, 255, 'UTF-8'));
     }
 
     public static function isValidKey(string $key, string $type): bool

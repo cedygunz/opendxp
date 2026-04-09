@@ -527,7 +527,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     protected function validatePathLength(): void
     {
-        if (mb_strlen($this->getRealFullPath()) > 765) {
+        if (mb_strlen($this->getRealFullPath(), 'UTF-8') > 765) {
             throw new Exception("Full path is limited to 765 characters, reduce the length of your parent's path");
         }
     }
