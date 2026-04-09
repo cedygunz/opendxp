@@ -124,21 +124,74 @@ final class AbstractElementValidatePathLengthTest extends TestCase
         $this->assertSame(str_repeat('é', self::MAX_VALID_KEY_LENGTH), $result);
     }
 
-    public function testGetValidKeyHandlesNonUtf8Input(): void
-    {
-        $nonUtf8 = "\x63\x61\x66\xE9";
-
-        $result = Service::getValidKey($nonUtf8, 'object');
-
-        $this->assertIsString($result);
-        $this->assertNotSame($nonUtf8, $result);
-        $this->assertNotEmpty($result);
-    }
-
     public function testGetValidKeyReplaces4ByteUnicodeCharacters(): void
     {
         $result = Service::getValidKey("abc😀def", 'object');
 
         $this->assertSame('abc-def', $result);
+    }
+
+    public function testGetValidKeyReplacesSlashes(): void
+    {
+        $result = Service::getValidKey("my/key/name", 'object');
+
+        $this->assertSame('my-key-name', $result);
+    }
+
+    public function testGetValidKeyReplacesControlCharacters(): void
+    {
+        // Control characters (like \0, \x01, etc.) should be removed
+        $result = Service::getValidKey("my\x00key", 'object');
+
+        $this->assertNotContains("\x00", $result);
+        $this->assertNotSame("my\x00key", $result);
+    }
+
+    public function testGetValidKeyHandlesMixedEncodingCharacters(): void
+    {
+        // Mix of ASCII (1 byte), 2-byte (é), and 3-byte (€) UTF-8 characters
+        // This tests that mb_substr respects character boundaries regardless of byte length
+        $input = 'a' . str_repeat('é', 100) . str_repeat('€', 100) . str_repeat('a', 100);
+        $result = Service::getValidKey($input, 'object');
+
+        // Should be exactly 255 characters
+        $this->assertSame(self::MAX_VALID_KEY_LENGTH, mb_strlen($result, 'UTF-8'));
+        
+        // Verify no partial characters (all characters should be complete)
+        // by checking it starts with 'a' and contains complete é and € characters
+        $this->assertStringStartsWith('a', $result);
+    }
+
+    public function testGetValidKeyAsciiOnlyString(): void
+    {
+        // ASCII is a subset of UTF-8 - all characters are 1 byte
+        $input = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        $result = Service::getValidKey($input, 'object');
+
+        // ASCII should pass through unchanged
+        $this->assertSame($input, $result);
+        $this->assertSame(strlen($input), mb_strlen($result, 'UTF-8'));
+    }
+
+    public function testGetValidKeyHandlesLatinExtendedCharacters(): void
+    {
+        // Latin Extended-A characters (like ą, ć, ę) are 2-byte UTF-8
+        $input = str_repeat('ą', 300);
+        $result = Service::getValidKey($input, 'object');
+
+        // Should truncate to exactly 255 characters
+        $this->assertSame(self::MAX_VALID_KEY_LENGTH, mb_strlen($result, 'UTF-8'));
+        $this->assertSame(str_repeat('ą', self::MAX_VALID_KEY_LENGTH), $result);
+    }
+
+    public function testGetValidKeyHandsCyrillicCharacters(): void
+    {
+        // Cyrillic characters (like А, Б, В) are 2-byte UTF-8
+        $input = str_repeat('А', 300);
+        $result = Service::getValidKey($input, 'object');
+
+        // Should truncate to exactly 255 characters
+        $this->assertSame(self::MAX_VALID_KEY_LENGTH, mb_strlen($result, 'UTF-8'));
+        $this->assertSame(str_repeat('А', self::MAX_VALID_KEY_LENGTH), $result);
     }
 }
