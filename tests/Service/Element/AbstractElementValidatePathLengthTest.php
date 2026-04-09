@@ -126,7 +126,7 @@ final class AbstractElementValidatePathLengthTest extends TestCase
 
     public function testGetValidKeyReplaces4ByteUnicodeCharacters(): void
     {
-        $result = Service::getValidKey("abc😀def", 'object');
+        $result = Service::getValidKey("abc📦def", 'object');
 
         $this->assertSame('abc-def', $result);
     }
@@ -143,7 +143,7 @@ final class AbstractElementValidatePathLengthTest extends TestCase
         // Control characters (like \0, \x01, etc.) should be removed
         $result = Service::getValidKey("my\x00key", 'object');
 
-        $this->assertNotContains("\x00", $result);
+        $this->assertStringNotContainsString("\x00", $result);
         $this->assertNotSame("my\x00key", $result);
     }
 
@@ -184,7 +184,7 @@ final class AbstractElementValidatePathLengthTest extends TestCase
         $this->assertSame(str_repeat('ą', self::MAX_VALID_KEY_LENGTH), $result);
     }
 
-    public function testGetValidKeyHandsCyrillicCharacters(): void
+    public function testGetValidKeyHandlesCyrillicCharacters(): void
     {
         // Cyrillic characters (like А, Б, В) are 2-byte UTF-8
         $input = str_repeat('А', 300);
@@ -193,5 +193,49 @@ final class AbstractElementValidatePathLengthTest extends TestCase
         // Should truncate to exactly 255 characters
         $this->assertSame(self::MAX_VALID_KEY_LENGTH, mb_strlen($result, 'UTF-8'));
         $this->assertSame(str_repeat('А', self::MAX_VALID_KEY_LENGTH), $result);
+    }
+
+    public function testGetValidKeyRemovesLeadingAndTrailingWhitespace(): void
+    {
+        // Key with leading and trailing spaces should have them removed
+        $input = '    mykey   ';
+        $result = Service::getValidKey($input, 'object');
+
+        $this->assertSame('mykey', $result);
+        $this->assertStringNotContainsString(' ', $result);
+    }
+
+    public function testGetValidKeyPreservesInternalWhitespace(): void
+    {
+        // Internal spaces in the key should be preserved
+        $input = 'my    key   name';
+        $result = Service::getValidKey($input, 'object');
+
+        $this->assertStringContainsString(' ', $result);
+        $this->assertSame('my    key   name', $result);
+    }
+
+    public function testGetValidKeyWithTabsAndNewlines(): void
+    {
+        // Tabs and newlines are control characters and should be removed by preg_replace
+        $input = "my\t\nkey";
+        $result = Service::getValidKey($input, 'object');
+
+        // Control characters should be removed
+        $this->assertStringNotContainsString("\t", $result);
+        $this->assertStringNotContainsString("\n", $result);
+    }
+
+    public function testGetValidKeyTrailingWhitespaceAfterTruncation(): void
+    {
+        // Create a string that when truncated will have trailing whitespace
+        // > MAX_VALID_KEY_LENGTH chars total with exposed trailing spaces after truncation
+        $input = str_repeat('a', 250) . '     TRUNCATETHIS';
+        $result = Service::getValidKey($input, 'object');
+
+        // Should have trailing spaces removed
+        $this->assertFalse(str_ends_with($result, ' '));
+        // Result should be exactly 250 'a's (trailing spaces removed)
+        $this->assertSame(str_repeat('a', 250), $result);
     }
 }
