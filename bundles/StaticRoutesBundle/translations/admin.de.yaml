@@ -1,4 +1,2 @@
----
-static_routes: Statische Routen
-routes: Routen
-...
+routes: 'Routen'
+static_routes: 'Statische Routen'

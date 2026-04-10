@@ -1,4 +1,2 @@
----
-quicksearch: Ricerca veloce (Ctrl+Spazio)
-keybinding_quickSearch: Quick Search
-...
+keybinding_quickSearch: 'Quick Search'
+quicksearch: 'Ricerca veloce (Ctrl+Spazio)'

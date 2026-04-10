@@ -1,6 +1,3 @@
----
-workflow_change_email_notification_text: "%s elemen (ID: %s) a %s m\u0171velet ker\xFClt
-  kiv\xE1lt\xE1sra a '%s' folyamatban."
-workflow_change_email_notification_deeplink: Deeplink az elemhez
-workflow_change_email_notification_note: "Megjegyz\xE9s hozz\xE1adva:"
-...
+workflow_change_email_notification_deeplink: 'Deeplink az elemhez'
+workflow_change_email_notification_note: 'Megjegyzés hozzáadva:'
+workflow_change_email_notification_text: '%s elemen (ID: %s) a %s művelet került kiváltásra a ''%s'' folyamatban.'

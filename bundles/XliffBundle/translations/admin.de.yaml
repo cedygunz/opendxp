@@ -1,17 +1,5 @@
----
-xliff_export_documents: "Wenn Sie etwas \xFCbersetzen wollen, z.B. den ganzen /en
-  Baum in eine andere Sprache, erstellen Sie bitte zuerst eine Kopie von /en (z.B.
-  /de), dann exportieren Sie /de f\xFCr die \xDCbersetzung. Wenn Sie bei der \xFCbersetzen
-  XLIFF den englischen Inhalt in /de importieren, wird die deutsche \xDCbersetzung
-  in der XLIFF \xFCberschrieben."
-xliff_export_objects: "Nur Felder innerhalb eines Localized Field Container werden
-  erkannt. Beim Importieren der \xFCbersetzen XLIFF wird die Ursprungssprache nicht
-  ver\xE4ndert. Nur die Felder, die \xFCbersetzt werden sollen, werden \xFCberschrieben."
-xliff_export_notice: "Hier kannst du deine ausgew\xE4hlten Dokumente und Objekte,
-  f\xFCr externe \xDCbersetzungen, exportieren."
-xliff_import_notice: "W\xE4hle eine \xFCbersetzte XLIFF Datei, welche vorher von OpenDXP
-  exportiert und dann von einem Lokalisierungsdienstleister (LSP) oder einer CAT Anwendung
-  \xFCbersetzt wurde, aus. Bitte beachte, dass der Import die Elemente, die f\xFCr
-  den Import ausgew\xE4hlt wurden, \xFCberschreibt (siehe auch Export)."
-xliff_import_export: Xliff Import/Export
-...
+xliff_export_documents: 'Wenn Sie etwas übersetzen wollen, z.B. den ganzen /en Baum in eine andere Sprache, erstellen Sie bitte zuerst eine Kopie von /en (z.B. /de), dann exportieren Sie /de für die Übersetzung. Wenn Sie bei der übersetzen XLIFF den englischen Inhalt in /de importieren, wird die deutsche Übersetzung in der XLIFF überschrieben.'
+xliff_export_notice: 'Hier kannst du deine ausgewählten Dokumente und Objekte, für externe Übersetzungen, exportieren.'
+xliff_export_objects: 'Nur Felder innerhalb eines Localized Field Container werden erkannt. Beim Importieren der übersetzen XLIFF wird die Ursprungssprache nicht verändert. Nur die Felder, die übersetzt werden sollen, werden überschrieben.'
+xliff_import_export: 'Xliff Import/Export'
+xliff_import_notice: 'Wähle eine übersetzte XLIFF Datei, welche vorher von OpenDXP exportiert und dann von einem Lokalisierungsdienstleister (LSP) oder einer CAT Anwendung übersetzt wurde, aus. Bitte beachte, dass der Import die Elemente, die für den Import ausgewählt wurden, überschreibt (siehe auch Export).'

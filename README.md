@@ -115,8 +115,16 @@ cd ./my-project
 
 ## Contributing
 
-**Bug fixes:** open a pull request including a step-by-step description to reproduce the problem.
+**Bug fixes:** open a pull request including a step-by-step description to reproduce the problem.  
 **Security vulnerabilities:** see our [security policy](https://github.com/open-dxp/opendxp/security/policy).
+
+### Translations
+Translation files live in `bundles/*Bundle/translations/` as YAML files (see [CoreBundle](bundles/CoreBundle/translations) for example).
+
+- The English source file is `translations/admin.en.yaml`
+- Each language has its own file, e.g. `admin.de.yaml`, `admin.fr.yaml`
+- To improve an existing translation: edit the relevant file and open a pull request
+- To add a new language: copy `admin.en.yaml`, rename it to `admin.<locale>.yaml`, translate the values, and open a pull request
 
 
 ## Supported Versions

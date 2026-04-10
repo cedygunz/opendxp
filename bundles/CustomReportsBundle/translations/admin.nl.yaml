@@ -1,8 +1,6 @@
----
-custom_reports: Aangepaste rapporten
-reports: Rapporten
-custom_report_permissions: Rechten
-keybinding_customReports: Custom Reports
-keybinding_reports: Report
+custom_report_permissions: 'Rechten'
+custom_reports: 'Aangepaste rapporten'
+keybinding_customReports: 'Custom Reports'
+keybinding_reports: 'Report'
 mandatory_fields_missing: 'Please fill in the following mandatory fields:'
-...
+reports: 'Rapporten'

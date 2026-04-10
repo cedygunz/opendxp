@@ -1,25 +1,23 @@
----
-log_relatedobject: Objet en relation
-log_component: Composant
-log_search_form: "Rechercher param\xE8tre"
-log_search_type: Type de journal
-log_search_relatedobject: Objet en relation (id)
-log_timestamp: Horodatage
-log_fileobject: Fichier Objet
-log_detailinformation: "D\xE9tail des informations"
-log_pid: PID
-log_refresh_label: Actualiser chaque
-log_applicationlog: Journal applicatif
-log_search_component: Composant
-log_search_pid: PID
-log_refresh_seconds: Secondes
-log_search_from: De
-log_search_to: "\xC0"
-log_type: Type
-log_source: Source
-log_message: Message
-log_reset_search: "R\xE9initialiser"
-log_search: Rechercher
-log_search_message: Message
-keybinding_applicationLogger: Application logger
-...
+keybinding_applicationLogger: 'Application logger'
+log_applicationlog: 'Journal applicatif'
+log_component: 'Composant'
+log_detailinformation: 'Détail des informations'
+log_fileobject: 'Fichier Objet'
+log_message: 'Message'
+log_pid: 'PID'
+log_refresh_label: 'Actualiser chaque'
+log_refresh_seconds: 'Secondes'
+log_relatedobject: 'Objet en relation'
+log_reset_search: 'Réinitialiser'
+log_search: 'Rechercher'
+log_search_component: 'Composant'
+log_search_form: 'Rechercher paramètre'
+log_search_from: 'De'
+log_search_message: 'Message'
+log_search_pid: 'PID'
+log_search_relatedobject: 'Objet en relation (id)'
+log_search_to: 'À'
+log_search_type: 'Type de journal'
+log_source: 'Source'
+log_timestamp: 'Horodatage'
+log_type: 'Type'

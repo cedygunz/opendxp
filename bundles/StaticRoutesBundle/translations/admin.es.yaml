@@ -1,4 +1,2 @@
----
-static_routes: "Rutas est\xE1ticas"
-routes: Routes
-...
+routes: 'Routes'
+static_routes: 'Rutas estáticas'

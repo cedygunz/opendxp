@@ -1,8 +1,6 @@
----
-custom_reports: "\xD6zel Raporlar"
-reports: Raporlar
-custom_report_permissions: Permission
-keybinding_customReports: Custom Reports
-keybinding_reports: Report
+custom_report_permissions: 'Permission'
+custom_reports: 'Özel Raporlar'
+keybinding_customReports: 'Custom Reports'
+keybinding_reports: 'Report'
 mandatory_fields_missing: 'Please fill in the following mandatory fields:'
-...
+reports: 'Raporlar'
