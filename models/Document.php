@@ -719,10 +719,7 @@ class Document extends Element\AbstractElement
                 }
 
                 if (!$link) {
-                    $scheme = sprintf('%s://', OpenDxp::getContainer()->getParameter('opendxp.general.default_scheme'));
-                    if ($request) {
-                        $scheme = sprintf('%s://', $request->getScheme());
-                    }
+                    $scheme = sprintf('%s://', Tool::getRequestScheme($request));
 
                     if ($site && $site->getMainDomain()) {
                         // check if current document is the root of the different site, if so, preg_replace below doesn't work, so just return /

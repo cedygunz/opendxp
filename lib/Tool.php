@@ -44,18 +44,24 @@ final class Tool
      * Sets the current request to operate on
      *
      * @internal
+     * @deprecated since OpenDXP 1.3 and will be removed in 2.0
      */
     public static function setCurrentRequest(?Request $request = null): void
     {
+        trigger_deprecation('open-dxp/opendxp', '1.3', 'Calling "%s()" is deprecated and will be removed in 2.0. The request is managed via the RequestStack.', __METHOD__);
+
         self::$currentRequest = $request;
     }
 
     /**
      * @internal
+     * @deprecated since OpenDXP 1.3 and will be removed in 2.0
      */
     public static function hasCurrentRequest(): bool
     {
-        return self::$currentRequest instanceof \Symfony\Component\HttpFoundation\Request;
+        trigger_deprecation('open-dxp/opendxp', '1.3', 'Calling "%s()" is deprecated and will be removed in 2.0. The request is managed via the RequestStack.', __METHOD__);
+
+        return self::$currentRequest instanceof Request;
     }
 
     /**
@@ -246,11 +252,11 @@ final class Tool
 
     private static function resolveRequest(?Request $request = null): ?Request
     {
-        if (!$request instanceof \Symfony\Component\HttpFoundation\Request) {
+        if (!$request instanceof Request) {
             // do an extra check for the container as we might be in a state where no container is set yet
             if (OpenDxp::hasContainer()) {
                 $request = OpenDxp::getContainer()->get('request_stack')->getMainRequest();
-            } elseif (self::$currentRequest instanceof \Symfony\Component\HttpFoundation\Request) {
+            } elseif (self::$currentRequest instanceof Request) {
                 return self::$currentRequest;
             }
         }
@@ -260,7 +266,7 @@ final class Tool
 
     public static function isFrontend(?Request $request = null): bool
     {
-        if (!$request instanceof \Symfony\Component\HttpFoundation\Request) {
+        if (!$request instanceof Request) {
             $request = OpenDxp::getContainer()->get('request_stack')->getMainRequest();
         }
 
@@ -280,7 +286,7 @@ final class Tool
     {
         $request = self::resolveRequest($request);
 
-        if (!$request instanceof \Symfony\Component\HttpFoundation\Request) {
+        if (!$request instanceof Request) {
             return false;
         }
 
@@ -310,7 +316,7 @@ final class Tool
     {
         $request = self::resolveRequest($request);
 
-        if (!$request instanceof \Symfony\Component\HttpFoundation\Request) {
+        if (!$request instanceof Request) {
             return false;
         }
 
@@ -335,7 +341,7 @@ final class Tool
     {
         $request = self::resolveRequest($request);
 
-        if (!$request instanceof \Symfony\Component\HttpFoundation\Request || !$request->getHost()) {
+        if (!$request instanceof Request || !$request->getHost()) {
             /** @var GeneralHostResolver $generalHostResolver */
             $generalHostResolver = OpenDxp::getContainer()->get(GeneralHostResolver::class);
 
@@ -352,8 +358,8 @@ final class Tool
     {
         $request = self::resolveRequest($request);
 
-        if (!$request instanceof \Symfony\Component\HttpFoundation\Request) {
-            return 'http';
+        if (!$request instanceof Request) {
+            return OpenDxp::getContainer()->get(RequestHelper::class)->getScheme();
         }
 
         return $request->getScheme();
@@ -368,17 +374,18 @@ final class Tool
     {
         $request = self::resolveRequest($request);
 
-        $protocol = 'http';
         $hostname = '';
         $port = '';
 
-        if ($request instanceof \Symfony\Component\HttpFoundation\Request) {
+        if ($request instanceof Request) {
             $protocol = $request->getScheme();
             $hostname = $request->getHost();
 
             if (!in_array($request->getPort(), [443, 80])) {
                 $port = ':' . $request->getPort();
             }
+        } else {
+            $protocol = OpenDxp::getContainer()->get(RequestHelper::class)->getScheme();
         }
 
         if (!$hostname || $hostname === 'localhost') {
@@ -433,7 +440,7 @@ final class Tool
     {
         $request = self::resolveRequest($request);
 
-        if (!$request instanceof \Symfony\Component\HttpFoundation\Request) {
+        if (!$request instanceof Request) {
             return null;
         }
 

@@ -73,7 +73,6 @@ final class OpenDxpCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('opendxp.maintenance.housekeeping.cleanup_profiler_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_profiler_files_atime_older_than']);
 
         $container->setParameter('opendxp.documents.default_controller', $config['documents']['default_controller']);
-        $container->setParameter('opendxp.general.default_scheme', $config['general']['default_scheme']);
 
         //twig security policy allowlist config
         $container->setParameter('opendxp.templating.twig.sandbox_security_policy.tags', $config['templating_engine']['twig']['sandbox_security_policy']['tags']);

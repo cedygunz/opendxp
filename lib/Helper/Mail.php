@@ -214,7 +214,7 @@ CSS;
             $hostUrl = \OpenDxp\Tool::getHostUrl();
         }
 
-        $defaultScheme = \OpenDxp::getContainer()->getParameter('opendxp.general.default_scheme');
+        $defaultScheme = \OpenDxp\Tool::getRequestScheme();
 
         //matches all links
         preg_match_all("@(href|src)\s*=[\"']([^(http|mailto|javascript|data:|#)].*?(css|jpe?g|gif|png)?)[\"']@is", $string, $matches);

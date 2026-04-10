@@ -27,15 +27,17 @@ use Symfony\Component\Routing\RequestContext;
 
 class RequestHelper
 {
-    public const string ATTRIBUTE_FRONTEND_REQUEST= '_opendxp_frontend_request';
+    public const string ATTRIBUTE_FRONTEND_REQUEST = '_opendxp_frontend_request';
 
-    public function __construct(protected RequestStack $requestStack, protected RequestContext $requestContext)
-    {
+    public function __construct(
+        protected RequestStack $requestStack,
+        protected RequestContext $requestContext
+    ) {
     }
 
     public function hasCurrentRequest(): bool
     {
-        return $this->requestStack->getCurrentRequest() instanceof \Symfony\Component\HttpFoundation\Request;
+        return $this->requestStack->getCurrentRequest() instanceof Request;
     }
 
     public function getCurrentRequest(): Request
@@ -49,7 +51,7 @@ class RequestHelper
 
     public function getRequest(?Request $request = null): Request
     {
-        if (!$request instanceof \Symfony\Component\HttpFoundation\Request) {
+        if (!$request instanceof Request) {
             return $this->getCurrentRequest();
         }
 
@@ -58,13 +60,13 @@ class RequestHelper
 
     public function hasMainRequest(): bool
     {
-        return $this->requestStack->getMainRequest() instanceof \Symfony\Component\HttpFoundation\Request;
+        return $this->requestStack->getMainRequest() instanceof Request;
     }
 
     public function getMainRequest(): Request
     {
         $mainRequest = $this->requestStack->getMainRequest();
-        if (!$mainRequest instanceof \Symfony\Component\HttpFoundation\Request) {
+        if (!$mainRequest instanceof Request) {
             throw new LogicException('There is no main request available.');
         }
 
@@ -188,6 +190,19 @@ class RequestHelper
             $this->requestContext->getMethod(),
             $this->requestContext->getParameters()
         );
+    }
+
+    /**
+     * Returns the current scheme. Uses the main request if available,
+     * otherwise falls back to the RequestContext (configurable via router.request_context.scheme).
+     */
+    public function getScheme(): string
+    {
+        if ($this->hasMainRequest()) {
+            return $this->getMainRequest()->getScheme();
+        }
+
+        return $this->requestContext->getScheme();
     }
 
     /**
