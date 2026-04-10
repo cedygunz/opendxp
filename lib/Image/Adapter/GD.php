@@ -128,7 +128,8 @@ class GD extends Adapter
 
     protected function destroy(): void
     {
-        // GdImage objects are freed automatically (imagedestroy() is deprecated as of PHP 8.5)
+        // GdImage objects are freed automatically
+        // => imagedestroy() is deprecated since PHP 8.5
     }
 
     private function createImage(int $width, int $height): GdImage
