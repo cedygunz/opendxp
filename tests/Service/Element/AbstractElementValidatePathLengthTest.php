@@ -160,6 +160,8 @@ final class AbstractElementValidatePathLengthTest extends TestCase
         // Verify no partial characters (all characters should be complete)
         // by checking it starts with 'a' and contains complete é and € characters
         $this->assertStringStartsWith('a', $result);
+        $this->assertStringContainsString('é', $result);
+        $this->assertStringContainsString('€', $result);
     }
 
     public function testGetValidKeyAsciiOnlyString(): void
