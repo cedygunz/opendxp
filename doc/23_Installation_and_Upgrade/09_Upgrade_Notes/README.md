@@ -1,5 +1,17 @@
 # Upgrade Notes
 
+## OpenDXP 1.3.1
+- Bugfix: Centralize brickPrefix handling in RelationFilterConditionParser [#120](https://github.com/open-dxp/opendxp/pull/120)
+- Bugfix: fix translation caching bugs and deprecate unused listing methods [#123](https://github.com/open-dxp/opendxp/pull/123)
+- Improvement: PHP 8.5 support added
+- Improvement: Remove more deprecated code usages [#112](https://github.com/open-dxp/opendxp/pull/112), [#113](https://github.com/open-dxp/opendxp/pull/113)
+- Improvement: Refactor findForbiddenPaths to improve performance, combining user and role queries into a single optimized query [#115](https://github.com/open-dxp/opendxp/pull/115)
+- Improvement: Compatibility fix with Symfony UX TwigComponent/LiveComponent
+- Improvement: Improve path and key validation with explicit encoding and tests [#128](https://github.com/open-dxp/opendxp/pull/128)
+- Improvement: Use Request Context for improved URL handling [#127](https://github.com/open-dxp/opendxp/pull/127)
+- Improvement: Remove POEditor support and normalize translation files [#129](https://github.com/open-dxp/opendxp/pull/129)
+- Improvement: Fix cross-site document path resolution in hardlink context [#132](https://github.com/open-dxp/opendxp/pull/132)
+
 ## OpenDXP 1.3.0
 - Bugfix: Fix Video Processor when TmpStore is missing
 - Improvement: Use try-finally for disable/enable versioning
