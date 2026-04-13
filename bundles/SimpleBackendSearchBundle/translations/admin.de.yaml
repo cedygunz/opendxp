@@ -1,4 +1,2 @@
----
-quicksearch: Schnellsuche
-keybinding_quickSearch: Schnelle Suche
-...
+keybinding_quickSearch: 'Schnelle Suche'
+quicksearch: 'Schnellsuche'

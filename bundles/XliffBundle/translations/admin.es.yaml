@@ -1,7 +1,5 @@
----
-xliff_export_documents: xliff_export_documents
-xliff_export_objects: xliff_export_objects
-xliff_export_notice: xliff_export_notice
-xliff_import_notice: xliff_import_notice
-xliff_import_export: Xliff Import/Export
-...
+xliff_export_documents: 'xliff_export_documents'
+xliff_export_notice: 'xliff_export_notice'
+xliff_export_objects: 'xliff_export_objects'
+xliff_import_export: 'Xliff Import/Export'
+xliff_import_notice: 'xliff_import_notice'

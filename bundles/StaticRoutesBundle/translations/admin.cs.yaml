@@ -1,4 +1,2 @@
----
-static_routes: Router
-routes: Routes
-...
+routes: 'Routes'
+static_routes: 'Router'

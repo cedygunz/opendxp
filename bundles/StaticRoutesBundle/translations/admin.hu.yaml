@@ -1,4 +1,2 @@
----
-static_routes: Statikus route-ok
-routes: Routes
-...
+routes: 'Routes'
+static_routes: 'Statikus route-ok'
