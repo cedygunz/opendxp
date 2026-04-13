@@ -958,8 +958,8 @@ class Service extends Model\AbstractModel
             $key = ltrim($key, '. ');
         }
 
-        // key should not end (or start) with space after cut
-        return trim(mb_substr($key, 0, 255));
+        // key should already have no whitespace at the start, and not end with it after cut
+        return rtrim(mb_substr($key, 0, 255, 'UTF-8'));
     }
 
     public static function isValidKey(string $key, string $type): bool
