@@ -9,12 +9,14 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) OpenDXP (https://www.opendxp.io)
+ * @copyright  Copyright (c) Pimcore GmbH (https://pimcore.com)
+ * @copyright  Modification Copyright (c) OpenDXP (https://www.opendxp.io)
  * @license    https://www.gnu.org/licenses/gpl-3.0.html  GNU General Public License version 3 (GPLv3)
  */
 
 namespace OpenDxp\Tests\Service\Element;
 
+use Exception;
 use OpenDxp\Model\Element\AbstractElement;
 use OpenDxp\Model\Element\Service;
 use OpenDxp\Tests\Support\Test\TestCase;
@@ -57,17 +59,17 @@ final class AbstractElementValidatePathLengthTest extends TestCase
     {
         // Create a real persisted object using TestHelper
         $element = TestHelper::createEmptyObject('pathlen-test-', true);
-        
+
         // Build a key that matches the desired path length
         // Path format: /parent_path/key, so we adjust the key length accordingly
         $basePath = $element->getRealPath(); // e.g., "/"
         $remainingLength = $pathLength - mb_strlen($basePath, 'UTF-8');
-        
+
         if ($remainingLength > 0) {
             $key = str_repeat('a', $remainingLength);
             $element->setKey($key);
         }
-        
+
         return $element;
     }
 
@@ -85,7 +87,6 @@ final class AbstractElementValidatePathLengthTest extends TestCase
     /**
      * Tests validatePathLength() method.
      */
-
     public function testValidatePathLengthAllowsExactlyMaxLength(): void
     {
         $element = $this->createElementWithPathLength(self::MAX_VALID_PATH_LENGTH);
@@ -98,14 +99,13 @@ final class AbstractElementValidatePathLengthTest extends TestCase
     {
         $element = $this->createElementWithPathLength(self::MAX_VALID_PATH_LENGTH + 1);
 
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->invokeValidatePathLength($element);
     }
 
     /**
      * Tests getValidKey() method.
      */
-
     public function testGetValidKeyTruncatesTo255Characters(): void
     {
         $input = str_repeat('a', 300);
@@ -126,14 +126,14 @@ final class AbstractElementValidatePathLengthTest extends TestCase
 
     public function testGetValidKeyReplaces4ByteUnicodeCharacters(): void
     {
-        $result = Service::getValidKey("abc📦def", 'object');
+        $result = Service::getValidKey('abc📦def', 'object');
 
         $this->assertSame('abc-def', $result);
     }
 
     public function testGetValidKeyReplacesSlashes(): void
     {
-        $result = Service::getValidKey("my/key/name", 'object');
+        $result = Service::getValidKey('my/key/name', 'object');
 
         $this->assertSame('my-key-name', $result);
     }
@@ -156,7 +156,7 @@ final class AbstractElementValidatePathLengthTest extends TestCase
 
         // Should be exactly 255 characters
         $this->assertSame(self::MAX_VALID_KEY_LENGTH, mb_strlen($result, 'UTF-8'));
-        
+
         // Verify no partial characters (all characters should be complete)
         // by checking it starts with 'a' and contains complete é and € characters
         $this->assertStringStartsWith('a', $result);
