@@ -214,6 +214,8 @@ CSS;
             $hostUrl = \OpenDxp\Tool::getHostUrl();
         }
 
+        $defaultScheme = \OpenDxp\Tool::getRequestScheme();
+
         //matches all links
         preg_match_all("@(href|src)\s*=[\"']([^(http|mailto|javascript|data:|#)].*?(css|jpe?g|gif|png)?)[\"']@is", $string, $matches);
 
@@ -221,7 +223,7 @@ CSS;
             $path = $matches[2][$key];
 
             if (str_starts_with($path, '//')) {
-                $absolutePath = 'http:' . $path;
+                $absolutePath = sprintf('%s:%s', $defaultScheme, $path);
             } elseif (str_starts_with($path, '/')) {
                 $absolutePath = preg_replace('@^' . $replacePrefix . '(/(.*))?$@', '/$2', $path);
                 $absolutePath = $hostUrl . $absolutePath;

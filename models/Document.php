@@ -719,10 +719,7 @@ class Document extends Element\AbstractElement
                 }
 
                 if (!$link) {
-                    $scheme = 'http://';
-                    if ($request) {
-                        $scheme = $request->getScheme() . '://';
-                    }
+                    $scheme = sprintf('%s://', Tool::getRequestScheme($request));
 
                     if ($site && $site->getMainDomain()) {
                         // check if current document is the root of the different site, if so, preg_replace below doesn't work, so just return /

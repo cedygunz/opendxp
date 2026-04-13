@@ -22,8 +22,8 @@ use OpenDxp\Document\Editable\EditableUsageResolver;
 use OpenDxp\Event\DocumentEvents;
 use OpenDxp\Event\Model\DocumentEvent;
 use OpenDxp\Http\Request\Host\GeneralHostResolver;
-use OpenDxp\Http\RequestHelper;
 use OpenDxp\Logger;
+use OpenDxp\Tool;
 use OpenDxp\Messenger\VersionDeleteMessage;
 use OpenDxp\Model;
 use OpenDxp\Model\Document;
@@ -536,13 +536,7 @@ abstract class PageSnippet extends Model\Document
     public function getUrl(?string $hostname = null, ?string $scheme = null): string
     {
         if (!$scheme) {
-            $scheme = 'http://';
-
-            /** @var RequestHelper $requestHelper */
-            $requestHelper = OpenDxp::getContainer()->get(RequestHelper::class);
-            if ($requestHelper->hasMainRequest()) {
-                $scheme = $requestHelper->getMainRequest()->getScheme() . '://';
-            }
+            $scheme = sprintf('%s://', Tool::getRequestScheme());
         }
 
         if (!$hostname) {

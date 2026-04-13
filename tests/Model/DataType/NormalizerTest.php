@@ -148,7 +148,7 @@ class NormalizerTest extends ModelTestCase
 
     public function testExternalImage(): void
     {
-        $originalValue = new DataObject\Data\ExternalImage('http://someurl.com');
+        $originalValue = new DataObject\Data\ExternalImage('https://someurl.com');
         $fd = new DataObject\ClassDefinition\Data\Email();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
