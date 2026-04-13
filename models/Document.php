@@ -730,7 +730,6 @@ class Document extends Element\AbstractElement
      *   No hardlink context exists. The document belongs to a different site with
      *   its own domain. Returns an absolute URL to that domain.
      *   Falls back to GeneralHostResolver if no site domain is configured.
-     *
      */
     private function resolveCrossSiteFullPath(?Request $request, ?Request $mainRequest): ?string
     {
