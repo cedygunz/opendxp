@@ -23,12 +23,12 @@ use OpenDxp\Event\DocumentEvents;
 use OpenDxp\Event\Model\DocumentEvent;
 use OpenDxp\Http\Request\Host\GeneralHostResolver;
 use OpenDxp\Logger;
-use OpenDxp\Tool;
 use OpenDxp\Messenger\VersionDeleteMessage;
 use OpenDxp\Model;
 use OpenDxp\Model\Document;
 use OpenDxp\Model\Document\Editable\Loader\EditableLoaderInterface;
 use OpenDxp\SystemSettingsConfig;
+use OpenDxp\Tool;
 use Override;
 
 /**

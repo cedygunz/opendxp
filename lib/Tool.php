@@ -44,6 +44,7 @@ final class Tool
      * Sets the current request to operate on
      *
      * @internal
+     *
      * @deprecated since OpenDXP 1.3 and will be removed in 2.0
      */
     public static function setCurrentRequest(?Request $request = null): void
@@ -55,6 +56,7 @@ final class Tool
 
     /**
      * @internal
+     *
      * @deprecated since OpenDXP 1.3 and will be removed in 2.0
      */
     public static function hasCurrentRequest(): bool
