@@ -93,6 +93,25 @@ Upgrade to the latest Pimcore `11.5.x` first!
 
 If you want to migrate your existing document, asset and object versions please read this: [Version Migration](Version_Migration.md)
 
+Note that you might have hardcoded pimcore class references in `documents_editables` or `properties` table.
+Check:
+```sql
+SELECT documentId, name, type, SUBSTRING(data, 1, 200)
+  FROM documents_editables
+  WHERE data LIKE '%Pimcore%'
+  LIMIT 20;
+ SELECT * FROM properties WHERE data LIKE '%Pimcore%' LIMIT 20;
+```
+It is save to replace the occurences, even in serialized data. Adjust the sql to your needs:
+```sql
+UPDATE documents_editables
+  SET data = REPLACE(data, 'Pimcore\\', 'OpenDxp\\')
+  WHERE data LIKE '%Pimcore%';
+UPDATE properties
+  SET data = REPLACE(data, 'Pimcore\\', 'OpenDxp\\')
+  WHERE data LIKE '%Pimcore%';
+```
+
 ***
 
 ### Breaking Changes
