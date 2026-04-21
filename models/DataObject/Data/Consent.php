@@ -19,6 +19,7 @@ namespace OpenDxp\Model\DataObject\Data;
 use OpenDxp\Model\DataObject\OwnerAwareFieldInterface;
 use OpenDxp\Model\DataObject\Traits\OwnerAwareFieldTrait;
 use OpenDxp\Model\Element\Note;
+use OpenDxp\Helper\DateFormat;
 
 class Consent implements OwnerAwareFieldInterface
 {
