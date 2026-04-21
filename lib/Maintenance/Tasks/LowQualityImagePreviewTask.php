@@ -19,6 +19,7 @@ namespace OpenDxp\Maintenance\Tasks;
 use Exception;
 use OpenDxp;
 use OpenDxp\Config;
+use OpenDxp\Helper\DateFormat;
 use OpenDxp\Maintenance\TaskInterface;
 use OpenDxp\Model\Asset;
 use Psr\Log\LoggerInterface;

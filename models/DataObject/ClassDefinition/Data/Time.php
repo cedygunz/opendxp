@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace OpenDxp\Model\DataObject\ClassDefinition\Data;
 
+use OpenDxp\Helper\DateFormat;
 use OpenDxp\Model;
 use OpenDxp\Model\DataObject;
 use OpenDxp\Model\DataObject\Concrete;

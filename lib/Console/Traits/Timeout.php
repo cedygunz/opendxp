@@ -18,6 +18,7 @@ namespace OpenDxp\Console\Traits;
 
 use Closure;
 use Exception;
+use OpenDxp\Helper\DateFormat;
 use OpenDxp\Logger;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

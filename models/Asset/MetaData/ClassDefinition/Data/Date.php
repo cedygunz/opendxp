@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace OpenDxp\Model\Asset\MetaData\ClassDefinition\Data;
 
 use Carbon\Carbon;
+use OpenDxp\Helper\DateFormat;
 use OpenDxp\Tool\UserTimezone;
 use Override;
 
