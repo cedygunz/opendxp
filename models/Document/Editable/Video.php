@@ -19,6 +19,7 @@ namespace OpenDxp\Model\Document\Editable;
 use DateTime;
 use OpenDxp;
 use OpenDxp\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
+use OpenDxp\Helper\DateFormat;
 use OpenDxp\Logger;
 use OpenDxp\Model;
 use OpenDxp\Model\Asset;
@@ -813,7 +814,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                 '@type' => 'VideoObject',
                 'name' => $this->getTitle(),
                 'description' => $this->getDescription(),
-                'uploadDate' => $uploadDate->format('Y-m-d\TH:i:sO'),
+                'uploadDate' => $uploadDate->format(DateFormat::ISO_8601_TIMEZONE),
             ];
             $duration = $video->getDuration();
 

@@ -76,7 +76,7 @@ class Consent implements OwnerAwareFieldInterface
     {
         $note = $this->getNote();
         if ($note) {
-            return $note->getTitle() . ': ' . date('r', $note->getDate());
+            return $note->getTitle() . ': ' . date(DateFormat::RFC_2822, $note->getDate());
         }
 
         return '';

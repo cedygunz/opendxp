@@ -43,7 +43,7 @@ class LowQualityImagePreviewTask implements TaskInterface
         if (!$isLowQualityPreviewEnabled) {
             return;
         }
-        if (date('H') <= 4 && $this->lock->acquire()) {
+        if ((int)date(DateFormat::COMPONENT_HOUR) <= 4 && $this->lock->acquire()) {
             // execution should be only sometime between 0:00 and 4:59 -> less load expected
             $this->logger->debug('Execute low quality image preview generation');
 

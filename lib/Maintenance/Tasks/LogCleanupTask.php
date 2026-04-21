@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace OpenDxp\Maintenance\Tasks;
 
+use OpenDxp\Helper\DateFormat;
 use OpenDxp\Helper\FileSystemHelper;
 use OpenDxp\Maintenance\TaskInterface;
 use OpenDxp\Model\Tool\TmpStore;
@@ -41,9 +42,9 @@ class LogCleanupTask implements TaskInterface
                 continue;
             }
 
-            if (file_exists($log) && date('Y-m-d', $lastTime) !== date('Y-m-d')) {
+            if (file_exists($log) && date(DateFormat::DATE, $lastTime) !== date(DateFormat::DATE)) {
                 // archive log (will be cleaned up by maintenance)
-                $archiveFilename = preg_replace('/\.log$/', '', $log).'-archive-'.date('Y-m-d', $lastTime).'.log';
+                $archiveFilename = preg_replace('/\.log$/', '', $log).'-archive-'.date(DateFormat::DATE, $lastTime).'.log';
                 rename($log, $archiveFilename);
 
                 $lastTimeItem->setData(time());

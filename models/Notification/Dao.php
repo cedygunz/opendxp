@@ -58,7 +58,7 @@ class Dao extends AbstractDao
      */
     public function save(): void
     {
-        $this->model->setModificationDate(date('Y-m-d H:i:s'));
+        $this->model->setModificationDate(date(DateFormat::DATETIME));
 
         if ($this->model->getId() === null || !$this->model->getCreationDate()) {
             $this->model->setCreationDate($this->model->getModificationDate());

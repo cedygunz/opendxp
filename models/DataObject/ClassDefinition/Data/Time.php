@@ -115,7 +115,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
             return null;
         }
 
-        return date('H:i', $timestamp);
+        return date(DateFormat::TIME, $timestamp);
     }
 
     /**

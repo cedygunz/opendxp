@@ -23,6 +23,7 @@ use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use OpenDxp\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use OpenDxp\Config;
+use OpenDxp\Helper\DateFormat;
 use OpenDxp\Maintenance\TaskInterface;
 use OpenDxp\Tool\Storage;
 use Psr\Log\LoggerInterface;
@@ -44,7 +45,7 @@ class LogArchiveTask implements TaskInterface
         $storage = Storage::get('application_log');
 
         $date = new DateTime('now');
-        $archiveTable = sprintf('%s_%s', ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX, $date->format('Y_m'));
+        $archiveTable = sprintf('%s_%s', ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX, $date->format(DateFormat::ARCHIVE_DATE));
 
         if (!empty($this->config['applicationlog']['archive_alternative_database'])) {
             $archiveTable = sprintf(
@@ -56,7 +57,7 @@ class LogArchiveTask implements TaskInterface
 
         $archiveThreshold = (int) ($this->config['applicationlog']['archive_treshold'] ?? 30);
         $sourceTable = ApplicationLoggerDb::TABLE_NAME;
-        $cutoff = (new DateTimeImmutable())->modify(sprintf('-%d days', $archiveThreshold))->format('Y-m-d H:i:s');
+        $cutoff = (new DateTimeImmutable())->modify(sprintf('-%d days', $archiveThreshold))->format(DateFormat::DATETIME);
         $whereParams = [$cutoff];
 
         $count = $this->db->fetchOne(
@@ -124,7 +125,7 @@ class LogArchiveTask implements TaskInterface
 
         foreach ($archiveTables as $archiveTableName) {
             if (preg_match('/^' . ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX . '_(\d{4})_(\d{2})$/', $archiveTableName, $matches)) {
-                $deleteArchiveLogDate = Carbon::createFromFormat('Y/m', $matches[1] . '/' . $matches[2]);
+                $deleteArchiveLogDate = Carbon::createFromFormat(DateFormat::FOLDER_DATE, $matches[1] . '/' . $matches[2]);
                 if ($deleteArchiveLogDate->add(new DateInterval('P' . ($this->config['applicationlog']['delete_archive_threshold'] ?? 6) . 'M')) < new DateTimeImmutable()) {
                     $this->db->executeStatement(sprintf(
                         'DROP TABLE IF EXISTS %s.%s',
@@ -132,7 +133,7 @@ class LogArchiveTask implements TaskInterface
                         $this->db->quoteIdentifier($archiveTableName)
                     ));
 
-                    $folderName = $deleteArchiveLogDate->format('Y/m');
+                    $folderName = $deleteArchiveLogDate->format(DateFormat::FOLDER_DATE);
                     if ($storage->directoryExists($folderName)) {
                         $storage->deleteDirectory($folderName);
                     }

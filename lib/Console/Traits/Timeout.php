@@ -89,7 +89,7 @@ trait Timeout
                     //default implementation: throw exeption
                     throw new Exception($abortMessage);
                 }
-            } elseif (is_null($oldStartTime) || date('i', $oldStartTime) !== date('i', $this->startTimeCurrentStep)) {
+            } elseif (is_null($oldStartTime) || date(DateFormat::COMPONENT_MINUTE, $oldStartTime) !== date(DateFormat::COMPONENT_MINUTE, $this->startTimeCurrentStep)) {
                 Logger::debug('Timeout enabled. Still needs '.($this->timeout - $timeSinceStartMinutes).' minutes in order to complete.');
             }
         }

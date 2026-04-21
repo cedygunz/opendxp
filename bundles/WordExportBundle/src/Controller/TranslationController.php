@@ -273,7 +273,7 @@ class TranslationController extends UserAwareController
         $response->headers->set('Content-Type', 'text/html');
         $response->headers->set(
             'Content-Disposition',
-            'attachment; filename="word-export-' . date('Ymd') . '_' . uniqid() . '.htm"'
+            'attachment; filename="word-export-' . date(DateFormat::FILENAME) . '_' . uniqid() . '.htm"'
         );
 
         return $response;

@@ -46,6 +46,6 @@ class Date extends Data
 
         $date = Carbon::createFromTimestamp((int) $value, date_default_timezone_get());
 
-        return UserTimezone::applyTimezone($date)->format('Y-m-d');
+        return UserTimezone::applyTimezone($date)->format(DateFormat::DATE);
     }
 }

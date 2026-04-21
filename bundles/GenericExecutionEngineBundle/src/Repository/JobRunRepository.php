@@ -28,6 +28,7 @@ use OpenDxp\Bundle\GenericExecutionEngineBundle\Model\Job;
 use OpenDxp\Bundle\GenericExecutionEngineBundle\Model\JobRunStates;
 use OpenDxp\Bundle\GenericExecutionEngineBundle\Security\PermissionServiceInterface;
 use OpenDxp\Bundle\GenericExecutionEngineBundle\Utils\Constants\TableConstants;
+use OpenDxp\Helper\DateFormat;
 use OpenDxp\Model\Exception\NotFoundException;
 use OpenDxp\Translation\Translator;
 use Psr\Log\LoggerInterface;
@@ -122,7 +123,7 @@ final readonly class JobRunRepository implements JobRunRepositoryInterface
             ),
             [
                 'id' => $jobRun->getId(),
-                'message' => (new DateTimeImmutable())->format('c') . ': ' . trim($message),
+                'message' => (new DateTimeImmutable())->format(DateFormat::ISO_8601) . ': ' . trim($message),
             ]
         );
 

@@ -20,6 +20,7 @@ use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Carbon\CarbonPeriod;
 use Exception;
+use OpenDxp\Helper\DateFormat;
 use OpenDxp\Model\DataObject;
 use OpenDxp\Model\DataObject\ClassDefinition\Data;
 use OpenDxp\Model\DataObject\Concrete;
@@ -177,7 +178,7 @@ class DateRange extends Data implements
         $data = $this->getDataFromObjectParam($object, $params);
 
         if ($data instanceof CarbonPeriod) {
-            $dates = $data->map(static fn (Carbon $date) => UserTimezone::applyTimezone($date)->format('Y-m-d'));
+            $dates = $data->map(static fn (Carbon $date) => UserTimezone::applyTimezone($date)->format(DateFormat::DATE));
 
             return implode(',', iterator_to_array($dates));
         }
@@ -279,7 +280,7 @@ class DateRange extends Data implements
         $newStartDate = $newValue->getStartDate();
         $newEndDate = $newValue->getEndDate();
 
-        if ($oldStartDate->format('Y-m-d') === $newStartDate->format('Y-m-d')) {
+        if ($oldStartDate->format(DateFormat::DATE) === $newStartDate->format(DateFormat::DATE)) {
             if (!$oldEndDate instanceof \Carbon\CarbonInterface && !$newEndDate instanceof \Carbon\CarbonInterface) {
                 return true;
             }
@@ -288,7 +289,7 @@ class DateRange extends Data implements
                 return false;
             }
 
-            return $oldEndDate->format('Y-m-d') === $newEndDate->format('Y-m-d');
+            return $oldEndDate->format(DateFormat::DATE) === $newEndDate->format(DateFormat::DATE);
         }
 
         return false;
