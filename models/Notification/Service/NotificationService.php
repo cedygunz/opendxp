@@ -20,6 +20,7 @@ namespace OpenDxp\Model\Notification\Service;
 use Carbon\Carbon;
 use Doctrine\DBAL\Exception;
 use OpenDxp\Db;
+use OpenDxp\Helper\DateFormat;
 use OpenDxp\Model\Element\ElementInterface;
 use OpenDxp\Model\Notification;
 use OpenDxp\Model\Notification\Listing;
@@ -226,7 +227,7 @@ class NotificationService
             'recipient = ? AND `read` = 0 AND `isStudio` = 0 AND creationDate >= ?',
             [
                 $user,
-                date('Y-m-d H:i:s', $lastUpdate),
+                date(DateFormat::DATETIME, $lastUpdate),
             ]
         );
         $listing->setOrderKey('creationDate');

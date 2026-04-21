@@ -22,7 +22,7 @@ namespace OpenDxp\Helper;
  *
  * @api
  */
-final readonly class DateFormat
+class DateFormat
 {
     /** @section Persistence & Database */
 

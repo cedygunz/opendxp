@@ -12,7 +12,7 @@ use the `OutputTimestampResolver` service and get the timestamp from it instead 
 
         $response = "
         <html><head></head><body>
-            current time is " . date("Y-m-d H:i", $currentTimestamp) . "
+            current time is " . date(DateFormat::DATETIME, $currentTimestamp) . "
         </body></html>
         ";
 

@@ -278,6 +278,7 @@ date older than a year could look like the following:
 
 namespace App\Sitemaps\Filter;
 
+use OpenDxp\Helper\DateFormat;
 use OpenDxp\Model\Element\ElementInterface;
 use OpenDxp\Bundle\SeoBundle\Sitemap\Element\FilterInterface;
 use OpenDxp\Bundle\SeoBundle\Sitemap\Element\GeneratorContextInterface;
@@ -293,7 +294,7 @@ class AgeFilter implements FilterInterface
 
     public function canBeAdded(ElementInterface $element, GeneratorContextInterface $context): bool
     {
-        $modicationDate = \DateTimeImmutable::createFromFormat('U', (string)$element->getModificationDate());
+        $modicationDate = \DateTimeImmutable::createFromFormat(DateFormat::UNIX_TIMESTAMP, (string)$element->getModificationDate());
         $now            = new \DateTimeImmutable();
 
         $diff = $modicationDate->diff($now);

@@ -20,6 +20,7 @@ namespace OpenDxp\Bundle\SeoBundle\Sitemap\Element\Processor;
 use DateTime;
 use OpenDxp\Bundle\SeoBundle\Sitemap\Element\GeneratorContextInterface;
 use OpenDxp\Bundle\SeoBundle\Sitemap\Element\ProcessorInterface;
+use OpenDxp\Helper\DateFormat;
 use OpenDxp\Model\Element\ElementInterface;
 use Presta\SitemapBundle\Sitemap\Url\Url;
 use Presta\SitemapBundle\Sitemap\Url\UrlConcrete;
@@ -35,7 +36,7 @@ class ModificationDateProcessor implements ProcessorInterface
             return $url;
         }
 
-        $url->setLastmod(DateTime::createFromFormat('U', (string)$element->getModificationDate()));
+        $url->setLastmod(DateTime::createFromFormat(DateFormat::UNIX_TIMESTAMP, (string)$element->getModificationDate()));
 
         return $url;
     }

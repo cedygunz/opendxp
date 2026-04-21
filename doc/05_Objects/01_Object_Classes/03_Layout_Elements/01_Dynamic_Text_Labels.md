@@ -24,6 +24,7 @@ Here is an example for a rendering class.
 
 namespace App\Helpers;
 
+use OpenDxp\Helper\DateFormat;
 use OpenDxp\Model\DataObject\Concrete;
 
 class CustomRenderer implements DynamicTextLabelInterface
@@ -33,7 +34,7 @@ class CustomRenderer implements DynamicTextLabelInterface
      */
     public function renderLayoutText(string $data, ?Concrete $object, array $params): string
     {
-        $text = '<h1 style="color: #F00;">Last reload: ' . date('c') . '</h1>' .
+        $text = '<h1 style="color: #F00;">Last reload: ' . date(DateFormat::ISO_8601) . '</h1>' .
             '<h2>Additional Data: ' . $data . '</h2>';
 
         if ($object) {

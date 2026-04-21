@@ -19,6 +19,7 @@ namespace OpenDxp\Bundle\CoreBundle\Command;
 use DateTime;
 use OpenDxp\Console\AbstractCommand;
 use OpenDxp\Console\Traits\Parallelization;
+use OpenDxp\Helper\DateFormat;
 use OpenDxp\Model\Asset;
 use OpenDxp\Model\Asset\Image;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -37,8 +38,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ThumbnailsImageCommand extends AbstractCommand
 {
     use Parallelization;
-
-    private const string DATE_FORMAT = 'Y-m-d H:i:s';
 
     protected function configure(): void
     {
@@ -68,7 +67,7 @@ class ThumbnailsImageCommand extends AbstractCommand
                 'last-modified-since',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'only create thumbnails of images that have been modified since the given date (format: ' . self::DATE_FORMAT . ' )'
+                'only create thumbnails of images that have been modified since the given date (format: ' . DateFormat::DATETIME . ' )'
             )
             ->addOption(
                 'thumbnails',
@@ -138,7 +137,7 @@ class ThumbnailsImageCommand extends AbstractCommand
         }
 
         if ($lastModifiedSince = $input->getOption('last-modified-since')) {
-            $lastModifiedSinceDate = DateTime::createFromFormat(self::DATE_FORMAT, $lastModifiedSince);
+            $lastModifiedSinceDate = DateTime::createFromFormat(DateFormat::DATETIME, $lastModifiedSince);
             $conditions[] = 'modificationDate >= ?';
             $conditionVariables[] = $lastModifiedSinceDate->getTimestamp();
         }
