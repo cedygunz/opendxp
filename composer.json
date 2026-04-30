@@ -9,13 +9,13 @@
         "RAD",
         "Product Information Management"
     ],
-    "homepage": "https://www.opendxp.ch",
+    "homepage": "https://www.opendxp.io",
     "license": "GPL-3.0-or-later",
     "authors": [
         {
             "name": "OpenDXP Team",
-            "email": "contact@opendxp.ch",
-            "homepage": "https://www.opendxp.ch",
+            "email": "contact@opendxp.io",
+            "homepage": "https://www.opendxp.io",
             "role": "Developer"
         }
     ],
