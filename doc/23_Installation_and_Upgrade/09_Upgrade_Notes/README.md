@@ -102,7 +102,7 @@ SELECT documentId, name, type, SUBSTRING(data, 1, 200)
   LIMIT 20;
  SELECT * FROM properties WHERE data LIKE '%Pimcore%' LIMIT 20;
 ```
-It is save to replace the occurences, even in serialized data. Adjust the sql to your needs:
+It is safe to replace the occurrences, even in serialized data. Adjust the SQL to your needs:
 ```sql
 UPDATE documents_editables
   SET data = REPLACE(data, 'Pimcore\\', 'OpenDxp\\')
