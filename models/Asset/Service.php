@@ -516,7 +516,7 @@ class Service extends Model\Element\Service
 
         $headers = [
             'Cache-Control' => 'public, max-age=' . $lifetime,
-            'Expires' => date(DateFormat::HTTP_EXPIRES, time() + $lifetime),
+            'Expires' => date(DateFormat::RFC_1123, time() + $lifetime),
             'Content-Type' => $mime,
             'Content-Length' => $fileSize,
         ];
@@ -571,7 +571,7 @@ class Service extends Model\Element\Service
                 fpassthru($stream);
             }, 200, [
                 'Cache-Control' => 'public, max-age=' . $lifetime,
-                'Expires' => date(DateFormat::HTTP_EXPIRES, time() + $lifetime),
+                'Expires' => date(DateFormat::RFC_1123, time() + $lifetime),
                 'Content-Type' => $storage->mimeType($storagePath),
                 'Content-Length' => $storage->fileSize($storagePath),
             ]);

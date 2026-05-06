@@ -17,6 +17,7 @@ namespace OpenDxp\Helper;
 
 /**
  * Common date format constants used throughout the OpenDXP application.
+ *
  * This class provides standardized PHP date format strings to ensure consistency
  * across database persistence, API responses, and UI rendering.
  *
@@ -24,16 +25,16 @@ namespace OpenDxp\Helper;
  */
 class DateFormat
 {
-    /** @section Persistence & Database */
+    /** @section Database and Display */
 
     /**
-     * Database-standard date.
+     * Short standard date.
      * @example 2024-04-21
      */
     public const string DATE = 'Y-m-d';
 
     /**
-     * Database-standard datetime with precision.
+     * ISO-8601-like standard datetime with second precision, but without timezone information.
      * @example 2024-04-21 14:30:45
      */
     public const string DATETIME = 'Y-m-d H:i:s';
@@ -41,13 +42,13 @@ class DateFormat
     /** @section Presentation & UI */
 
     /**
-     * User-facing short datetime.
+     * User-facing short datetime representation.
      * @example 2024-04-21 14:30
      */
     public const string DATETIME_SHORT = 'Y-m-d H:i';
 
     /**
-     * User-facing time.
+     * User-facing short time representation.
      * @example 14:30
      */
     public const string TIME = 'H:i';
@@ -68,17 +69,18 @@ class DateFormat
     public const string ISO_8601_TIMEZONE = 'Y-m-d\TH:i:sO';
 
     /**
-     * RFC 2822 compliant format for Email/Internet headers (Alias for 'r')..
+     * RFC 2822 / 5322 format for Email/Internet headers (Alias for 'r').
      * @see https://www.php.net/manual/en/datetime.format.php
      * @example Mon, 21 Apr 2024 14:30:45 +0000
      */
     public const string RFC_2822 = 'r';
 
     /**
-     * HTTP/1.1 'Expires' and 'Last-Modified' header format.
+     * RFC 1123 format for HTTP headers (Date, Expires, Last-Modified, etc.).
+     * @see https://www.ietf.org/rfc/rfc1123
      * @example Mon, 21 Apr 2024 14:30:45 GMT
      */
-    public const string HTTP_EXPIRES = 'D, d M Y H:i:s T';
+    public const string RFC_1123 = 'D, d M Y H:i:s T';
 
     /** @section Storage & Filesystem */
 
@@ -95,13 +97,13 @@ class DateFormat
     public const string FOLDER_DATE = 'Y/m';
 
     /**
-     * Full directory pathing for organization.
+     * Full directory pathing for storage.
      * @example /2024/04/21/
      */
     public const string FILEPATH_DATE = '/Y/m/d/';
 
     /**
-     * Delimiter-free date for safe filename generation.
+     * Delimiter-free date for extra safe filename generation.
      * @example 20240421
      */
     public const string FILENAME = 'Ymd';
