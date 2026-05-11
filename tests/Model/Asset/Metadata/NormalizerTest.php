@@ -248,4 +248,71 @@ class NormalizerTest extends ModelTestCase
 
         $this->doCompare($this->testAsset->getId(), $metaDataName, $originalData);
     }
+
+    /**
+     * Entries ordered: none → de → en
+     * getMetadata('alt', 'de') must return the 'de' value, not the fallback.
+     */
+    public function testLanguageSpecificEntryPrecedesEmptyLanguageFallback(): void
+    {
+        $asset = TestHelper::createImageAsset();
+        $asset->addMetadata('alt', 'input', 'test', null);
+        $asset->addMetadata('alt', 'input', 'test de', 'de');
+        $asset->addMetadata('alt', 'input', 'test en', 'en');
+        $asset->save();
+
+        $this->assertEquals('test de', $asset->getMetadata('alt', 'de'));
+        $this->assertEquals('test en', $asset->getMetadata('alt', 'en'));
+    }
+
+    /**
+     * When no language-specific entry exists, empty-language entry is the fallback.
+     */
+    public function testFallbackToEmptyLanguageWhenNoExactMatch(): void
+    {
+        $asset = TestHelper::createImageAsset();
+        $asset->addMetadata('alt', 'input', 'fallback', null);
+        $asset->addMetadata('alt', 'input', 'test de', 'de');
+        $asset->save();
+
+        $this->assertEquals('fallback', $asset->getMetadata('alt', 'it'));
+        $this->assertEquals('fallback', $asset->getMetadata('alt', 'fr'));
+    }
+
+    /**
+     * strictMatchLanguage=true returns the exact match when it exists.
+     */
+    public function testStrictMatchLanguageReturnsExactMatch(): void
+    {
+        $asset = TestHelper::createImageAsset();
+        $asset->addMetadata('alt', 'input', 'fallback', null);
+        $asset->addMetadata('alt', 'input', 'test de', 'de');
+        $asset->save();
+
+        $this->assertEquals('test de', $asset->getMetadata('alt', 'de', true));
+    }
+
+    /**
+     * Non-existent name returns null regardless of language.
+     */
+    public function testReturnsNullForUnknownName(): void
+    {
+        $asset = TestHelper::createImageAsset();
+        $asset->addMetadata('alt', 'input', 'value', null);
+        $asset->save();
+
+        $this->assertNull($asset->getMetadata('title', 'de'));
+    }
+
+    /**
+     * No fallback entry and no exact match → null.
+     */
+    public function testReturnsNullWhenNeitherFallbackNorExactMatchExists(): void
+    {
+        $asset = TestHelper::createImageAsset();
+        $asset->addMetadata('alt', 'input', 'test de', 'de');
+        $asset->save();
+
+        $this->assertNull($asset->getMetadata('alt', 'fr'));
+    }
 }

@@ -1527,28 +1527,28 @@ class Asset extends Element\AbstractElement
         bool $strictMatchLanguage = false,
         bool $raw = false
     ): mixed {
-        $result = null;
-        $data = null;
         if ($language === null) {
             $language = OpenDxp::getContainer()->get(LocaleServiceInterface::class)->findLocale();
         }
 
+        $fallback = null;
         foreach ($this->metadata as $md) {
             if ($md['name'] != $name) {
                 continue;
             }
-            if ($language == $md['language'] || (empty($md['language']) && !$strictMatchLanguage)) {
-                $data = $md;
-
-                break;
+            if ($language == $md['language']) {
+                return $raw ? $md : $this->transformMetadata($md);
+            }
+            if (!$strictMatchLanguage && empty($md['language']) && $fallback === null) {
+                $fallback = $md;
             }
         }
 
-        if ($data) {
-            return $raw ? $data : $this->transformMetadata($data);
+        if ($fallback !== null) {
+            return $raw ? $fallback : $this->transformMetadata($fallback);
         }
 
-        return $result;
+        return null;
     }
 
     public function getFileSize(bool $formatted = false, int $precision = 2): int|string
