@@ -110,6 +110,20 @@ When a `.mpd` source is present, a DASH-capable player will prefer it and adapt 
 
 ---
 
+## Output Formats
+
+Each video thumbnail configuration generates the following formats by default:
+
+| Format | Container | Video Codec | Audio Codec          | Notes                                                                                                                       |
+|--------|-----------|-------------|----------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| `mp4`  | MP4       | H.264       | AAC                  | Always generated. Optimized for streaming with `faststart`.                                                                 |
+| `webm` | WebM      | VP9         | Opus (48 kHz)        | VP8 fallback if ffmpeg has no VP9 support.                                                                                  |
+| `mpd`  | MPEG-DASH | H.264       | AAC (via libfdk_aac) | Only generated when media segments are configured. See [Adaptive Bitrate Streaming](#adaptive-bitrate-streaming-mpeg-dash). |
+
+The `mp4` format is always included. Additional formats (`webm`, `mpd`) are generated based on the thumbnail configuration.
+
+---
+
 ## Related
 
 - [Video Editable](../../03_Documents/01_Editables/38_Video.md)
