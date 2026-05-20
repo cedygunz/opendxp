@@ -34,8 +34,8 @@ class Processor
 {
     protected static array $argumentMapping = [
         'resize'            => ['width', 'height'],
-        'scaleByWidth'      => ['width'],
-        'scaleByHeight'     => ['height'],
+        'scaleByWidth'      => ['width', 'forceResize'],
+        'scaleByHeight'     => ['height', 'forceResize'],
         'cut'               => ['start', 'duration'],
         'setFramerate'      => ['fps'],
         'colorChannelMixer' => ['effect'],
@@ -179,11 +179,10 @@ class Processor
                 }
 
                 ksort($arguments);
-                if (count($mapping) === count($arguments)) {
+                if (method_exists($converter, $transformation['method'])) {
                     call_user_func_array([$converter, $transformation['method']], $arguments);
                 } else {
-                    $message = 'Video Transform failed: cannot call method `' . $transformation['method'] . '´ with arguments `' . implode(',', $arguments) . '´ because there are too few arguments';
-                    Logger::error($message);
+                    Logger::error(sprintf('Video Transform failed: unknown method `%s`', $transformation['method']));
                 }
             }
         }

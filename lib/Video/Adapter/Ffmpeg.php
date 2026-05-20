@@ -405,18 +405,26 @@ class Ffmpeg extends Adapter
         $this->addArgument('-s', $width.'x'.$height);
     }
 
-    public function scaleByWidth(int $width): void
+    public function scaleByWidth(int $width, bool $forceResize = true): void
     {
         // ensure $width is even (mp4 requires this)
-        $width = ceil($width / 2) * 2;
-        $this->videoFilter[] = 'scale='.$width.':trunc(ow/a/2)*2';
+        $width = (int) (ceil($width / 2) * 2);
+        if ($forceResize) {
+            $this->videoFilter[] = sprintf('scale=%d:trunc(ow/a/2)*2', $width);
+        } else {
+            $this->videoFilter[] = sprintf('scale=if(gte(iw\,%d)\,%d\,iw):trunc(ow/a/2)*2', $width, $width);
+        }
     }
 
-    public function scaleByHeight(int $height): void
+    public function scaleByHeight(int $height, bool $forceResize = true): void
     {
         // ensure $height is even (mp4 requires this)
-        $height = ceil($height / 2) * 2;
-        $this->videoFilter[] = 'scale=trunc(oh/(ih/iw)/2)*2:'.$height;
+        $height = (int) (ceil($height / 2) * 2);
+        if ($forceResize) {
+            $this->videoFilter[] = sprintf('scale=trunc(oh/(ih/iw)/2)*2:%d', $height);
+        } else {
+            $this->videoFilter[] = sprintf('scale=trunc(oh/(ih/iw)/2)*2:if(gte(ih\,%d)\,%d\,ih)', $height, $height);
+        }
     }
 
     public function cut(?string $inputSeeking = null, ?string $targetDuration = null): void
