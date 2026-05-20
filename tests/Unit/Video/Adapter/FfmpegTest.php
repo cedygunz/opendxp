@@ -10,7 +10,8 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) OpenDXP (https://www.opendxp.io)
+ * @copyright  Copyright (c) Pimcore GmbH (https://pimcore.com)
+ * @copyright  Modification Copyright (c) OpenDXP (https://www.opendxp.io)
  * @license    https://www.gnu.org/licenses/gpl-3.0.html  GNU General Public License version 3 (GPLv3)
  */
 
@@ -18,12 +19,13 @@ namespace OpenDxp\Tests\Unit\Video\Adapter;
 
 use OpenDxp\Tests\Support\Test\TestCase;
 use OpenDxp\Video\Adapter\Ffmpeg;
+use ReflectionProperty;
 
 class FfmpegTest extends TestCase
 {
     private function getVideoFilter(Ffmpeg $ffmpeg): array
     {
-        $prop = new \ReflectionProperty(Ffmpeg::class, 'videoFilter');
+        $prop = new ReflectionProperty(Ffmpeg::class, 'videoFilter');
 
         return $prop->getValue($ffmpeg);
     }
