@@ -1533,10 +1533,10 @@ class Asset extends Element\AbstractElement
 
         $fallback = null;
         foreach ($this->metadata as $md) {
-            if ($md['name'] != $name) {
+            if ($md['name'] !== $name) {
                 continue;
             }
-            if ($language == $md['language']) {
+            if (($language ?: null) === ($md['language'] ?: null)) {
                 return $raw ? $md : $this->transformMetadata($md);
             }
             if (!$strictMatchLanguage && empty($md['language']) && $fallback === null) {
