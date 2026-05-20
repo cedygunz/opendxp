@@ -106,24 +106,19 @@ class Ffmpeg extends Adapter
                 $command[] = '-movflags';
                 $command[] = 'faststart';
             } elseif ($this->getFormat() === 'webm') {
-                // check for vp9 support
-                $webmCodec = 'libvpx';
+
                 $process = new Process([self::getFfmpegCli(), '-codecs']);
                 $process->run();
-                $codecs = $process->getOutput();
-                if (stripos($codecs, 'vp9')) {
-                    //$webmCodec = "libvpx-vp9"; // disabled until better support in ffmpeg and browsers
-                }
-                $command[] = '-strict';
-                $command[] = 'experimental';
+                $webmCodec = str_contains($process->getOutput(), 'vp9') ? 'libvpx-vp9' : 'libvpx';
+
                 $command[] = '-f';
                 $command[] = 'webm';
                 $command[] = '-vcodec';
                 $command[] = $webmCodec;
                 $command[] = '-acodec';
-                $command[] = 'libvorbis';
+                $command[] = 'libopus';
                 $command[] = '-ar';
-                $command[] = '44000';
+                $command[] = '48000';
                 $command[] = '-g';
                 $command[] = '100';
             } elseif ($this->getFormat() === 'mpd') {
@@ -131,29 +126,25 @@ class Ffmpeg extends Adapter
                 $mediaKeys = array_keys($medias);
                 $command = [];
 
-                foreach ($mediaKeys as $mediaKey) {
+                foreach ($mediaKeys as $_) {
                     $command[] = '-map';
                     $command[] = 'v:0';
                 }
+
                 $command[] = '-c:a';
                 $command[] = 'libfdk_aac';
                 $command[] = '-vcodec';
                 $command[] = 'libx264';
-                $counter = count($mediaKeys);
 
-                for ($i = 0; $i < $counter; $i++) {
-                    $bitrate = $mediaKeys[$i];
-                    $command[] = '-b:v:' . $i;
+                foreach ($mediaKeys as $i => $bitrate) {
+                    $command[] = sprintf('-b:v:%d', $i);
                     $command[] = $bitrate;
-                    $command[] = '-c:v:' . $i;
-                    $command[] = 'libx264';
-                    $command[] = '-c:v:' . $i;
+                    $command[] = sprintf('-c:v:%d', $i);
                     $command[] = 'libx264';
 
                     if ($medias[$bitrate]['converter'] instanceof self) {
                         foreach ($medias[$bitrate]['converter']->arguments as $aKey => $argument) {
-                            $argument = ($aKey % 2 === 0 ? $argument . ':' . $i : $argument);
-                            $command[] = $argument;
+                            $command[] = ($aKey % 2 === 0 ? $argument . ':' . $i : $argument);
                         }
                     }
                 }
@@ -179,11 +170,14 @@ class Ffmpeg extends Adapter
             } else {
                 throw new Exception('Unsupported video output format: ' . $this->getFormat());
             }
+
             // add some global arguments
             $command[] = '-threads';
             $command[] = '0';
             $command[] = str_replace('/', DIRECTORY_SEPARATOR, $this->getDestinationFile());
+
             array_unshift($command, '-i', realpath($this->file));
+
             // prepend seeking before input file to use input seeking method
             if ($this->inputSeeking !== null) {
                 $sourceDuration = $this->getDuration() * 100;
@@ -192,6 +186,7 @@ class Ffmpeg extends Adapter
                 }
                 array_unshift($command, '-ss', $this->inputSeeking);
             }
+
             array_unshift($command, self::getFfmpegCli());
 
             Console::addLowProcessPriority($command);
@@ -203,12 +198,13 @@ class Ffmpeg extends Adapter
             $process->setTimeout(null);
             $process->start();
 
-            $logHandle = fopen($this->getConversionLogFile(), 'a');
+            $logHandle = fopen($this->getConversionLogFile(), 'ab');
             fwrite($logHandle, 'Command: ' . $process->getCommandLine() . "\n\n\n");
 
             $process->wait(function ($type, $buffer) use ($logHandle): void {
                 fwrite($logHandle, $buffer);
             });
+
             fclose($logHandle);
 
             if ($process->isSuccessful()) {
