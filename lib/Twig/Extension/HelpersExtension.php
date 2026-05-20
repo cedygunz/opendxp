@@ -21,69 +21,54 @@ use Exception;
 use OpenDxp\Document;
 use OpenDxp\Twig\Extension\Templating\OpenDxpUrl;
 use OpenDxp\Video;
-use Override;
 use Symfony\Component\Mime\MimeTypes;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
-use Twig\TwigFunction;
-use Twig\TwigTest;
+use Twig\Attribute\AsTwigFilter;
+use Twig\Attribute\AsTwigFunction;
+use Twig\Attribute\AsTwigTest;
 
 /**
  * @internal
  */
-class HelpersExtension extends AbstractExtension
+class HelpersExtension
 {
-    private readonly OpenDxpUrl $OpenDxpUrlHelper;
-
-    public function __construct(OpenDxpUrl $OpenDxpUrlHelper)
+    public function __construct(private readonly OpenDxpUrl $OpenDxpUrlHelper)
     {
-        $this->OpenDxpUrlHelper = $OpenDxpUrlHelper;
     }
 
-    #[Override]
-    public function getFilters(): array
-    {
-        return [
-            new TwigFilter('basename', $this->basenameFilter(...)),
-        ];
-    }
-
-    #[Override]
-    public function getFunctions(): array
-    {
-        return [
-            new TwigFunction('opendxp_video_is_available', Video::isAvailable(...)),
-            new TwigFunction('opendxp_document_is_available', Document::isAvailable(...)),
-            new TwigFunction('opendxp_file_exists', is_file(...)),
-            new TwigFunction('opendxp_file_extension', $this->getFileExtension(...)),
-            new TwigFunction('opendxp_image_version_preview', $this->getImageVersionPreview(...)),
-            new TwigFunction('opendxp_asset_version_preview', $this->getAssetVersionPreview(...)),
-            new TwigFunction('opendxp_breach_attack_random_content', $this->breachAttackRandomContent(...), [
-                'is_safe' => ['html'],
-            ]),
-            new TwigFunction('opendxp_url', $this->OpenDxpUrlHelper, [
-                'name' => 'opendxp_url',
-                'is_safe' => null,
-            ]),
-        ];
-    }
-
-    #[Override]
-    public function getTests(): array
-    {
-        return [
-            new TwigTest('instanceof', fn ($object, $class) => $object instanceof $class),
-        ];
-    }
-
+    #[AsTwigFilter('basename')]
     public function basenameFilter(string $value, string $suffix = ''): string
     {
         return basename($value, $suffix);
     }
 
+    #[AsTwigFunction('opendxp_video_is_available')]
+    public function isVideoAvailable(): bool
+    {
+        return Video::isAvailable();
+    }
+
+    #[AsTwigFunction('opendxp_document_is_available')]
+    public function isDocumentAvailable(): bool
+    {
+        return Document::isAvailable();
+    }
+
+    #[AsTwigFunction('opendxp_file_exists')]
+    public function fileExists(string $path): bool
+    {
+        return is_file($path);
+    }
+
+    #[AsTwigFunction('opendxp_file_extension')]
+    public function getFileExtension(string $fileName): string
+    {
+        return pathinfo($fileName, PATHINFO_EXTENSION);
+    }
+
     /**
      * @throws Exception
      */
+    #[AsTwigFunction('opendxp_image_version_preview')]
     public function getImageVersionPreview(string $file): string
     {
         $thumbnail = OPENDXP_SYSTEM_TEMP_DIRECTORY . '/image-version-preview-' . uniqid() . '.png';
@@ -102,6 +87,7 @@ class HelpersExtension extends AbstractExtension
     /**
      * @throws Exception
      */
+    #[AsTwigFunction('opendxp_asset_version_preview')]
     public function getAssetVersionPreview(string $file): string
     {
         $dataUri = 'data:'.MimeTypes::getDefault()->guessMimeType($file).';base64,'.base64_encode(file_get_contents($file));
@@ -113,6 +99,7 @@ class HelpersExtension extends AbstractExtension
     /**
      * @throws Exception
      */
+    #[AsTwigFunction('opendxp_breach_attack_random_content', isSafe: ['html'])]
     public function breachAttackRandomContent(): string
     {
         $length = 50;
@@ -127,8 +114,15 @@ class HelpersExtension extends AbstractExtension
             . '-->';
     }
 
-    public function getFileExtension(string $fileName): string
+    #[AsTwigFunction('opendxp_url')]
+    public function opendxpUrl(array $urlOptions = [], ?string $name = null, bool $reset = false, bool $encode = true, bool $relative = false): string
     {
-        return pathinfo($fileName, PATHINFO_EXTENSION);
+        return ($this->OpenDxpUrlHelper)($urlOptions, $name, $reset, $encode, $relative);
+    }
+
+    #[AsTwigTest('instanceof')]
+    public function isInstanceOf(mixed $object, string $class): bool
+    {
+        return $object instanceof $class;
     }
 }
