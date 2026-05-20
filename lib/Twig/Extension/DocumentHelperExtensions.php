@@ -18,27 +18,58 @@ declare(strict_types=1);
 namespace OpenDxp\Twig\Extension;
 
 use OpenDxp\Model\Document;
-use Override;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigTest;
+use Twig\Attribute\AsTwigTest;
 
 /**
  * @internal
  */
-class DocumentHelperExtensions extends AbstractExtension
+class DocumentHelperExtensions
 {
-    #[Override]
-    public function getTests(): array
+    #[AsTwigTest('opendxp_document')]
+    public function isDocument(mixed $object): bool
     {
-        return [
-            new TwigTest('opendxp_document', static fn ($object) => $object instanceof Document),
-            new TwigTest('opendxp_document_email', static fn ($object) => $object instanceof Document\Email),
-            new TwigTest('opendxp_document_folder', static fn ($object) => $object instanceof Document\Folder),
-            new TwigTest('opendxp_document_hardlink', static fn ($object) => $object instanceof Document\Hardlink),
-            new TwigTest('opendxp_document_page', static fn ($object) => $object instanceof Document\Page),
-            new TwigTest('opendxp_document_link', static fn ($object) => $object instanceof Document\Link),
-            new TwigTest('opendxp_document_page_snippet', static fn ($object) => $object instanceof Document\PageSnippet),
-            new TwigTest('opendxp_document_snippet', static fn ($object) => $object instanceof Document\Snippet),
-        ];
+        return $object instanceof Document;
+    }
+
+    #[AsTwigTest('opendxp_document_email')]
+    public function isDocumentEmail(mixed $object): bool
+    {
+        return $object instanceof Document\Email;
+    }
+
+    #[AsTwigTest('opendxp_document_folder')]
+    public function isDocumentFolder(mixed $object): bool
+    {
+        return $object instanceof Document\Folder;
+    }
+
+    #[AsTwigTest('opendxp_document_hardlink')]
+    public function isDocumentHardlink(mixed $object): bool
+    {
+        return $object instanceof Document\Hardlink;
+    }
+
+    #[AsTwigTest('opendxp_document_page')]
+    public function isDocumentPage(mixed $object): bool
+    {
+        return $object instanceof Document\Page;
+    }
+
+    #[AsTwigTest('opendxp_document_link')]
+    public function isDocumentLink(mixed $object): bool
+    {
+        return $object instanceof Document\Link;
+    }
+
+    #[AsTwigTest('opendxp_document_page_snippet')]
+    public function isDocumentPageSnippet(mixed $object): bool
+    {
+        return $object instanceof Document\PageSnippet;
+    }
+
+    #[AsTwigTest('opendxp_document_snippet')]
+    public function isDocumentSnippet(mixed $object): bool
+    {
+        return $object instanceof Document\Snippet;
     }
 }

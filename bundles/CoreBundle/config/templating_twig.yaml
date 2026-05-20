@@ -10,6 +10,7 @@ services:
     OpenDxp\Twig\Extension\HelpersExtension: ~
 
     OpenDxp\Twig\Extension\DocumentEditableExtension: ~
+    OpenDxp\Twig\Extension\DocumentEditableRenderExtension: ~
 
     OpenDxp\Twig\Extension\SubrequestExtension:
         lazy: true
@@ -81,4 +82,3 @@ services:
         arguments:
             $policy: '@OpenDxp\Twig\Sandbox\SecurityPolicy'
 
-    OpenDxp\Twig\Extension\AdminExtension: ~

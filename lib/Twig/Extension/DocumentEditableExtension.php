@@ -16,9 +16,7 @@ declare(strict_types=1);
 
 namespace OpenDxp\Twig\Extension;
 
-use Exception;
-use Generator;
-use OpenDxp\Model\Document\Editable\BlockInterface;
+use OpenDxp\Model\Document\Editable\EditableInterface;
 use OpenDxp\Model\Document\PageSnippet;
 use OpenDxp\Templating\Renderer\EditableRenderer;
 use OpenDxp\Twig\TokenParser\BlockParser;
@@ -28,6 +26,12 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 /**
+ * Registers the wildcard fallback `opendxp_*` for custom editables (e.g. from third-party bundles)
+ * and the token parsers.
+ *
+ * Built-in editable types are additionally registered with explicit signatures in DocumentEditableRenderExtension.
+ * Twig resolves exact matches before wildcards, so both coexist without conflict.
+ *
  * @internal
  */
 class DocumentEditableExtension extends AbstractExtension
@@ -44,58 +48,7 @@ class DocumentEditableExtension extends AbstractExtension
                 'needs_context' => true,
                 'is_safe' => ['html'],
             ]),
-            new TwigFunction('opendxp_iterate_block', $this->getBlockIterator(...)),
         ];
-
-        // @phpstan-ignore-next-line those are just for auto-complete, not nice, but works ;-)
-        new TwigFunction('opendxp_area');
-        new TwigFunction('opendxp_areablock');
-        new TwigFunction('opendxp_block');
-        new TwigFunction('opendxp_checkbox');
-        new TwigFunction('opendxp_date');
-        new TwigFunction('opendxp_embed');
-        new TwigFunction('opendxp_image');
-        new TwigFunction('opendxp_input');
-        new TwigFunction('opendxp_link');
-        new TwigFunction('opendxp_multiselect');
-        new TwigFunction('opendxp_numeric');
-        new TwigFunction('opendxp_pdf');
-        new TwigFunction('opendxp_relation');
-        new TwigFunction('opendxp_relations');
-        new TwigFunction('opendxp_renderlet');
-        new TwigFunction('opendxp_scheduledblock');
-        new TwigFunction('opendxp_select');
-        new TwigFunction('opendxp_snippet');
-        new TwigFunction('opendxp_table');
-        new TwigFunction('opendxp_textarea');
-        new TwigFunction('opendxp_video');
-        new TwigFunction('opendxp_wysiwyg');
-    }
-
-    /**
-     * @internal
-     *
-     * @throws Exception
-     */
-    public function renderEditable(array $context, string $type, string $name, array $options = []): string|\OpenDxp\Model\Document\Editable\EditableInterface
-    {
-        $document = $context['document'] ?? null;
-        if (!($document instanceof PageSnippet)) {
-            return '';
-        }
-        $editmode = $context['editmode'] ?? false;
-
-        return $this->editableRenderer->render($document, $type, $name, $options, $editmode);
-    }
-
-    /**
-     * Returns an iterator which can be used instead of while($block->loop())
-     *
-     * @internal
-     */
-    public function getBlockIterator(BlockInterface $block): Generator
-    {
-        return $block->getIterator();
     }
 
     #[Override]
@@ -105,5 +58,21 @@ class DocumentEditableExtension extends AbstractExtension
             new BlockParser(),
             new ManualBlockParser(),
         ];
+    }
+
+    public function renderEditable(array $context, string $type, string $name, array $options = []): string|EditableInterface
+    {
+        $document = $context['document'] ?? null;
+        if (!($document instanceof PageSnippet)) {
+            return '';
+        }
+
+        return $this->editableRenderer->render(
+            $document,
+            $type,
+            $name,
+            $options,
+            $context['editmode'] ?? false
+        );
     }
 }

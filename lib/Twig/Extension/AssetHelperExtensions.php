@@ -18,28 +18,64 @@ declare(strict_types=1);
 namespace OpenDxp\Twig\Extension;
 
 use OpenDxp\Model\Asset;
-use Override;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigTest;
+use Twig\Attribute\AsTwigTest;
 
 /**
  * @internal
  */
-class AssetHelperExtensions extends AbstractExtension
+class AssetHelperExtensions
 {
-    #[Override]
-    public function getTests(): array
+    #[AsTwigTest('opendxp_asset')]
+    public function isAsset(mixed $object): bool
     {
-        return [
-            new TwigTest('opendxp_asset', static fn ($object) => $object instanceof Asset),
-            new TwigTest('opendxp_asset_archive', static fn ($object) => $object instanceof Asset\Archive),
-            new TwigTest('opendxp_asset_audio', static fn ($object) => $object instanceof Asset\Audio),
-            new TwigTest('opendxp_asset_document', static fn ($object) => $object instanceof Asset\Document),
-            new TwigTest('opendxp_asset_folder', static fn ($object) => $object instanceof Asset\Folder),
-            new TwigTest('opendxp_asset_image', static fn ($object) => $object instanceof Asset\Image),
-            new TwigTest('opendxp_asset_text', static fn ($object) => $object instanceof Asset\Text),
-            new TwigTest('opendxp_asset_unknown', static fn ($object) => $object instanceof Asset\Unknown),
-            new TwigTest('opendxp_asset_video', static fn ($object) => $object instanceof Asset\Video),
-        ];
+        return $object instanceof Asset;
+    }
+
+    #[AsTwigTest('opendxp_asset_archive')]
+    public function isAssetArchive(mixed $object): bool
+    {
+        return $object instanceof Asset\Archive;
+    }
+
+    #[AsTwigTest('opendxp_asset_audio')]
+    public function isAssetAudio(mixed $object): bool
+    {
+        return $object instanceof Asset\Audio;
+    }
+
+    #[AsTwigTest('opendxp_asset_document')]
+    public function isAssetDocument(mixed $object): bool
+    {
+        return $object instanceof Asset\Document;
+    }
+
+    #[AsTwigTest('opendxp_asset_folder')]
+    public function isAssetFolder(mixed $object): bool
+    {
+        return $object instanceof Asset\Folder;
+    }
+
+    #[AsTwigTest('opendxp_asset_image')]
+    public function isAssetImage(mixed $object): bool
+    {
+        return $object instanceof Asset\Image;
+    }
+
+    #[AsTwigTest('opendxp_asset_text')]
+    public function isAssetText(mixed $object): bool
+    {
+        return $object instanceof Asset\Text;
+    }
+
+    #[AsTwigTest('opendxp_asset_unknown')]
+    public function isAssetUnknown(mixed $object): bool
+    {
+        return $object instanceof Asset\Unknown;
+    }
+
+    #[AsTwigTest('opendxp_asset_video')]
+    public function isAssetVideo(mixed $object): bool
+    {
+        return $object instanceof Asset\Video;
     }
 }

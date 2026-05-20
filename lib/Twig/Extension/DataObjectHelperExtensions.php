@@ -18,38 +18,50 @@ declare(strict_types=1);
 namespace OpenDxp\Twig\Extension;
 
 use OpenDxp\Model\DataObject;
-use Override;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
-use Twig\TwigTest;
+use Twig\Attribute\AsTwigFunction;
+use Twig\Attribute\AsTwigTest;
 
 /**
  * @internal
  */
-class DataObjectHelperExtensions extends AbstractExtension
+class DataObjectHelperExtensions
 {
-    #[Override]
-    public function getTests(): array
+    #[AsTwigTest('opendxp_data_object')]
+    public function isDataObject(mixed $object): bool
     {
-        return [
-            new TwigTest('opendxp_data_object', static fn ($object) => $object instanceof DataObject\Concrete),
-            new TwigTest('opendxp_data_object_folder', static fn ($object) => $object instanceof DataObject\Folder),
-            new TwigTest('opendxp_data_object_class', static function ($object, $className) {
-                $className = ucfirst($className);
-                $className = 'OpenDxp\\Model\\DataObject\\' . $className;
-
-                return class_exists($className) && $object instanceof $className;
-            }),
-            new TwigTest('opendxp_data_object_gallery', static fn ($object) => $object instanceof DataObject\Data\ImageGallery),
-            new TwigTest('opendxp_data_object_hotspot_image', static fn ($object) => $object instanceof DataObject\Data\Hotspotimage),
-        ];
+        return $object instanceof DataObject\Concrete;
     }
 
-    #[Override]
-    public function getFunctions(): array
+    #[AsTwigTest('opendxp_data_object_folder')]
+    public function isDataObjectFolder(mixed $object): bool
     {
-        return [
-            new TwigFunction('opendxp_data_object_select_options', static fn ($object, $field) => DataObject\Service::getOptionsForSelectField($object, $field)),
-        ];
+        return $object instanceof DataObject\Folder;
+    }
+
+    #[AsTwigTest('opendxp_data_object_class')]
+    public function isDataObjectClass(mixed $object, string $className): bool
+    {
+        $className = ucfirst($className);
+        $className = 'OpenDxp\\Model\\DataObject\\' . $className;
+
+        return class_exists($className) && $object instanceof $className;
+    }
+
+    #[AsTwigTest('opendxp_data_object_gallery')]
+    public function isDataObjectGallery(mixed $object): bool
+    {
+        return $object instanceof DataObject\Data\ImageGallery;
+    }
+
+    #[AsTwigTest('opendxp_data_object_hotspot_image')]
+    public function isDataObjectHotspotImage(mixed $object): bool
+    {
+        return $object instanceof DataObject\Data\Hotspotimage;
+    }
+
+    #[AsTwigFunction('opendxp_data_object_select_options')]
+    public function getDataObjectSelectOptions(mixed $object, string $field): array
+    {
+        return DataObject\Service::getOptionsForSelectField($object, $field);
     }
 }

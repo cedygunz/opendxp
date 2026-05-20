@@ -280,83 +280,62 @@ using Twig Extension.
 namespace App\Twig\Extension;
 
 use App\Website\LinkGenerator\NewsLinkGenerator;
-use App\Website\LinkGenerator\CategoryLinkGenerator; 
+use App\Website\LinkGenerator\CategoryLinkGenerator;
 use OpenDxp\Model\Document;
 use OpenDxp\Navigation\Container;
 use OpenDxp\Twig\Extension\Templating\Navigation;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
+use Twig\Attribute\AsTwigFunction;
 
-class NavigationExtension extends AbstractExtension
+class NavigationExtension
 {
-    protected Navigation $navigationHelper;
-    protected NewsLinkGenerator $newsLinkGenerator;
-    protected CategoryLinkGenerator $categoryLinkGenerator;
-
-    public function __construct(Navigation $navigationHelper, NewsLinkGenerator $newsLinkGenerator, CategoryLinkGenerator $categoryLinkGenerator)
-    {
-        $this->navigationHelper = $navigationHelper;
-        $this->newsLinkGenerator = $newsLinkGenerator;
-        $this->categoryLinkGenerator = $categoryLinkGenerator;
+    public function __construct(
+        private Navigation $navigationHelper,
+        private NewsLinkGenerator $newsLinkGenerator,
+        private CategoryLinkGenerator $categoryLinkGenerator,
+    ) {
     }
 
-    /**
-     * @return TwigFunction[]
-     */
-    public function getFunctions(): array
-    {
-        return [
-            new TwigFunction('app_navigation_links', [$this, 'getNavigationLinks'])
-        ];
-    }
-
-    /**
-     * @throws \Exception
-     */
+    #[AsTwigFunction('app_navigation_links')]
     public function getNavigationLinks(Document $document, Document $startNode): Container
     {
-        $navigation = $this->navigationHelper->build([
+        return $this->navigationHelper->build([
             'active' => $document,
             'root' => $startNode,
             'pageCallback' => function($page, $document) {
                 /** @var \OpenDxp\Model\Document $document */
                 /** @var \OpenDxp\Navigation\Page\Document $page */
-                if($document->getProperty("templateType") == "news") {
+                if ($document->getProperty('templateType') === 'news') {
                     $list = new \OpenDxp\Model\DataObject\News\Listing;
                     $list->load();
-                    foreach($list as $news) {
+                    foreach ($list as $news) {
                         $detailLink = $this->newsLinkGenerator->generate($news, ['document' => $document]);
-                        $uri = new \OpenDxp\Navigation\Page\Document([
-                            "label" => $news->getTitle(),
-                            "id" => "object-" . $news->getId(),
-                            "uri" => $detailLink,
-                        ]);
-                        $page->addPage($uri);
+                        $page->addPage(new \OpenDxp\Navigation\Page\Document([
+                            'label' => $news->getTitle(),
+                            'id' => 'object-' . $news->getId(),
+                            'uri' => $detailLink,
+                        ]));
                     }
                 }
             },
             'rootCallback' => function(Container $navigation) {
                 $list = new \OpenDxp\Model\DataObject\Category\Listing;
                 $list->load();
-                foreach($list as $category) {
+                foreach ($list as $category) {
                     $detailLink = $this->categoryLinkGenerator->generate($category);
-                    $categoryDocument = new \OpenDxp\Navigation\Page\Document([
-                        "label" => $category->getName(),
-                        "id" => "object-" . $category->getId(),
-                        "uri" => $detailLink,
-                    ]);
-                    $navigation->addPage($categoryDocument);
+                    $navigation->addPage(new \OpenDxp\Navigation\Page\Document([
+                        'label' => $category->getName(),
+                        'id' => 'object-' . $category->getId(),
+                        'uri' => $detailLink,
+                    ]));
                 }
-            }
+            },
         ]);
-
-        return $navigation;
     }
 }
 ```
 
 ```twig
-{% set navigation = app_navigation_news_links(document, navStartNode) %}
+{% set navigation = app_navigation_links(document, navStartNode) %}
 
 <div class="my-navigation">
     {{ opendxp_render_nav(navigation, 'menu', 'renderMenu', {
@@ -378,6 +357,7 @@ bypasses the caching mechanism of the navigation container.
 
 But sometimes it's necessary to get some properties or other data out of the documents in the navigation to build the navigation as it should be. 
 For that we've introduced a new parameter for the navigation extension, which acts as a callback and allows to map custom data onto the navigation page item.
+
 ```php
 <?php
 
@@ -386,48 +366,29 @@ namespace App\Twig\Extension;
 use OpenDxp\Model\Document;
 use OpenDxp\Navigation\Container;
 use OpenDxp\Twig\Extension\Templating\Navigation;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
+use Twig\Attribute\AsTwigFunction;
 
-class NavigationExtension extends AbstractExtension
+class NavigationExtension
 {
-    protected Navigation $navigationHelper;
+    public function __construct(private Navigation $navigationHelper)
+    {
+    }
 
-    public function __construct(Navigation $navigationHelper)
-    {
-        $this->navigationHelper = $navigationHelper;
-    }
-    
-    /**
-     * @return TwigFunction[]
-     */
-    public function getFunctions(): array
-    {
-        return [
-            new TwigFunction('app_navigation_custom', [$this, 'getCustomNavigation'])
-        ];
-    }
-    
-    /**
-     * @throws \Exception
-     */
+    #[AsTwigFunction('app_navigation_custom')]
     public function getCustomNavigation(Document $document, Document $startNode): Container
     {
-        $navigation = $this->navigationHelper->build([
+        return $this->navigationHelper->build([
             'active' => $document,
-            'root' => $startNode, 
+            'root' => $startNode,
             'pageCallback' => function ($page, $document) {
-                $page->setCustomSetting("myCustomProperty", $document->getProperty("myCustomProperty"));
-                $page->setCustomSetting("subListClass", $document->getProperty("subListClass"));
-                $page->setCustomSetting("title", $document->getTitle());
-                $page->setCustomSetting("headline", $document->getEditable("headline")->getData());
-            }]
-        );
-
-        return $navigation;
+                $page->setCustomSetting('myCustomProperty', $document->getProperty('myCustomProperty'));
+                $page->setCustomSetting('subListClass', $document->getProperty('subListClass'));
+                $page->setCustomSetting('title', $document->getTitle());
+                $page->setCustomSetting('headline', $document->getEditable('headline')->getData());
+            },
+        ]);
     }
 }
-
 ```
 
 ```twig
@@ -460,7 +421,7 @@ Using this method will dramatically improve the performance of your navigation.
 Sometimes it's necessary to manually set the key for the navigation cache. 
 
 ```twig
-{% opendxp_build_nav({active: document, root: navStartNode, cache: 'yourindividualkey'}) %}
+{% set nav = opendxp_build_nav({active: document, root: navStartNode, cache: 'yourindividualkey'}) %}
 ```
 
 ### Disabling the Navigation Cache
@@ -468,22 +429,19 @@ Sometimes it's necessary to manually set the key for the navigation cache.
 You can disable the navigation cache by setting the `cache` argument to `false`.
 
 ```twig
-{% opendxp_build_nav({active: document, root: navStartNode, cache: false}) %}
+{% set nav = opendxp_build_nav({active: document, root: navStartNode, cache: false}) %}
 ```
 
 ## FAQ
 
-**A document does not show up in the navigation. Why?**
-
+**A document does not show up in the navigation. Why?**  
 Please make sure that the documents and its parent documents are published and that the document itself as well as all its parents have a navigation name set. 
 Neither the document itself nor one of its parent documents may have activated **Exclude From Navigation** in their properties. (`Document properties -> System properties`)
 
-**Why is the navigation not appearing?**
-
+**Why is the navigation not appearing?**  
 See the above question. If none of the documents have a navigation title set the render function will simply return nothing.
 
-**Why is the homepage not appearing in the navigation?**
-
+**Why is the homepage not appearing in the navigation?**  
 The homepage will not appear in the navigation by default. You can add the homepage (and any other page) manually:
 
 ```twig
@@ -495,18 +453,20 @@ The homepage will not appear in the navigation by default. You can add the homep
 }) %}
 ```
 
-If you retrieve the **home** document (which always has the ID 1) you can also retrieve its navigation properties so that they can be edited from the OpenDXP admin interface like all the other documents.
+If you retrieve the **home** document (which always has the ID 1) you can also retrieve its navigation properties 
+so that they can be edited from the OpenDXP admin interface like all the other documents.
 
 ```twig
 {% set home = opendxp_document(1) %}
- 
- {# 
+
+{# 
     order: put it in front of all the others
     uri: path to homepage
     label: visible label
     title: tooltip text
     active: active state (boolean)
- #}
+#}
+
 {% do navigation.addPage({
     order: -1,
     uri: '/',

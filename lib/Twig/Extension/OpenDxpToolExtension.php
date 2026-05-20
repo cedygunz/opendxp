@@ -17,22 +17,24 @@ declare(strict_types=1);
 
 namespace OpenDxp\Twig\Extension;
 
+use OpenDxp\Tool;
 use OpenDxp\Tool\DeviceDetector;
-use Override;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
+use Twig\Attribute\AsTwigFunction;
 
 /**
  * @internal
  */
-class OpenDxpToolExtension extends AbstractExtension
+class OpenDxpToolExtension
 {
-    #[Override]
-    public function getFunctions(): array
+    #[AsTwigFunction('opendxp_supported_locales')]
+    public function getSupportedLocales(): array
     {
-        return [
-            new TwigFunction('opendxp_supported_locales', \OpenDxp\Tool::getSupportedLocales(...)),
-            new TwigFunction('opendxp_device', DeviceDetector::getInstance(...), ['is_safe' => ['html']]),
-        ];
+        return Tool::getSupportedLocales();
+    }
+
+    #[AsTwigFunction('opendxp_device', isSafe: ['html'])]
+    public function getDevice(?string $default = null): DeviceDetector
+    {
+        return DeviceDetector::getInstance($default);
     }
 }

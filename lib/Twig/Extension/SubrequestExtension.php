@@ -16,31 +16,22 @@ declare(strict_types=1);
 
 namespace OpenDxp\Twig\Extension;
 
+use OpenDxp\Model\Document\PageSnippet;
 use OpenDxp\Twig\Extension\Templating\Inc;
-use Override;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
+use Twig\Attribute\AsTwigFunction;
 
 /**
  * @internal
  */
-class SubrequestExtension extends AbstractExtension
+class SubrequestExtension
 {
-    protected Inc $incHelper;
-
-    public function __construct(Inc $incHelper)
+    public function __construct(protected Inc $incHelper)
     {
-        $this->incHelper = $incHelper;
     }
 
-    #[Override]
-    public function getFunctions(): array
+    #[AsTwigFunction('opendxp_inc', isSafe: ['html'])]
+    public function inc(int|string|PageSnippet $include, array $params = [], bool $cacheEnabled = true, ?bool $editmode = null): string
     {
-        // as runtime extension classes are invokable, we can pass them directly as callable
-        return [
-            new TwigFunction('opendxp_inc', $this->incHelper, [
-                'is_safe' => ['html'],
-            ]),
-        ];
+        return ($this->incHelper)($include, $params, $cacheEnabled, $editmode);
     }
 }
