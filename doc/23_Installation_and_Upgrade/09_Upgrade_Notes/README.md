@@ -1,5 +1,9 @@
 # Upgrade Notes
 
+## OpenDXP 1.3.2
+- Improvement: `UnmanagedTablesSchemaFilter` (formally `IgnoreCoreTablesFilterListener`) is now disabled by default and only activates during `doctrine:schema:update`, `doctrine:schema:validate`, and commands implementing `ExcludesUnmanagedTablesInterface`
+  - New Feature: If `ExcludesUnmanagedTablesInterface` is implemented on any console command that calls `SchemaTool::updateSchema()` directly to prevent unintended DROP TABLE statements for non-ORM tables, see [docs](../../19_Development_Tools_and_Details/06_Doctrine_Schema_Filter.md)
+
 ## OpenDXP 1.3.1
 - Bugfix: Centralize brickPrefix handling in RelationFilterConditionParser [#120](https://github.com/open-dxp/opendxp/pull/120)
 - Bugfix: fix translation caching bugs and deprecate unused listing methods [#123](https://github.com/open-dxp/opendxp/pull/123)

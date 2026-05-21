@@ -17,10 +17,11 @@ declare(strict_types=1);
 namespace OpenDxp\Bundle\CoreBundle\EventListener\Doctrine;
 
 use Doctrine\DBAL\Schema\AbstractAsset;
-use Doctrine\Migrations\Tools\Console\Command\DoctrineCommand;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Tools\Console\Command\SchemaTool\UpdateCommand;
+use Doctrine\ORM\Tools\Console\Command\ValidateSchemaCommand;
 use Doctrine\Persistence\ManagerRegistry;
-use OpenDxp\Bundle\CoreBundle\Command\Bundle\InstallCommand;
+use OpenDxp\Bundle\CoreBundle\Doctrine\ExcludesUnmanagedTablesInterface;
 use Override;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
@@ -28,13 +29,13 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 #[AutoconfigureTag('doctrine.dbal.schema_filter')]
-class IgnoreCoreTablesFilterListener implements EventSubscriberInterface
+class UnmanagedTablesSchemaFilter implements EventSubscriberInterface
 {
-    private bool $enabled = true;
+    private bool $enabled = false;
 
     protected bool $initialized = false;
 
-    protected array $coreTables;
+    protected array $managedTables;
 
     public function __construct(protected ManagerRegistry $managerRegistry)
     {
@@ -52,7 +53,7 @@ class IgnoreCoreTablesFilterListener implements EventSubscriberInterface
 
         $this->loadManagedTables();
 
-        return in_array($assetName, $this->coreTables, true);
+        return in_array($assetName, $this->managedTables, true);
     }
 
     private function loadManagedTables(): void
@@ -62,12 +63,12 @@ class IgnoreCoreTablesFilterListener implements EventSubscriberInterface
         }
 
         $this->initialized = true;
-        $this->coreTables = [];
+        $this->managedTables = [];
 
         foreach ($this->managerRegistry->getManagers() as $em) {
             foreach ($em->getMetadataFactory()->getAllMetadata() as $metadata) {
-                if ($metadata instanceof ClassMetadata && !in_array($metadata->getTableName(), $this->coreTables, true)) {
-                    $this->coreTables[] = $metadata->getTableName();
+                if ($metadata instanceof ClassMetadata && !in_array($metadata->getTableName(), $this->managedTables, true)) {
+                    $this->managedTables[] = $metadata->getTableName();
                 }
             }
         }
@@ -75,11 +76,10 @@ class IgnoreCoreTablesFilterListener implements EventSubscriberInterface
 
     public function onConsoleCommand(ConsoleCommandEvent $event): void
     {
-        if ($event->getCommand() instanceof DoctrineCommand) {
-            $this->enabled = false;
-        } elseif ($event->getCommand() instanceof InstallCommand) {
-            $this->enabled = false;
-        }
+        $command = $event->getCommand();
+        $this->enabled = $command instanceof UpdateCommand
+            || $command instanceof ValidateSchemaCommand
+            || $command instanceof ExcludesUnmanagedTablesInterface;
     }
 
     #[Override]
