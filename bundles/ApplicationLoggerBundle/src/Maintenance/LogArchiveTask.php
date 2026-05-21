@@ -23,7 +23,7 @@ use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use OpenDxp\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use OpenDxp\Config;
-use OpenDxp\Helper\DateFormat;
+use OpenDxp\DateFormat;
 use OpenDxp\Maintenance\TaskInterface;
 use OpenDxp\Tool\Storage;
 use Psr\Log\LoggerInterface;

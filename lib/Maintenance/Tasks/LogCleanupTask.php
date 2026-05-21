@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace OpenDxp\Maintenance\Tasks;
 
-use OpenDxp\Helper\DateFormat;
+use OpenDxp\DateFormat;
 use OpenDxp\Helper\FileSystemHelper;
 use OpenDxp\Maintenance\TaskInterface;
 use OpenDxp\Model\Tool\TmpStore;

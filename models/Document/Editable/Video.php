@@ -19,7 +19,7 @@ namespace OpenDxp\Model\Document\Editable;
 use DateTime;
 use OpenDxp;
 use OpenDxp\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
-use OpenDxp\Helper\DateFormat;
+use OpenDxp\DateFormat;
 use OpenDxp\Logger;
 use OpenDxp\Model;
 use OpenDxp\Model\Asset;

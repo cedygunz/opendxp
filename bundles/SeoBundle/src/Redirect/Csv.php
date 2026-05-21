@@ -24,7 +24,7 @@ use League\Csv\Reader;
 use League\Csv\Statement;
 use League\Csv\Writer;
 use OpenDxp\Bundle\SeoBundle\Model\Redirect;
-use OpenDxp\Helper\DateFormat;
+use OpenDxp\DateFormat;
 use OpenDxp\Model\Document;
 use OpenDxp\Model\Element\Service;
 use OpenDxp\Tool\Admin;

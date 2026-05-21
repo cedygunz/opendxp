@@ -19,7 +19,7 @@ use Closure;
 use Exception;
 use JsonSerializable;
 use OpenDxp\Db\Helper;
-use OpenDxp\Helper\DateFormat;
+use OpenDxp\DateFormat;
 use OpenDxp\Model;
 use OpenDxp\Model\DataObject;
 use OpenDxp\Model\DataObject\Concrete;

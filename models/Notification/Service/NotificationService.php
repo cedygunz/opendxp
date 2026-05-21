@@ -20,7 +20,7 @@ namespace OpenDxp\Model\Notification\Service;
 use Carbon\Carbon;
 use Doctrine\DBAL\Exception;
 use OpenDxp\Db;
-use OpenDxp\Helper\DateFormat;
+use OpenDxp\DateFormat;
 use OpenDxp\Model\Element\ElementInterface;
 use OpenDxp\Model\Notification;
 use OpenDxp\Model\Notification\Listing;

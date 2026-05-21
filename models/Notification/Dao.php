@@ -17,7 +17,7 @@ namespace OpenDxp\Model\Notification;
 
 use Doctrine\DBAL\Exception;
 use OpenDxp\Db\Helper;
-use OpenDxp\Helper\DateFormat;
+use OpenDxp\DateFormat;
 use OpenDxp\Model\Dao\AbstractDao;
 use OpenDxp\Model\Element\Service;
 use OpenDxp\Model\Exception\NotFoundException;

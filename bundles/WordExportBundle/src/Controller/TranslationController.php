@@ -20,7 +20,7 @@ use Exception;
 use Locale;
 use OpenDxp\Controller\Traits\JsonHelperTrait;
 use OpenDxp\Controller\UserAwareController;
-use OpenDxp\Helper\DateFormat;
+use OpenDxp\DateFormat;
 use OpenDxp\Logger;
 use OpenDxp\Model\DataObject;
 use OpenDxp\Model\Document\Page;

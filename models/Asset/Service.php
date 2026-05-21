@@ -21,7 +21,7 @@ use OpenDxp;
 use OpenDxp\Config;
 use OpenDxp\Event\AssetEvents;
 use OpenDxp\Event\Model\AssetEvent;
-use OpenDxp\Helper\DateFormat;
+use OpenDxp\DateFormat;
 use OpenDxp\Loader\ImplementationLoader\Exception\UnsupportedException;
 use OpenDxp\Model;
 use OpenDxp\Model\Asset;

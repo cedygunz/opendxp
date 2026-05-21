@@ -17,7 +17,7 @@ namespace OpenDxp\Model\DataObject\ClassDefinition\Data;
 
 use OpenDxp;
 use OpenDxp\DataObject\Consent\Service;
-use OpenDxp\Helper\DateFormat;
+use OpenDxp\DateFormat;
 use OpenDxp\Model;
 use OpenDxp\Model\DataObject;
 use OpenDxp\Model\DataObject\ClassDefinition\Data;

@@ -17,7 +17,7 @@ namespace OpenDxp\Model\Tool\Email\Log;
 
 use DateTimeInterface;
 use Exception;
-use OpenDxp\Helper\DateFormat;
+use OpenDxp\DateFormat;
 use OpenDxp\Logger;
 use OpenDxp\Model;
 use stdClass;

@@ -22,7 +22,7 @@ use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Level;
 use Monolog\LogRecord;
 use OpenDxp\Db;
-use OpenDxp\Helper\DateFormat;
+use OpenDxp\DateFormat;
 
 class ApplicationLoggerDb extends AbstractProcessingHandler
 {

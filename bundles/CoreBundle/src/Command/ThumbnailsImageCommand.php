@@ -19,7 +19,7 @@ namespace OpenDxp\Bundle\CoreBundle\Command;
 use DateTime;
 use OpenDxp\Console\AbstractCommand;
 use OpenDxp\Console\Traits\Parallelization;
-use OpenDxp\Helper\DateFormat;
+use OpenDxp\DateFormat;
 use OpenDxp\Model\Asset;
 use OpenDxp\Model\Asset\Image;
 use Symfony\Component\Console\Attribute\AsCommand;
