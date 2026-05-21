@@ -13,7 +13,7 @@ declare(strict_types=1);
  * @license    https://www.gnu.org/licenses/gpl-3.0.html  GNU General Public License version 3 (GPLv3)
  */
 
-namespace OpenDxp\Helper;
+namespace OpenDxp;
 
 /**
  * Common date format constants used throughout the OpenDXP application.
