@@ -24,7 +24,7 @@ Here is an example for a rendering class.
 
 namespace App\Helpers;
 
-use OpenDxp\Helper\DateFormat;
+use OpenDxp\DateFormat;
 use OpenDxp\Model\DataObject\Concrete;
 
 class CustomRenderer implements DynamicTextLabelInterface

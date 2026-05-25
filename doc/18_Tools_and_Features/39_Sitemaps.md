@@ -278,7 +278,7 @@ date older than a year could look like the following:
 
 namespace App\Sitemaps\Filter;
 
-use OpenDxp\Helper\DateFormat;
+use OpenDxp\DateFormat;
 use OpenDxp\Model\Element\ElementInterface;
 use OpenDxp\Bundle\SeoBundle\Sitemap\Element\FilterInterface;
 use OpenDxp\Bundle\SeoBundle\Sitemap\Element\GeneratorContextInterface;

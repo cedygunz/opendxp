@@ -130,7 +130,7 @@ a different icon for all assets starting with a capital 'C' in their key.
 ```php
 namespace App\Model\Product\AdminStyle;
 
-use OpenDxp\Helper\DateFormat;
+use OpenDxp\DateFormat;
 use OpenDxp\Model\Asset;
 use OpenDxp\Model\Element\AdminStyle;
 
