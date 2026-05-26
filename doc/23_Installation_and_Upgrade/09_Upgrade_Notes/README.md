@@ -3,6 +3,11 @@
 ## OpenDXP 1.3.2
 - Improvement: `UnmanagedTablesSchemaFilter` (formally `IgnoreCoreTablesFilterListener`) is now disabled by default and only activates during `doctrine:schema:update`, `doctrine:schema:validate`, and commands implementing `ExcludesUnmanagedTablesInterface`
   - New Feature: If `ExcludesUnmanagedTablesInterface` is implemented on any console command that calls `SchemaTool::updateSchema()` directly to prevent unintended DROP TABLE statements for non-ORM tables, see [docs](../../19_Development_Tools_and_Details/06_Doctrine_Schema_Filter.md)
+- Improvement: Add `forceResize` parameter to video scaling methods
+- Improvement: Update `Ffmpeg` processing for improved format handling and codec support
+- Improvement: Migrate Twig extensions to attributes
+- Bugfix: return exact language match before null-language fallback in `Asset::getMetadata()`
+- Improvement: Collect Dateformats and centalize them in a single location with documentation
 
 ## OpenDXP 1.3.1
 - Bugfix: Centralize brickPrefix handling in RelationFilterConditionParser [#120](https://github.com/open-dxp/opendxp/pull/120)
