@@ -21,8 +21,8 @@ use Doctrine\DBAL\Connection;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Level;
 use Monolog\LogRecord;
-use OpenDxp\Db;
 use OpenDxp\DateFormat;
+use OpenDxp\Db;
 
 class ApplicationLoggerDb extends AbstractProcessingHandler
 {

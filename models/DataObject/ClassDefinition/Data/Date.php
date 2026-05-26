@@ -18,8 +18,8 @@ namespace OpenDxp\Model\DataObject\ClassDefinition\Data;
 
 use Carbon\Carbon;
 use DateTimeInterface;
-use OpenDxp\Db;
 use OpenDxp\DateFormat;
+use OpenDxp\Db;
 use OpenDxp\Model\DataObject;
 use OpenDxp\Model\DataObject\ClassDefinition\Data;
 use OpenDxp\Model\DataObject\Concrete;
