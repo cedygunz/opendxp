@@ -35,7 +35,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
 {
     protected bool $enabled = true;
 
-    public function __construct(private readonly Manager $workflowManager,)
+    public function __construct(private readonly Manager $workflowManager)
     {
     }
 

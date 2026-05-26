@@ -36,8 +36,8 @@ abstract class AbstractHasherFactory implements PasswordHasherFactoryInterface
 
     public function __construct(
         /**
-     * Hasher class name to build
-     */
+         * Hasher class name to build
+         */
         protected string $className,
         mixed $arguments = null
     ) {

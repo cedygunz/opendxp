@@ -21,7 +21,7 @@ use Attribute;
 #[Attribute(Attribute::TARGET_CLASS)]
 final readonly class AsAreabrick
 {
-    public function __construct(public ?string $id = null,)
+    public function __construct(public ?string $id = null)
     {
     }
 }

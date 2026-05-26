@@ -33,7 +33,7 @@ final readonly class TwigEnvironmentConfigurator
      *
      * @see https://github.com/symfony/symfony/issues/63808
      */
-    public function __construct(private object $inner,)
+    public function __construct(private object $inner)
     {
     }
 
