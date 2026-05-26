@@ -29,8 +29,10 @@ class TranslationEvent extends Event
      *
      * @param array $arguments additional parameters (e.g. "versionNote" for the version note)
      */
-    public function __construct(protected Translation $translation, array $arguments = [])
-    {
+    public function __construct(
+        protected Translation $translation,
+        array $arguments = []
+    ) {
         $this->arguments = $arguments;
     }
 

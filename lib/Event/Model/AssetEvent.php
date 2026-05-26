@@ -29,8 +29,10 @@ class AssetEvent extends Event implements ElementEventInterface
      *
      * @param array $arguments additional parameters (e.g. "versionNote" for the version note)
      */
-    public function __construct(protected Asset $asset, array $arguments = [])
-    {
+    public function __construct(
+        protected Asset $asset,
+        array $arguments = []
+    ) {
         $this->arguments = $arguments;
     }
 

@@ -28,8 +28,10 @@ use Symfony\Component\Mime\Address;
  */
 class LogMailMaintenanceTask implements TaskInterface
 {
-    public function __construct(private readonly Connection $db, private Config $config)
-    {
+    public function __construct(
+        private readonly Connection $db,
+        private Config $config
+    ) {
     }
 
     public function execute(): void

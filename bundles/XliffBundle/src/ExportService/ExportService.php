@@ -25,8 +25,10 @@ class ExportService implements ExportServiceInterface
     /**
      * ExportService constructor.
      */
-    public function __construct(private ExportDataExtractorServiceInterface $exportDataExtractorService, private ExporterInterface $translationExporter)
-    {
+    public function __construct(
+        private ExportDataExtractorServiceInterface $exportDataExtractorService,
+        private ExporterInterface $translationExporter
+    ) {
     }
 
     public function exportTranslationItems(TranslationItemCollection $translationItems, string $sourceLanguage, array $targetLanguages, ?string $exportId = null): string

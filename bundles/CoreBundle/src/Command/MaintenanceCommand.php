@@ -34,8 +34,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class MaintenanceCommand extends AbstractCommand
 {
-    public function __construct(private readonly ExecutorInterface $maintenanceExecutor, private readonly LoggerInterface $logger)
-    {
+    public function __construct(
+        private readonly ExecutorInterface $maintenanceExecutor,
+        private readonly LoggerInterface $logger
+    ) {
         parent::__construct();
     }
 

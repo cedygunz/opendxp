@@ -35,8 +35,10 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class Router implements RouterInterface, RequestMatcherInterface, VersatileGeneratorInterface
 {
-    public function __construct(protected RequestContext $context, protected RequestHelper $requestHelper)
-    {
+    public function __construct(
+        protected RequestContext $context,
+        protected RequestHelper $requestHelper
+    ) {
     }
 
     public function setContext(RequestContext $context): void

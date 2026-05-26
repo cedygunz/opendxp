@@ -29,8 +29,10 @@ class MarshalMatcher extends TypeMatcher
     /**
      * MarshalMatcher constructor.
      */
-    public function __construct(private readonly ?string $sourceType, private readonly ?int $sourceId)
-    {
+    public function __construct(
+        private readonly ?string $sourceType,
+        private readonly ?int $sourceId
+    ) {
     }
 
     /**

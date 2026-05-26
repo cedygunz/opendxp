@@ -29,8 +29,10 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
 {
     protected const string ENTRY_ID = 'maintenance_mode';
 
-    public function __construct(protected RequestStack $requestStack, protected Connection $db)
-    {
+    public function __construct(
+        protected RequestStack $requestStack,
+        protected Connection $db
+    ) {
     }
 
     public function activate(string $sessionId): void

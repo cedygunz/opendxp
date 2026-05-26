@@ -21,8 +21,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ResponseException extends Exception
 {
-    public function __construct(protected Response $response, ?Exception $previous = null)
-    {
+    public function __construct(
+        protected Response $response,
+        ?Exception $previous = null
+    ) {
         parent::__construct('', 0, $previous);
     }
 

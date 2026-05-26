@@ -49,8 +49,10 @@ class Builder
 
     private readonly OptionsResolver $optionsResolver;
 
-    public function __construct(private readonly RequestHelper $requestHelper, ?string $pageClass = null)
-    {
+    public function __construct(
+        private readonly RequestHelper $requestHelper,
+        ?string $pageClass = null
+    ) {
         if (null !== $pageClass) {
             $this->pageClass = $pageClass;
         }

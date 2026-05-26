@@ -25,8 +25,10 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class CacheResponseEvent extends Event
 {
-    public function __construct(private readonly Response $response, private bool $cache)
-    {
+    public function __construct(
+        private readonly Response $response,
+        private bool $cache
+    ) {
     }
 
     public function getResponse(): Response

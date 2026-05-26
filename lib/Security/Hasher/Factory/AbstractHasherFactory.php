@@ -34,11 +34,13 @@ abstract class AbstractHasherFactory implements PasswordHasherFactoryInterface
 
     protected ?ReflectionClass $reflector = null;
 
-    public function __construct(/**
+    public function __construct(
+        /**
      * Hasher class name to build
      */
-        protected string $className, mixed $arguments = null)
-    {
+        protected string $className,
+        mixed $arguments = null
+    ) {
         if ($arguments) {
             if (!is_array($arguments)) {
                 $arguments = [$arguments];

@@ -24,8 +24,10 @@ class SiteEvent extends Event
 {
     use ArgumentsAwareTrait;
 
-    public function __construct(protected Site $site, array $arguments = [])
-    {
+    public function __construct(
+        protected Site $site,
+        array $arguments = []
+    ) {
         $this->arguments = $arguments;
     }
 

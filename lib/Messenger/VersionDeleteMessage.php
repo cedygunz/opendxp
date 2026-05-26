@@ -21,8 +21,10 @@ namespace OpenDxp\Messenger;
  */
 class VersionDeleteMessage
 {
-    public function __construct(protected string $elementType, protected int $elementId)
-    {
+    public function __construct(
+        protected string $elementType,
+        protected int $elementId
+    ) {
     }
 
     public function getElementType(): string

@@ -29,8 +29,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OptionsProvider implements SelectOptionsProviderInterface
 {
-    public function __construct(private readonly Manager $workflowManager, private readonly TranslatorInterface $translator)
-    {
+    public function __construct(
+        private readonly Manager $workflowManager,
+        private readonly TranslatorInterface $translator
+    ) {
     }
 
     /**

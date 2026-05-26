@@ -22,8 +22,10 @@ use OpenDxp\Model\DataObject\QuantityValue\Unit;
 
 class InputQuantityValue extends AbstractQuantityValue
 {
-    public function __construct(protected string|null $value = null, Unit|string|null $unit = null)
-    {
+    public function __construct(
+        protected string|null $value = null,
+        Unit|string|null $unit = null
+    ) {
         parent::__construct($unit);
     }
 

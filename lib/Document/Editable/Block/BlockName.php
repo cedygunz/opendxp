@@ -28,8 +28,10 @@ use OpenDxp\Model\Document\Editable;
  */
 final readonly class BlockName implements JsonSerializable
 {
-    public function __construct(private string $name, private string $realName)
-    {
+    public function __construct(
+        private string $name,
+        private string $realName
+    ) {
     }
 
     /**

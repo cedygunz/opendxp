@@ -25,8 +25,10 @@ class OpenDxpUrl implements RuntimeExtensionInterface
 {
     use HelperCharsetTrait;
 
-    public function __construct(protected UrlGeneratorInterface $generator, protected RequestHelper $requestHelper)
-    {
+    public function __construct(
+        protected UrlGeneratorInterface $generator,
+        protected RequestHelper $requestHelper
+    ) {
     }
 
     public function __invoke(array $urlOptions = [], ?string $name = null, bool $reset = false, bool $encode = true, bool $relative = false): string

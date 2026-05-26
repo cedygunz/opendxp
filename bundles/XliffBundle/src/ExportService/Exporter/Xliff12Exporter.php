@@ -31,8 +31,10 @@ class Xliff12Exporter implements ExporterInterface
 
     private ?SimpleXMLElement $xliffFile = null;
 
-    public function __construct(private readonly Xliff12Escaper $xliffEscaper, protected Filesystem $filesystem)
-    {
+    public function __construct(
+        private readonly Xliff12Escaper $xliffEscaper,
+        protected Filesystem $filesystem
+    ) {
     }
 
     public function export(AttributeSet $attributeSet, ?string $exportId = null): string

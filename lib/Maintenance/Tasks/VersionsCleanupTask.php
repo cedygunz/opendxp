@@ -31,8 +31,10 @@ use Psr\Log\LoggerInterface;
  */
 class VersionsCleanupTask implements TaskInterface
 {
-    public function __construct(private readonly LoggerInterface $logger, private readonly SystemSettingsConfig $config)
-    {
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly SystemSettingsConfig $config
+    ) {
     }
 
     public function execute(): void

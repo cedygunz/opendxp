@@ -33,8 +33,10 @@ class OpenDxpContextResolver extends AbstractRequestResolver
 
     public const string CONTEXT_DEFAULT = 'default';
 
-    public function __construct(RequestStack $requestStack, protected OpenDxpContextGuesser $guesser)
-    {
+    public function __construct(
+        RequestStack $requestStack,
+        protected OpenDxpContextGuesser $guesser
+    ) {
         parent::__construct($requestStack);
     }
 

@@ -34,8 +34,10 @@ class SystemSettingsConfig
 
     private static ?LocationAwareConfigRepository $locationAwareConfigRepository = null;
 
-    public function __construct(private readonly EventDispatcherInterface $eventDispatcher, private readonly LocaleServiceInterface $localeService)
-    {
+    public function __construct(
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly LocaleServiceInterface $localeService
+    ) {
     }
 
     private static function getRepository(): LocationAwareConfigRepository

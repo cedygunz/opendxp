@@ -21,8 +21,10 @@ use stdClass;
 
 abstract class AbstractAdapter implements CustomReportAdapterInterface
 {
-    public function __construct(protected stdClass $config, protected ?Config $fullConfig = null)
-    {
+    public function __construct(
+        protected stdClass $config,
+        protected ?Config $fullConfig = null
+    ) {
     }
 
     abstract public function getData(?array $filters, ?string $sort, ?string $dir, ?int $offset, ?int $limit, ?array $fields = null, ?array $drillDownFilters = null): array;

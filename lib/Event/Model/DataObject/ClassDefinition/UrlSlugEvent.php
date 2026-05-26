@@ -22,8 +22,10 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class UrlSlugEvent extends Event
 {
-    public function __construct(protected ?UrlSlug $urlSlug, protected array $data)
-    {
+    public function __construct(
+        protected ?UrlSlug $urlSlug,
+        protected array $data
+    ) {
     }
 
     public function getUrlSlug(): ?UrlSlug

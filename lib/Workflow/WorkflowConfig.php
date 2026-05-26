@@ -18,8 +18,10 @@ namespace OpenDxp\Workflow;
 
 class WorkflowConfig
 {
-    public function __construct(private readonly string $name, private array $workflowConfigArray)
-    {
+    public function __construct(
+        private readonly string $name,
+        private array $workflowConfigArray
+    ) {
     }
 
     public function getName(): string

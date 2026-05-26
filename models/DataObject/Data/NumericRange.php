@@ -24,8 +24,10 @@ class NumericRange implements OwnerAwareFieldInterface, Stringable
 {
     use OwnerAwareFieldTrait;
 
-    public function __construct(protected int|null|float $minimum, protected int|null|float $maximum)
-    {
+    public function __construct(
+        protected int|null|float $minimum,
+        protected int|null|float $maximum
+    ) {
         $this->markMeDirty();
     }
 

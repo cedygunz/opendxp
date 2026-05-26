@@ -24,8 +24,10 @@ class ModelEvent extends Event implements ModelEventInterface
 {
     use ArgumentsAwareTrait;
 
-    public function __construct(protected ModelInterface $modelInterface, array $arguments = [])
-    {
+    public function __construct(
+        protected ModelInterface $modelInterface,
+        array $arguments = []
+    ) {
         $this->arguments = $arguments;
     }
 

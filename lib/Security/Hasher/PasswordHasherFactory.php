@@ -39,8 +39,10 @@ class PasswordHasherFactory implements PasswordHasherFactoryInterface
     /**
      * @param PasswordHasherFactoryInterface[] $passwordHasherFactories
      */
-    public function __construct(protected PasswordHasherFactoryInterface $frameworkFactory, protected array $passwordHasherFactories = [])
-    {
+    public function __construct(
+        protected PasswordHasherFactoryInterface $frameworkFactory,
+        protected array $passwordHasherFactories = []
+    ) {
     }
 
     public function getPasswordHasher(string|PasswordAuthenticatedUserInterface|PasswordHasherAwareInterface $user): PasswordHasherInterface

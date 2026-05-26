@@ -38,8 +38,10 @@ class Navigation implements RuntimeExtensionInterface
 {
     use HelperCharsetTrait;
 
-    public function __construct(private Builder $builder, private ContainerInterface $rendererLocator)
-    {
+    public function __construct(
+        private Builder $builder,
+        private ContainerInterface $rendererLocator
+    ) {
     }
 
     /**

@@ -57,8 +57,10 @@ class UrlSlug implements OwnerAwareFieldInterface
     /**
      * UrlSlug constructor.
      */
-    public function __construct(protected ?string $slug, ?int $siteId = 0)
-    {
+    public function __construct(
+        protected ?string $slug,
+        ?int $siteId = 0
+    ) {
         $this->siteId = $siteId ?? 0;
     }
 

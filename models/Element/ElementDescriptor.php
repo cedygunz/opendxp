@@ -21,8 +21,10 @@ namespace OpenDxp\Model\Element;
  */
 final class ElementDescriptor
 {
-    public function __construct(protected string $type, protected int $id)
-    {
+    public function __construct(
+        protected string $type,
+        protected int $id
+    ) {
     }
 
     public function getType(): string

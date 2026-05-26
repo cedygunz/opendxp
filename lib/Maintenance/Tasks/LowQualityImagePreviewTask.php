@@ -33,8 +33,10 @@ class LowQualityImagePreviewTask implements TaskInterface
 {
     private readonly LockInterface $lock;
 
-    public function __construct(private readonly LoggerInterface $logger, LockFactory $lockFactory)
-    {
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        LockFactory $lockFactory
+    ) {
         $this->lock = $lockFactory->createLock(self::class, 86400 * 2);
     }
 

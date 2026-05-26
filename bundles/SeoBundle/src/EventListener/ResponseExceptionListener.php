@@ -35,9 +35,8 @@ class ResponseExceptionListener implements EventSubscriberInterface
 {
     use OpenDxpContextAwareTrait;
 
-    public function __construct(
-        protected Connection $db,
-    ) {
+    public function __construct(protected Connection $db,)
+    {
     }
 
     public static function getSubscribedEvents(): array

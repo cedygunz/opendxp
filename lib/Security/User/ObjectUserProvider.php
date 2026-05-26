@@ -46,8 +46,10 @@ class ObjectUserProvider implements UserProviderInterface
      */
     protected string $className;
 
-    public function __construct(string $className, protected string $usernameField = 'username')
-    {
+    public function __construct(
+        string $className,
+        protected string $usernameField = 'username'
+    ) {
         $this->setClassName($className);
     }
 

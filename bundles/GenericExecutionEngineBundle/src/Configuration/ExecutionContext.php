@@ -23,9 +23,8 @@ use OpenDxp\Bundle\GenericExecutionEngineBundle\Exception\ExecutionContextNotDef
  */
 final readonly class ExecutionContext implements ExecutionContextInterface
 {
-    public function __construct(
-        private array $contexts
-    ) {
+    public function __construct(private array $contexts)
+    {
     }
 
     public function getTranslationDomain(string $context): string

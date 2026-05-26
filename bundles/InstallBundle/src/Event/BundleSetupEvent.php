@@ -23,8 +23,10 @@ class BundleSetupEvent extends Event
 
     private array $excludeFromBundlesPhp = [];
 
-    public function __construct(private array $bundles, private array $recommendations)
-    {
+    public function __construct(
+        private array $bundles,
+        private array $recommendations
+    ) {
     }
 
     public function getBundles(): array

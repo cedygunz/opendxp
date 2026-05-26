@@ -28,8 +28,10 @@ use SplFileInfo;
  */
 class HousekeepingTask implements TaskInterface
 {
-    public function __construct(protected int $tmpFileTime, protected int $profilerTime)
-    {
+    public function __construct(
+        protected int $tmpFileTime,
+        protected int $profilerTime
+    ) {
     }
 
     public function execute(): void

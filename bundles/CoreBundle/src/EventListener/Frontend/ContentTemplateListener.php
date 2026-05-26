@@ -39,8 +39,10 @@ class ContentTemplateListener implements EventSubscriberInterface
 {
     use OpenDxpContextAwareTrait;
 
-    public function __construct(protected TemplateResolver $templateResolver, protected Environment $twig)
-    {
+    public function __construct(
+        protected TemplateResolver $templateResolver,
+        protected Environment $twig
+    ) {
     }
 
     public static function getSubscribedEvents(): array

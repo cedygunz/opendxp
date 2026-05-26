@@ -38,8 +38,10 @@ final class DynamicRouteProvider implements RouteProviderInterface
     /**
      * @param DynamicRouteHandlerInterface[] $handlers
      */
-    public function __construct(protected SiteResolver $siteResolver, array $handlers = [])
-    {
+    public function __construct(
+        protected SiteResolver $siteResolver,
+        array $handlers = []
+    ) {
         foreach ($handlers as $handler) {
             $this->addHandler($handler);
         }

@@ -27,8 +27,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 final class OpenDxpStyle extends SymfonyStyle
 {
-    public function __construct(private readonly InputInterface $input, private readonly OutputInterface $output)
-    {
+    public function __construct(
+        private readonly InputInterface $input,
+        private readonly OutputInterface $output
+    ) {
         parent::__construct($this->input, $this->output);
     }
 

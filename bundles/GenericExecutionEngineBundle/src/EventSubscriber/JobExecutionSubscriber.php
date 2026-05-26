@@ -38,9 +38,8 @@ final readonly class JobExecutionSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function __construct(
-        private JobExecutionAgentInterface $jobExecutionAgent
-    ) {
+    public function __construct(private JobExecutionAgentInterface $jobExecutionAgent)
+    {
     }
 
     public function onWorkerMessageFailed(WorkerMessageFailedEvent $event): void

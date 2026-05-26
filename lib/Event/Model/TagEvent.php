@@ -27,8 +27,10 @@ class TagEvent extends Event
     /**
      * TagEvent constructor.
      */
-    public function __construct(protected Tag $tag, array $arguments = [])
-    {
+    public function __construct(
+        protected Tag $tag,
+        array $arguments = []
+    ) {
         $this->arguments = $arguments;
     }
 

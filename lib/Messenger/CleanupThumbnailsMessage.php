@@ -21,8 +21,10 @@ namespace OpenDxp\Messenger;
  */
 class CleanupThumbnailsMessage
 {
-    public function __construct(protected string $type, protected string $name)
-    {
+    public function __construct(
+        protected string $type,
+        protected string $name
+    ) {
     }
 
     public function getType(): string

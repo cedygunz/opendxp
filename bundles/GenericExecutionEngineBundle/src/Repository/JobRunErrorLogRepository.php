@@ -23,9 +23,8 @@ use OpenDxp\Bundle\GenericExecutionEngineBundle\Entity\JobRunErrorLog;
 
 final readonly class JobRunErrorLogRepository implements JobRunErrorLogRepositoryInterface
 {
-    public function __construct(
-        private EntityManagerInterface $openDxpEntityManager,
-    ) {
+    public function __construct(private EntityManagerInterface $openDxpEntityManager,)
+    {
     }
 
     public function createFromJobRun(

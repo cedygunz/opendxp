@@ -20,9 +20,8 @@ use OpenDxp\Model\DataObject\ClassDefinition;
 
 class ListingClassBuilder implements ListingClassBuilderInterface
 {
-    public function __construct(
-        protected ListingClassFieldDefinitionBuilderInterface $fieldDefinitionBuilder
-    ) {
+    public function __construct(protected ListingClassFieldDefinitionBuilderInterface $fieldDefinitionBuilder)
+    {
     }
 
     public function buildListingClass(ClassDefinition $classDefinition): string

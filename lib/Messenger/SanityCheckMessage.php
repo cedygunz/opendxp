@@ -21,8 +21,10 @@ namespace OpenDxp\Messenger;
  */
 class SanityCheckMessage
 {
-    public function __construct(protected string $type, protected int $id)
-    {
+    public function __construct(
+        protected string $type,
+        protected int $id
+    ) {
     }
 
     public function getType(): string

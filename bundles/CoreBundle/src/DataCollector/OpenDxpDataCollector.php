@@ -30,9 +30,8 @@ use Throwable;
  */
 class OpenDxpDataCollector extends DataCollector implements ResetInterface
 {
-    public function __construct(
-        protected OpenDxpContextResolver $contextResolver
-    ) {
+    public function __construct(protected OpenDxpContextResolver $contextResolver)
+    {
     }
 
     public function collect(Request $request, Response $response, ?Throwable $exception = null): void

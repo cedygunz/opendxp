@@ -27,8 +27,10 @@ use SimpleXMLElement;
 
 class Xliff12DataExtractor implements ImportDataExtractorInterface
 {
-    public function __construct(protected Xliff12Escaper $xliffEscaper, protected TranslationItemResolverInterface $translationItemResolver)
-    {
+    public function __construct(
+        protected Xliff12Escaper $xliffEscaper,
+        protected TranslationItemResolverInterface $translationItemResolver
+    ) {
     }
 
     public function extractElement(string $importId, int $stepId): ?AttributeSet

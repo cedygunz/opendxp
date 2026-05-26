@@ -30,8 +30,10 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class SessionStatus
 {
-    public function __construct(private readonly string $symfonyMetadataStorageKey, private readonly EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        private readonly string $symfonyMetadataStorageKey,
+        private readonly EventDispatcherInterface $eventDispatcher
+    ) {
     }
 
     public function isDisabledBySession(Request $request): bool

@@ -28,8 +28,10 @@ class UserLoader
 {
     protected ?UserModel $user = null;
 
-    public function __construct(protected TokenStorageUserResolver $userResolver, protected RequestHelper $requestHelper)
-    {
+    public function __construct(
+        protected TokenStorageUserResolver $userResolver,
+        protected RequestHelper $requestHelper
+    ) {
     }
 
     public function getUser(): ?UserModel

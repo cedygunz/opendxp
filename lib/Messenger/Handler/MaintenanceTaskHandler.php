@@ -24,9 +24,8 @@ use OpenDxp\Messenger\MaintenanceTaskMessage;
  */
 class MaintenanceTaskHandler
 {
-    public function __construct(
-        private readonly ExecutorInterface $maintenanceExecutor
-    ) {
+    public function __construct(private readonly ExecutorInterface $maintenanceExecutor)
+    {
     }
 
     public function __invoke(MaintenanceTaskMessage $message): void

@@ -160,8 +160,10 @@ class Installer
         'clear_cache',
     ];
 
-    public function __construct(private readonly LoggerInterface $logger, private readonly EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly EventDispatcherInterface $eventDispatcher
+    ) {
     }
 
     public function setDbCredentials(array $dbCredentials = []): void

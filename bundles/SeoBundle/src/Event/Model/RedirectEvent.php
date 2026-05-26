@@ -27,8 +27,10 @@ class RedirectEvent extends Event
     /**
      * @param array $arguments additional parameters (e.g. "versionNote" for the version note)
      */
-    public function __construct(protected Redirect $redirect, array $arguments = [])
-    {
+    public function __construct(
+        protected Redirect $redirect,
+        array $arguments = []
+    ) {
         $this->arguments = $arguments;
     }
 

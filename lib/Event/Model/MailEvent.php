@@ -24,8 +24,10 @@ class MailEvent extends Event
 {
     use ArgumentsAwareTrait;
 
-    public function __construct(protected Mail $mail, array $arguments = [])
-    {
+    public function __construct(
+        protected Mail $mail,
+        array $arguments = []
+    ) {
         $this->arguments = $arguments;
     }
 

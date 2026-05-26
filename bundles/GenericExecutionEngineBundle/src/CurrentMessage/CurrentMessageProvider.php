@@ -25,9 +25,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final readonly class CurrentMessageProvider implements CurrentMessageProviderInterface
 {
-    public function __construct(
-        private TranslatorInterface $translator
-    ) {
+    public function __construct(private TranslatorInterface $translator)
+    {
     }
 
     public function getTranslationMessages(string $key, array $parameters = [], ?string $domain = null): MessageInterface

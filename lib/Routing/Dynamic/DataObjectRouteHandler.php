@@ -30,8 +30,10 @@ use Symfony\Component\Routing\RouteCollection;
  */
 final readonly class DataObjectRouteHandler implements DynamicRouteHandlerInterface
 {
-    public function __construct(private SiteResolver $siteResolver, private RequestHelper $requestHelper)
-    {
+    public function __construct(
+        private SiteResolver $siteResolver,
+        private RequestHelper $requestHelper
+    ) {
     }
 
     public function getRouteByName(string $name): DataObjectRoute

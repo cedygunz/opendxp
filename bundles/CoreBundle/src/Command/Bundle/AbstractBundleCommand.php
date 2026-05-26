@@ -28,8 +28,10 @@ use Symfony\Component\Console\Input\InputOption;
  */
 abstract class AbstractBundleCommand extends AbstractCommand
 {
-    public function __construct(protected OpenDxpBundleManager $bundleManager, ?string $name = null)
-    {
+    public function __construct(
+        protected OpenDxpBundleManager $bundleManager,
+        ?string $name = null
+    ) {
         parent::__construct($name);
     }
 

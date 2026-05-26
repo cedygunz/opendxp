@@ -30,8 +30,10 @@ class EditableUsageResolver
 {
     protected ?UsageRecorderSubscriber $subscriber = null;
 
-    public function __construct(protected EventDispatcherInterface $dispatcher, protected DocumentRendererInterface $renderer)
-    {
+    public function __construct(
+        protected EventDispatcherInterface $dispatcher,
+        protected DocumentRendererInterface $renderer
+    ) {
     }
 
     public function getUsedEditableNames(Document\PageSnippet $document): array

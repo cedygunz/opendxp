@@ -26,8 +26,10 @@ use Traversable;
  */
 class ServiceCollection implements IteratorAggregate
 {
-    public function __construct(private readonly ContainerInterface $container, private readonly array $ids)
-    {
+    public function __construct(
+        private readonly ContainerInterface $container,
+        private readonly array $ids
+    ) {
     }
 
     public function getIterator(): Traversable

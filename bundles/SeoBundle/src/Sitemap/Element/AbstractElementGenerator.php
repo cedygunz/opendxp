@@ -31,8 +31,10 @@ abstract class AbstractElementGenerator implements GeneratorInterface
      * @param FilterInterface[] $filters
      * @param ProcessorInterface[] $processors
      */
-    public function __construct(private array $filters = [], private array $processors = [])
-    {
+    public function __construct(
+        private array $filters = [],
+        private array $processors = []
+    ) {
     }
 
     public function addFilter(FilterInterface $filter): void

@@ -21,8 +21,10 @@ namespace OpenDxp\Bundle\SimpleBackendSearchBundle\Message;
  */
 class SearchBackendMessage
 {
-    public function __construct(protected string $type, protected int $id)
-    {
+    public function __construct(
+        protected string $type,
+        protected int $id
+    ) {
     }
 
     public function getType(): string

@@ -24,8 +24,10 @@ class LocaleService implements LocaleServiceInterface
 {
     protected ?string $locale = null;
 
-    public function __construct(protected ?RequestStack $requestStack = null, protected ?Translator $translator = null)
-    {
+    public function __construct(
+        protected ?RequestStack $requestStack = null,
+        protected ?Translator $translator = null
+    ) {
     }
 
     public function isLocale(string $locale): bool

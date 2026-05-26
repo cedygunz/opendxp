@@ -33,8 +33,10 @@ class OptimizeImageHandler implements BatchHandlerInterface
 {
     use BatchHandlerTrait;
 
-    public function __construct(protected ImageOptimizerInterface $optimizer, protected LoggerInterface $logger)
-    {
+    public function __construct(
+        protected ImageOptimizerInterface $optimizer,
+        protected LoggerInterface $logger
+    ) {
     }
 
     public function __invoke(OptimizeImageMessage $message, ?Acknowledger $ack = null): mixed

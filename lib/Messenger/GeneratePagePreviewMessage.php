@@ -21,8 +21,10 @@ namespace OpenDxp\Messenger;
  */
 class GeneratePagePreviewMessage
 {
-    public function __construct(protected int $pageId, protected string $hostUrl)
-    {
+    public function __construct(
+        protected int $pageId,
+        protected string $hostUrl
+    ) {
     }
 
     public function getPageId(): int
