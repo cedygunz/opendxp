@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace OpenDxp\Model\DataObject\ClassDefinition\Data;
 
+use OpenDxp\DateFormat;
 use OpenDxp\Model;
 use OpenDxp\Model\DataObject;
 use OpenDxp\Model\DataObject\Concrete;
@@ -115,7 +116,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
             return null;
         }
 
-        return date('H:i', $timestamp);
+        return date(DateFormat::TIME, $timestamp);
     }
 
     /**

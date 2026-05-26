@@ -130,6 +130,7 @@ a different icon for all assets starting with a capital 'C' in their key.
 ```php
 namespace App\Model\Product\AdminStyle;
 
+use OpenDxp\DateFormat;
 use OpenDxp\Model\Asset;
 use OpenDxp\Model\Element\AdminStyle;
 
@@ -148,7 +149,7 @@ class AssetEventStyle extends AdminStyle
             $this->elementQtipConfig = [
                 'title' => 'ID: ' . $element->getId(),
                 'text' => 'Path: ' . $element->getFullPath()
-                        . '<br>Modified: ' . date('c', $element->getModificationDate())
+                        . '<br>Modified: ' . date(DateFormat::ISO_8601, $element->getModificationDate())
                         . '<br>Size:  '. $element->getWidth() . 'x' . $element->getHeight() . " px"
             ];
         }

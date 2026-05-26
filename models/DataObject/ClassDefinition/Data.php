@@ -19,6 +19,7 @@ use Closure;
 use Exception;
 use JsonSerializable;
 use OpenDxp\Db\Helper;
+use OpenDxp\DateFormat;
 use OpenDxp\Model;
 use OpenDxp\Model\DataObject;
 use OpenDxp\Model\DataObject\Concrete;
@@ -389,18 +390,17 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         if ($this instanceof \OpenDxp\Model\DataObject\ClassDefinition\Data\CalculatedValue) {
             if ($this->elementType === 'date') {
-                $dateFormat = 'Y-m-d H:i:s';
                 $startDate = new \Carbon\Carbon($value);
                 if ($operator === '=') {
                     $maxTime = $startDate->addDay();
                     $endDate = new \Carbon\Carbon($maxTime);
-                    $operator = ' BETWEEN ' . $db->quote($startDate->format($dateFormat));
-                    $operator .= ' AND ' . $db->quote($endDate->format($dateFormat));
+                    $operator = ' BETWEEN ' . $db->quote($startDate->format(DateFormat::DATETIME));
+                    $operator .= ' AND ' . $db->quote($endDate->format(DateFormat::DATETIME));
 
                     return $key . ' ' . $operator;
                 }
 
-                return $key . ' ' . $operator . ' ' . $db->quote($startDate->format($dateFormat));
+                return $key . ' ' . $operator . ' ' . $db->quote($startDate->format(DateFormat::DATETIME));
             }
 
             if ($this->elementType === 'boolean') {

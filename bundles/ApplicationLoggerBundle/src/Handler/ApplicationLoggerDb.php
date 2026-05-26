@@ -22,6 +22,7 @@ use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Level;
 use Monolog\LogRecord;
 use OpenDxp\Db;
+use OpenDxp\DateFormat;
 
 class ApplicationLoggerDb extends AbstractProcessingHandler
 {
@@ -43,7 +44,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
             'pid' => getmypid(),
             'priority' => $record->level->toPsrLogLevel(),
             'message' => $record->message,
-            'timestamp' => $record->datetime->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s'),
+            'timestamp' => $record->datetime->setTimezone(new DateTimeZone('UTC'))->format(DateFormat::DATETIME),
             'component' => $record->context['component'] ?? $record->channel,
             'fileobject' => $record->context['fileObject'] ?? null,
             'relatedobject' => $record->context['relatedObject'] ?? null,

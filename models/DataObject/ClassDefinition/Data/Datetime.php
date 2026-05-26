@@ -19,6 +19,7 @@ namespace OpenDxp\Model\DataObject\ClassDefinition\Data;
 use Carbon\Carbon;
 use DateTimeInterface;
 use OpenDxp\Db;
+use OpenDxp\DateFormat;
 use OpenDxp\Model;
 use OpenDxp\Model\DataObject;
 use OpenDxp\Model\DataObject\ClassDefinition\Data;
@@ -61,7 +62,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         if ($data) {
             $result = $data->getTimestamp();
             if ($this->getColumnType() === 'datetime') {
-                return date('Y-m-d H:i:s', $result);
+                return date(DateFormat::DATETIME, $result);
             }
 
             return $result;
@@ -158,7 +159,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof DateTimeInterface) {
-            return $this->applyTimezone($data)->format('Y-m-d H:i:s');
+            return $this->applyTimezone($data)->format(DateFormat::DATETIME);
         }
 
         return '';
@@ -169,7 +170,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof DateTimeInterface) {
-            return $this->applyTimezone($data)->format('Y-m-d H:i');
+            return $this->applyTimezone($data)->format(DateFormat::DATETIME_SHORT);
         }
 
         return '';
@@ -282,7 +283,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         $timestamp = $value;
 
         if ($this->getColumnType() === 'datetime') {
-            $value = date('Y-m-d', $value);
+            $value = date(DateFormat::DATE, $value);
         }
 
         if ($operator === '=') {
@@ -326,8 +327,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
-        $oldValue = $oldValue instanceof DateTimeInterface ? $oldValue->format('Y-m-d H:i:s') : null;
-        $newValue = $newValue instanceof DateTimeInterface ? $newValue->format('Y-m-d H:i:s') : null;
+        $oldValue = $oldValue instanceof DateTimeInterface ? $oldValue->format(DateFormat::DATETIME) : null;
+        $newValue = $newValue instanceof DateTimeInterface ? $newValue->format(DateFormat::DATETIME) : null;
 
         return $oldValue === $newValue;
     }

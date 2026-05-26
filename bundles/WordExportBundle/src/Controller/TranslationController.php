@@ -20,6 +20,7 @@ use Exception;
 use Locale;
 use OpenDxp\Controller\Traits\JsonHelperTrait;
 use OpenDxp\Controller\UserAwareController;
+use OpenDxp\DateFormat;
 use OpenDxp\Logger;
 use OpenDxp\Model\DataObject;
 use OpenDxp\Model\Document\Page;
@@ -273,7 +274,7 @@ class TranslationController extends UserAwareController
         $response->headers->set('Content-Type', 'text/html');
         $response->headers->set(
             'Content-Disposition',
-            'attachment; filename="word-export-' . date('Ymd') . '_' . uniqid() . '.htm"'
+            'attachment; filename="word-export-' . date(DateFormat::FILENAME) . '_' . uniqid() . '.htm"'
         );
 
         return $response;

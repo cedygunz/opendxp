@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace OpenDxp\Model\Asset\MetaData\ClassDefinition\Data;
 
 use Carbon\Carbon;
+use OpenDxp\DateFormat;
 use OpenDxp\Tool\UserTimezone;
 use Override;
 
@@ -46,6 +47,6 @@ class Date extends Data
 
         $date = Carbon::createFromTimestamp((int) $value, date_default_timezone_get());
 
-        return UserTimezone::applyTimezone($date)->format('Y-m-d');
+        return UserTimezone::applyTimezone($date)->format(DateFormat::DATE);
     }
 }

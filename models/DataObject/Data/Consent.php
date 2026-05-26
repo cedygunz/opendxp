@@ -19,6 +19,7 @@ namespace OpenDxp\Model\DataObject\Data;
 use OpenDxp\Model\DataObject\OwnerAwareFieldInterface;
 use OpenDxp\Model\DataObject\Traits\OwnerAwareFieldTrait;
 use OpenDxp\Model\Element\Note;
+use OpenDxp\DateFormat;
 
 class Consent implements OwnerAwareFieldInterface
 {
@@ -76,7 +77,7 @@ class Consent implements OwnerAwareFieldInterface
     {
         $note = $this->getNote();
         if ($note) {
-            return $note->getTitle() . ': ' . date('r', $note->getDate());
+            return $note->getTitle() . ': ' . date(DateFormat::RFC_2822, $note->getDate());
         }
 
         return '';

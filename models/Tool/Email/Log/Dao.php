@@ -17,6 +17,7 @@ namespace OpenDxp\Model\Tool\Email\Log;
 
 use DateTimeInterface;
 use Exception;
+use OpenDxp\DateFormat;
 use OpenDxp\Logger;
 use OpenDxp\Model;
 use stdClass;
@@ -139,7 +140,7 @@ class Dao extends Model\Dao\AbstractDao
                 'value' => $value, ];
         } elseif ($value instanceof DateTimeInterface) {
             $class->data = ['type' => 'simple',
-                'value' => $value->format('Y-m-d H:i'), ];
+                'value' => $value->format(DateFormat::DATETIME_SHORT), ];
         } elseif (is_object($value) && method_exists($value, 'getId')) {
             $class->data = ['type' => 'object',
                 'objectId' => $value->getId(),

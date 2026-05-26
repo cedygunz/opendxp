@@ -24,6 +24,7 @@ use League\Csv\Reader;
 use League\Csv\Statement;
 use League\Csv\Writer;
 use OpenDxp\Bundle\SeoBundle\Model\Redirect;
+use OpenDxp\DateFormat;
 use OpenDxp\Model\Document;
 use OpenDxp\Model\Element\Service;
 use OpenDxp\Tool\Admin;
@@ -87,7 +88,7 @@ class Csv
 
             $expiry = null;
             if ($redirect->getExpiry()) {
-                $expiry = (new DateTime('@' . $redirect->getExpiry()))->format('c');
+                $expiry = (new DateTime('@' . $redirect->getExpiry()))->format(DateFormat::ISO_8601);
             }
 
             $data = [

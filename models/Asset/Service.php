@@ -21,6 +21,7 @@ use OpenDxp;
 use OpenDxp\Config;
 use OpenDxp\Event\AssetEvents;
 use OpenDxp\Event\Model\AssetEvent;
+use OpenDxp\DateFormat;
 use OpenDxp\Loader\ImplementationLoader\Exception\UnsupportedException;
 use OpenDxp\Model;
 use OpenDxp\Model\Asset;
@@ -515,7 +516,7 @@ class Service extends Model\Element\Service
 
         $headers = [
             'Cache-Control' => 'public, max-age=' . $lifetime,
-            'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
+            'Expires' => date(DateFormat::RFC_1123, time() + $lifetime),
             'Content-Type' => $mime,
             'Content-Length' => $fileSize,
         ];
@@ -570,7 +571,7 @@ class Service extends Model\Element\Service
                 fpassthru($stream);
             }, 200, [
                 'Cache-Control' => 'public, max-age=' . $lifetime,
-                'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
+                'Expires' => date(DateFormat::RFC_1123, time() + $lifetime),
                 'Content-Type' => $storage->mimeType($storagePath),
                 'Content-Length' => $storage->fileSize($storagePath),
             ]);

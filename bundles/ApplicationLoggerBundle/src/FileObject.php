@@ -19,6 +19,7 @@ namespace OpenDxp\Bundle\ApplicationLoggerBundle;
 use const OPENDXP_PROJECT_ROOT;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\UnableToWriteFile;
+use OpenDxp\DateFormat;
 use OpenDxp\Logger;
 use OpenDxp\Tool\Storage;
 use Stringable;
@@ -28,7 +29,7 @@ final class FileObject implements Stringable
     public function __construct(protected string $data, protected ?string $filename = null)
     {
         if (!$this->filename) {
-            $this->filename = date('/Y/m/d/') . uniqid('fileobject_', true);
+            $this->filename = date(DateFormat::FILEPATH_DATE) . uniqid('fileobject_', true);
         }
         $storage = Storage::get('application_log');
 

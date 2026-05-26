@@ -17,6 +17,7 @@ namespace OpenDxp\Model\DataObject\ClassDefinition\Data;
 
 use OpenDxp;
 use OpenDxp\DataObject\Consent\Service;
+use OpenDxp\DateFormat;
 use OpenDxp\Model;
 use OpenDxp\Model\DataObject;
 use OpenDxp\Model\DataObject\ClassDefinition\Data;
@@ -166,7 +167,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
             }
 
             if (!empty($originalNote)) {
-                $note->setTitle($note->getTitle() . ' (objects merged - original consent date: ' . date('Y-m-d H:i:s', $originalNote->getDate()) .')');
+                $note->setTitle($note->getTitle() . ' (objects merged - original consent date: ' . date(DateFormat::DATETIME, $originalNote->getDate()) .')');
                 $note->save();
 
                 $noteId = $note->getId();
