@@ -133,6 +133,7 @@ final class Configuration implements ConfigurationInterface
         $this->addTemplatingEngineNode($rootNode);
         $this->addGotenbergNode($rootNode);
         $this->addDependencyNode($rootNode);
+        $this->addHttpCacheNode($rootNode);
         $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
             'image_thumbnails' => OPENDXP_CONFIGURATION_DIRECTORY . '/image_thumbnails',
             'video_thumbnails' => OPENDXP_CONFIGURATION_DIRECTORY . '/video_thumbnails',
@@ -1968,6 +1969,69 @@ final class Configuration implements ConfigurationInterface
                 ->children()
                     ->scalarNode('enabled')
                         ->defaultValue(true)
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
+    }
+
+    private function addHttpCacheNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('http_cache')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->booleanNode('enabled')
+                        ->info('Enable HTTP cache tag-based invalidation via FOSHttpCacheBundle. Requires fos_http_cache to be configured in your project. Default: false.')
+                        ->defaultFalse()
+                    ->end()
+                    ->enumNode('scope')
+                        ->info('When to start collecting cache tags. "controller" (default): only from kernel.controller onwards, elements loaded before (e.g. in kernel.request listeners) are not tagged. "request": collect from the very beginning of the request.')
+                        ->values(['controller', 'request'])
+                        ->defaultValue('controller')
+                    ->end()
+                    ->arrayNode('elements')
+                        ->info('Controls which element types are tracked.')
+                        ->addDefaultsIfNotSet()
+                        ->children()
+                            ->arrayNode('documents')
+                                ->addDefaultsIfNotSet()
+                                ->children()
+                                    ->booleanNode('enabled')->defaultTrue()->end()
+                                    ->booleanNode('tag_list')
+                                        ->info('Also tag/invalidate "doc-list".')
+                                        ->defaultTrue()
+                                    ->end()
+                                ->end()
+                            ->end()
+                            ->arrayNode('data_objects')
+                                ->addDefaultsIfNotSet()
+                                ->children()
+                                    ->booleanNode('enabled')->defaultTrue()->end()
+                                    ->booleanNode('tag_list')
+                                        ->info('Also tag/invalidate "obj-class:{className}".')
+                                        ->defaultTrue()
+                                    ->end()
+                                ->end()
+                            ->end()
+                            ->arrayNode('assets')
+                                ->addDefaultsIfNotSet()
+                                ->children()
+                                    ->booleanNode('enabled')->defaultTrue()->end()
+                                    ->booleanNode('tag_list')
+                                        ->info('Also tag/invalidate "asset-list".')
+                                        ->defaultTrue()
+                                    ->end()
+                                ->end()
+                            ->end()
+                            ->arrayNode('translations')
+                                ->addDefaultsIfNotSet()
+                                ->children()
+                                    ->booleanNode('enabled')->defaultTrue()->end()
+                                ->end()
+                            ->end()
+                        ->end()
                     ->end()
                 ->end()
             ->end()

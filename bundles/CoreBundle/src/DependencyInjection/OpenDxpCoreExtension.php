@@ -19,6 +19,9 @@ namespace OpenDxp\Bundle\CoreBundle\DependencyInjection;
 use InvalidArgumentException;
 use OpenDxp;
 use OpenDxp\Bundle\CoreBundle\EventListener\TranslationDebugListener;
+use OpenDxp\Bundle\CoreBundle\HttpCache\Strategy\OpenDxpElementCacheStrategy;
+use OpenDxp\Bundle\CoreBundle\HttpCache\Strategy\TranslationCacheStrategy;
+use OpenDxp\HttpCache\HttpCacheScope;
 use OpenDxp\Extension\Document\Areabrick\Attribute\AsAreabrick;
 use OpenDxp\Http\Context\OpenDxpContextGuesser;
 use OpenDxp\Loader\ImplementationLoader\ClassMapLoader;
@@ -31,7 +34,6 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
@@ -39,7 +41,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 /**
  * @internal
  */
-final class OpenDxpCoreExtension extends ConfigurableExtension implements PrependExtensionInterface
+final class OpenDxpCoreExtension extends ConfigurableExtension
 {
     #[Override]
     public function getAlias(): string
@@ -65,19 +67,46 @@ final class OpenDxpCoreExtension extends ConfigurableExtension implements Prepen
             $container->setParameter('opendxp.encryption.secret', $config['encryption']['secret']);
         }
 
-        $container->setParameter('opendxp.translations.admin_translation_mapping', $config['translations']['admin_translation_mapping']);
+        $container->setParameter(
+            'opendxp.translations.admin_translation_mapping',
+            $config['translations']['admin_translation_mapping']
+        );
 
-        $container->setParameter('opendxp.web_profiler.toolbar.excluded_routes', $config['web_profiler']['toolbar']['excluded_routes']);
+        $container->setParameter(
+            'opendxp.web_profiler.toolbar.excluded_routes',
+            $config['web_profiler']['toolbar']['excluded_routes']
+        );
 
-        $container->setParameter('opendxp.maintenance.housekeeping.cleanup_tmp_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_tmp_files_atime_older_than']);
-        $container->setParameter('opendxp.maintenance.housekeeping.cleanup_profiler_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_profiler_files_atime_older_than']);
+        $container->setParameter(
+            'opendxp.maintenance.housekeeping.cleanup_tmp_files_atime_older_than',
+            $config['maintenance']['housekeeping']['cleanup_tmp_files_atime_older_than']
+        );
 
-        $container->setParameter('opendxp.documents.default_controller', $config['documents']['default_controller']);
+        $container->setParameter(
+            'opendxp.maintenance.housekeeping.cleanup_profiler_files_atime_older_than',
+            $config['maintenance']['housekeeping']['cleanup_profiler_files_atime_older_than']
+        );
+
+        $container->setParameter(
+            'opendxp.documents.default_controller',
+            $config['documents']['default_controller']
+        );
 
         //twig security policy allowlist config
-        $container->setParameter('opendxp.templating.twig.sandbox_security_policy.tags', $config['templating_engine']['twig']['sandbox_security_policy']['tags']);
-        $container->setParameter('opendxp.templating.twig.sandbox_security_policy.filters', $config['templating_engine']['twig']['sandbox_security_policy']['filters']);
-        $container->setParameter('opendxp.templating.twig.sandbox_security_policy.functions', $config['templating_engine']['twig']['sandbox_security_policy']['functions']);
+        $container->setParameter(
+            'opendxp.templating.twig.sandbox_security_policy.tags',
+            $config['templating_engine']['twig']['sandbox_security_policy']['tags']
+        );
+
+        $container->setParameter(
+            'opendxp.templating.twig.sandbox_security_policy.filters',
+            $config['templating_engine']['twig']['sandbox_security_policy']['filters']
+        );
+
+        $container->setParameter(
+            'opendxp.templating.twig.sandbox_security_policy.functions',
+            $config['templating_engine']['twig']['sandbox_security_policy']['functions']
+        );
 
         // register opendxp config on container
         // TODO is this bad practice?
@@ -87,6 +116,7 @@ final class OpenDxpCoreExtension extends ConfigurableExtension implements Prepen
         // set default domain for router to main domain if configured
         // this will be overridden from the request in web context but is handy for CLI scripts
         $domain = $config['general']['domain'] ?? '';
+
         if ($domain) {
             // when not an env variable, check if the domain is valid
             if (
@@ -128,6 +158,7 @@ final class OpenDxpCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('class_builder.yaml');
         $loader->load('serializer.yaml');
 
+        $this->configureHttpCache($container, $config['http_cache'] ?? []);
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
         $this->configureClassResolvers($container, $config);
@@ -166,20 +197,20 @@ final class OpenDxpCoreExtension extends ConfigurableExtension implements Prepen
     private function configureImplementationLoaders(ContainerBuilder $container, array $config): void
     {
         $services = [
-            EditableLoader::class => [
-                'config' => $config['documents']['editables'],
+            EditableLoader::class                               => [
+                'config'       => $config['documents']['editables'],
                 'prefixLoader' => DocumentEditablePrefixLoader::class,
             ],
-            'opendxp.implementation_loader.object.data' => [
-                'config' => $config['objects']['class_definitions']['data'],
+            'opendxp.implementation_loader.object.data'         => [
+                'config'       => $config['objects']['class_definitions']['data'],
                 'prefixLoader' => PrefixLoader::class,
             ],
-            'opendxp.implementation_loader.object.layout' => [
-                'config' => $config['objects']['class_definitions']['layout'],
+            'opendxp.implementation_loader.object.layout'       => [
+                'config'       => $config['objects']['class_definitions']['layout'],
                 'prefixLoader' => PrefixLoader::class,
             ],
             'opendxp.implementation_loader.asset.metadata.data' => [
-                'config' => $config['assets']['metadata']['class_definitions']['data'],
+                'config'       => $config['assets']['metadata']['class_definitions']['data'],
                 'prefixLoader' => PrefixLoader::class,
             ],
         ];
@@ -266,16 +297,62 @@ final class OpenDxpCoreExtension extends ConfigurableExtension implements Prepen
         }
     }
 
-    /**
-     * Allows us to prepend/modify configurations of different extensions
-     */
-    public function prepend(ContainerBuilder $container): void
+    private function configureHttpCache(ContainerBuilder $container, array $config): void
     {
-        /*$securityConfigs = $container->getExtensionConfig('security');
+        $enabled = $config['enabled'] ?? false;
 
-        if (count($securityConfigs) > 1) {
-            $this->setExtensionConfig($container, 'security', $securityConfigs);
-        }*/
+        $container->setParameter('opendxp.http_cache.enabled', $enabled);
+
+        if (!$enabled) {
+            return;
+        }
+
+        if (!class_exists(\FOS\HttpCacheBundle\FOSHttpCacheBundle::class)) {
+            throw new \LogicException(
+                'opendxp.http_cache.enabled requires FOSHttpCacheBundle. Try running "composer require friendsofsymfony/http-cache-bundle" and register it in bundles.php: FOS\HttpCacheBundle\FOSHttpCacheBundle::class => [\'all\' => true].'
+            );
+        }
+
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
+        $loader->load('http_cache.yaml');
+
+        $collectFromRequest = ($config['scope'] ?? 'controller') === 'request';
+        $container
+            ->getDefinition(HttpCacheScope::class)
+            ->setArgument('$collectFromRequest', $collectFromRequest);
+
+        $this->registerHttpCacheStrategies($container, $config['elements'] ?? []);
+    }
+
+    private function registerHttpCacheStrategies(ContainerBuilder $container, array $elements): void
+    {
+        $documents = $elements['documents'] ?? [];
+        $dataObjects = $elements['data_objects'] ?? [];
+        $assets = $elements['assets'] ?? [];
+        $translations = $elements['translations'] ?? [];
+
+        $docsEnabled = $documents['enabled'] ?? true;
+        $objEnabled = $dataObjects['enabled'] ?? true;
+        $assetsEnabled = $assets['enabled'] ?? true;
+
+        if ($docsEnabled || $objEnabled || $assetsEnabled) {
+            $definition = new Definition(OpenDxpElementCacheStrategy::class, [
+                '$documentsEnabled'   => $docsEnabled,
+                '$documentsTagList'   => $documents['tag_list'] ?? true,
+                '$dataObjectsEnabled' => $objEnabled,
+                '$dataObjectsTagList' => $dataObjects['tag_list'] ?? true,
+                '$assetsEnabled'      => $assetsEnabled,
+                '$assetsTagList'      => $assets['tag_list'] ?? true,
+            ]);
+            $definition->addTag('opendxp.http_cache.strategy');
+            $container->setDefinition(OpenDxpElementCacheStrategy::class, $definition);
+        }
+
+        if ($translations['enabled'] ?? true) {
+            $definition = new Definition(TranslationCacheStrategy::class);
+            $definition->addTag('opendxp.http_cache.strategy');
+            $container->setDefinition(TranslationCacheStrategy::class, $definition);
+        }
     }
 
     /**

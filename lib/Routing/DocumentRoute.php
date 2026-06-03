@@ -23,7 +23,7 @@ use Symfony\Component\Routing\Route;
 /**
  * @internal
  */
-final class DocumentRoute extends Route implements RouteObjectInterface
+final class DocumentRoute extends Route implements RouteObjectInterface, HttpCacheTaggableInterface
 {
     protected ?Document $document = null;
 
@@ -42,6 +42,11 @@ final class DocumentRoute extends Route implements RouteObjectInterface
     public function getContent(): ?object
     {
         return $this->getDocument();
+    }
+
+    public function getCacheElement(): ?object
+    {
+        return $this->document;
     }
 
     public function getRouteKey(): ?string

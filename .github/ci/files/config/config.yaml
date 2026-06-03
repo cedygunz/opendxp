@@ -18,6 +18,8 @@ doctrine:
                     bit: boolean
 
 opendxp:
+    http_cache:
+        enabled: true
     email:
         sender:
             name: opendxp

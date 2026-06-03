@@ -25,7 +25,7 @@ use Symfony\Component\Routing\Route;
 /**
  * @internal
  */
-final class DataObjectRoute extends Route implements RouteObjectInterface
+final class DataObjectRoute extends Route implements RouteObjectInterface, HttpCacheTaggableInterface
 {
     protected ?Concrete $object = null;
 
@@ -81,6 +81,11 @@ final class DataObjectRoute extends Route implements RouteObjectInterface
     public function getContent(): ?object
     {
         return null;
+    }
+
+    public function getCacheElement(): ?object
+    {
+        return $this->object;
     }
 
     public function getRouteKey(): ?string
