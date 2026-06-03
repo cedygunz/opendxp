@@ -58,7 +58,6 @@ class HttpCacheTagDataCollector extends DataCollector
         return 'opendxp.http_cache_tags';
     }
 
-    /** @return string[] */
     public function getTags(): array
     {
         return $this->data['tags'] ?? [];
@@ -69,13 +68,11 @@ class HttpCacheTagDataCollector extends DataCollector
         return $this->data['count'] ?? 0;
     }
 
-    /** @return array<string, string[]> */
     public function getTypes(): array
     {
         return $this->data['types'] ?? [];
     }
 
-    /** @return string[] Tags added via FOSHttpCacheBundle directly */
     public function getExternalTags(): array
     {
         return $this->data['external_tags'] ?? [];
@@ -83,6 +80,7 @@ class HttpCacheTagDataCollector extends DataCollector
 
     /**
      * @param CacheTag[] $tags
+     *
      * @return CacheTag[]
      */
     private function deduplicateTags(array $tags): array
@@ -97,9 +95,6 @@ class HttpCacheTagDataCollector extends DataCollector
 
     /**
      * FOS has no public getTags() method, reading the response header is the only available approach.
-     *
-     * @param string[] $tracedStrings
-     * @return string[]
      */
     private function collectExternalTags(Response $response, array $tracedStrings): array
     {
@@ -111,20 +106,53 @@ class HttpCacheTagDataCollector extends DataCollector
         $allTags = array_filter(array_map(trim(...), preg_split('/[\s,]+/', $headerValue) ?: []));
         $tracedSet = array_flip($tracedStrings);
 
-        return array_values(array_filter($allTags, static fn (string $tag) => !isset($tracedSet[$tag])));
+        return array_values(array_filter($allTags, static fn(string $tag) => !isset($tracedSet[$tag])));
     }
 
     /**
      * @param CacheTag[] $tags
-     * @return array<string, string[]>
      */
     private function groupByType(array $tags): array
     {
+        $labels = [
+            'doc'         => 'Documents',
+            'obj'         => 'Objects',
+            'obj-class'   => 'DataObject Classes',
+            'asset'       => 'Assets',
+            'translation' => 'Translations',
+        ];
+
+        $listPrefixes = [
+            'doc-list',
+            'asset-list'
+        ];
+
         $grouped = [];
+        $lists = [];
+
         foreach ($tags as $tag) {
-            $grouped[$tag->type->prefix()][] = (string) $tag;
+            $prefix = $tag->type->prefix();
+            $str = (string) $tag;
+
+            if (in_array($prefix, $listPrefixes, true)) {
+                $lists[] = $str;
+            } else {
+                $grouped[$labels[$prefix] ?? $this->formatPrefix($prefix)][] = $str;
+            }
+        }
+
+        if ($lists !== []) {
+            $grouped['Lists'] = $lists;
         }
 
         return $grouped;
+    }
+
+    private function formatPrefix(string $prefix): string
+    {
+        $str = str_replace('-', ' ', $prefix);
+        $str = (string) preg_replace('/([a-z])([A-Z])/', '$1 $2', $str);
+
+        return ucwords($str);
     }
 }

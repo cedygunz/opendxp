@@ -24,14 +24,16 @@ services:
         alias: OpenDxp\HttpCache\TraceableHttpCacheTagCollector
         public: true
 
-    OpenDxp\Bundle\CoreBundle\DataCollector\HttpCacheTagDataCollector:
-        arguments:
-            $responseTagger: '@FOS\HttpCacheBundle\Http\SymfonyResponseTagger'
-        tags:
-            - { name: data_collector, id: opendxp.http_cache_tags, template: '@OpenDxpCore/data_collector/http_cache_tags.html.twig' }
-
     OpenDxp\HttpCache\HttpCache:
         public: true
         arguments:
             $strategies: !tagged_iterator opendxp.http_cache.strategy
             $cacheManager: '@?FOS\HttpCacheBundle\CacheManager'
+
+    OpenDxp\Bundle\CoreBundle\DataCollector\HttpCacheTagDataCollector:
+        arguments:
+            $responseTagger: '@FOS\HttpCacheBundle\Http\SymfonyResponseTagger'
+        tags:
+            -   name: data_collector
+                id: opendxp.http_cache_tags
+                template: '@OpenDxpCore/data_collector/http_cache_tags.html.twig'

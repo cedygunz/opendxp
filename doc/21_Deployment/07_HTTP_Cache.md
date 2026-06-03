@@ -7,7 +7,7 @@ When content changes, only the affected cached responses are invalidated, no ful
 The response header name (`X-Cache-Tags` by default) is determined by the configured FOSHttpCacheBundle proxy client. 
 Varnish `purgekeys` mode uses `xkey`; Fastly uses `Surrogate-Key`. See the [FOSHttpCacheBundle proxy client docs](https://foshttpcachebundle.readthedocs.io/en/stable/reference/configuration/proxy-clients.html) for details.
 
----
+***
 
 ## How it works
 
@@ -62,7 +62,7 @@ Save Document 42
   → Varnish/Fastly/etc. invalidates all responses tagged doc:42 or doc-list
 ```
 
----
+***
 
 ## Setup
 
@@ -135,7 +135,7 @@ fos_http_cache:
             - { match: { path: ^/(?!admin) }, headers: { public: true, s_maxage: 3600 } }
 ```
 
----
+***
 
 ## Configuration reference
 
@@ -175,7 +175,7 @@ opendxp:
                 enabled: false
 ```
 
----
+***
 
 ## Project-specific tags
 
@@ -209,9 +209,37 @@ fos_http_cache:
 
 See [FOSHttpCacheBundle tagging docs](https://foshttpcachebundle.readthedocs.io/en/stable/features/tagging.html) for the full reference.
 
-### 2. Via custom strategy (for custom element types)
+***
 
-Register a `HttpCacheTagStrategyInterface` service to cover both collection and invalidation for a custom element type with a single class:
+### 2. Via Doctrine entity strategy
+For Doctrine entities that need a single `{prefix}:{id}` tag, use the `DoctrineGeneralEntityCacheStrategy` service. 
+
+Collection (on `postLoad`) and invalidation (on `postPersist`/`postUpdate`/`postRemove`) are handled automatically, 
+which only fires for the registered entity classes.
+
+```yaml
+# config/services/http_cache.yaml
+app.http_cache.my_entity:
+    class: OpenDxp\HttpCache\DoctrineGeneralEntityCacheStrategy
+    tags:
+        - name: opendxp.http_cache.doctrine_entity
+          entity_class: App\Entity\MyEntity
+          tag_prefix: app-my-entity
+          # identifier_expression: 'object.getId()'   # optional — this is the default
+```
+
+This produces tags like `app-my-entity:42`.
+
+> [!NOTE]
+> `identifier_expression` is a Symfony expression evaluated with `object` as the entity instance.
+
+***
+
+### 3. Via custom strategy
+Use this if you need more control about tagging or custom (special) entities.
+
+Implement `HttpCacheTagStrategyInterface` directly and register a `HttpCacheTagStrategyInterface` service 
+to cover both collection and invalidation for a custom element type with a single class:
 
 ```php
 use OpenDxp\HttpCache\HttpCacheTagStrategyInterface;
@@ -258,14 +286,14 @@ App\Cache\BlogPostCacheStrategy:
 **Collection**: call when a BlogPost is loaded:
 
 ```php
-// In a Doctrine postLoad listener, or repository, or controller:
+// In a postLoad listener, or repository, or controller:
 $this->invalidator->collectTagsFor($blogPost);
 ```
 
 **Invalidation**: call when a BlogPost changes:
 
 ```php
-// In a Doctrine postUpdate/postDelete listener or wherever mutations happen:
+// In a postUpdate/postDelete listener or wherever mutations happen:
 $this->invalidator->invalidate($blogPost);
 ```
 
@@ -280,7 +308,7 @@ class BlogPostRepository
 }
 ```
 
----
+***
 
 ## Skipping invalidation
 
@@ -295,7 +323,7 @@ $document->save([HttpCacheArguments::SKIP_INVALIDATION => true]);
 
 `saveVersionOnly` and `autoSave` operations are automatically excluded from invalidation.
 
----
+***
 
 ## Filtering tag collection
 
@@ -321,7 +349,7 @@ class InternalDocumentTagGuard
 
 To add or modify tags, register a `HttpCacheTagStrategyInterface` strategy instead: the guard is a filter only.
 
----
+***
 
 ## Disabling tag collection
 
@@ -379,7 +407,7 @@ public function onKernelRequest(RequestEvent $event): void
 }
 ```
 
----
+***
 
 ## ESI fragments
 For pages mixing public and user-specific content, use Symfony's ESI support. 
@@ -401,13 +429,13 @@ public function badgeAction(): Response
 }
 ```
 
----
+***
 
 ## Symfony Web Profiler
 When the Symfony profiler is activ, an **HTTP Cache Tags** panel is available in the toolbar.
 It shows all tags collected for the current request, grouped by type.
 
----
+***
 
 ## Proxy configuration
 OpenDXP delegates all proxy communication to FOSHttpCacheBundle. 

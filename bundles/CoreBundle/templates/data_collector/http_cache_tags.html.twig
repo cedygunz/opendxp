@@ -21,7 +21,7 @@
             {% endfor %}
             {% if collector.externalTags|length > 0 %}
                 <div class="sf-toolbar-info-piece">
-                    <b>external</b>
+                    <b>External</b>
                     <span>{{ collector.externalTags|length }}</span>
                 </div>
             {% endif %}
@@ -84,7 +84,7 @@
         {% endfor %}
 
         {% if collector.externalTags|length > 0 %}
-            <h3>external <small>({{ collector.externalTags|length }})</small></h3>
+            <h3>External <small>({{ collector.externalTags|length }})</small></h3>
             <p style="color: #999; font-size: 0.85em; margin: 0 0 0.5em">
                 Added via FOSHttpCacheBundle directly (e.g. <code>fos_httpcache_tag()</code>, <code>#[Tag]</code>).
             </p>
