@@ -9,6 +9,22 @@ Varnish `purgekeys` mode uses `xkey`; Fastly uses `Surrogate-Key`. See the [FOSH
 
 ***
 
+## Overview
+
+- [How it works](#how-it-works)
+- [Setup](#setup)
+- [Configuration reference](#configuration-reference)
+- [Project-specific tags](#project-specific-tags)
+- [Skipping invalidation](#skipping-invalidation)
+- [Filtering tag collection](#filtering-tag-collection)
+- [Disabling tag collection](#disabling-tag-collection)
+- [ESI fragments](#esi-fragments)
+- [Symfony Web Profiler](#symfony-web-profiler)
+- [Proxy configuration](#proxy-configuration)
+- [Symfony HttpCache Example](#symfony-httpcache-example)
+
+***
+
 ## How it works
 
 ### 1. Tag collection during request
@@ -483,7 +499,7 @@ Supported backends: Varnish (BAN and xkey/purgekeys), Fastly, nginx, Cloudflare,
 
 ***
 
-## Testing with Symfony HttpCache
+## Symfony HttpCache Example
 Symfony ships with a built-in reverse proxy (`HttpCache`) that runs in-process. 
 This an example of how to use it with OpenDXP.
 
