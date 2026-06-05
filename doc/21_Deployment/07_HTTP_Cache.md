@@ -19,14 +19,14 @@ Built-in tags collected automatically:
 
 | Source                             | Tags added                      |
 |------------------------------------|---------------------------------|
-| Route document (e.g. `/about-us`)  | `doc:42`                        |
-| Route DataObject (URL slug)        | `obj:17`, `obj-class:Employee`* |
-| Document loaded during rendering   | `doc:5`, `doc:12`               |
-| DataObject loaded during rendering | `obj:3`, `obj:8`                |
-| Asset loaded during rendering      | `asset:22`                      |
-| Document listing executed          | `doc-list`*                     |
-| Asset listing executed             | `asset-list`*                   |
-| DataObject listing executed        | `obj-class:Employee`*           |
+| Route document (e.g. `/about-us`)  | `doc_42`                        |
+| Route DataObject (URL slug)        | `obj_17`, `obj_class_employee`* |
+| Document loaded during rendering   | `doc_5`, `doc_12`               |
+| DataObject loaded during rendering | `obj_3`, `obj_8`                |
+| Asset loaded during rendering      | `asset_22`                      |
+| Document listing executed          | `doc_list`*                     |
+| Asset listing executed             | `asset_list`*                   |
+| DataObject listing executed        | `obj_class_employee`*           |
 | Translation changed                | `translation`                   |
 
 \* Only when `tag_list: true` is set (default) in the `elements` config.
@@ -43,7 +43,7 @@ Tags are only collected during cacheable HTTP methods (GET, HEAD). POST/PUT/DELE
 FOSHttpCacheBundle's `TagListener` writes all collected tags to the response header configured for the active proxy client. For example, with Varnish `ban` mode:
 
 ```
-X-Cache-Tags: doc:42 obj:17 obj-class:Employee asset:22
+X-Cache-Tags: doc_42 obj_17 obj_class_employee asset_22
 ```
 
 The reverse proxy stores this header alongside the cached response and strips it before delivering to the browser.
@@ -56,10 +56,10 @@ When a Document, DataObject, Asset or Translation is saved or deleted, `ElementC
 Save Document 42
   → ElementChangeListener::onDocumentChange()
   → HttpCache::invalidate($document)
-  → OpenDxpElementCacheStrategy::getTags() → ['doc:42', 'doc-list']
-  → CacheManager::invalidateTags(['doc:42', 'doc-list'])
+  → OpenDxpElementCacheStrategy::getTags() → ['doc_42', 'doc_list']
+  → CacheManager::invalidateTags(['doc_42', 'doc_list'])
   → kernel.terminate → FOSHttpCacheBundle flushes to proxy
-  → Varnish/Fastly/etc. invalidates all responses tagged doc:42 or doc-list
+  → Varnish/Fastly/etc. invalidates all responses tagged doc_42 or doc_list
 ```
 
 ***
@@ -186,13 +186,13 @@ opendxp:
         elements:
             documents:
                 enabled: true       # tag/invalidate documents (default: true)
-                tag_list: true      # also tag/invalidate "doc-list" (default: true)
+                tag_list: true      # also tag/invalidate "doc_list" (default: true)
             data_objects:
                 enabled: true       # tag/invalidate data objects (default: true)
-                tag_list: true      # also tag/invalidate "obj-class:{className}" (default: true)
+                tag_list: true      # also tag/invalidate "obj_class:{className}" (default: true)
             assets:
                 enabled: true       # tag/invalidate assets (default: true)
-                tag_list: true      # also tag/invalidate "asset-list" (default: true)
+                tag_list: true      # also tag/invalidate "asset_list" (default: true)
             translations:
                 enabled: true       # invalidate on translation changes (default: true)
 ```
@@ -480,3 +480,119 @@ Supported backends: Varnish (BAN and xkey/purgekeys), Fastly, nginx, Cloudflare,
 
 - [FOSHttpCacheBundle proxy client configuration](https://foshttpcachebundle.readthedocs.io/en/stable/reference/configuration/proxy-client.html)
 - [FOSHttpCache Varnish VCL examples](https://foshttpcache.readthedocs.io/en/latest/varnish-configuration.html)
+
+***
+
+## Testing with Symfony HttpCache
+Symfony ships with a built-in reverse proxy (`HttpCache`) that runs in-process. 
+This an example of how to use it with OpenDXP.
+
+### 1. Install the tag-aware store
+The default Symfony store does not support tag-based invalidation. 
+Install the PSR-6 store from toflar:
+
+```bash
+composer require toflar/psr6-symfony-http-cache-store
+```
+
+### 2. Create `src/AppCache.php`
+
+```php
+namespace App;
+
+use FOS\HttpCache\SymfonyCache\CacheInvalidation;
+use FOS\HttpCache\SymfonyCache\CleanupCacheTagsListener;
+use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
+use FOS\HttpCache\SymfonyCache\PurgeListener;
+use FOS\HttpCache\SymfonyCache\PurgeTagsListener;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpCache\HttpCache;
+use Symfony\Component\HttpKernel\HttpCache\SurrogateInterface;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Toflar\Psr6HttpCacheStore\Psr6Store;
+
+class AppCache extends HttpCache implements CacheInvalidation
+{
+    use EventDispatchingHttpCache;
+
+    public function __construct(
+        HttpKernelInterface $kernel,
+        ?SurrogateInterface $surrogate = null,
+        array $options = [],
+    ) {
+        $store = new Psr6Store([
+            'cache_directory'   => $kernel->getCacheDir() . '/http_cache',
+            'cache_tags_header' => PurgeTagsListener::DEFAULT_TAGS_HEADER,
+        ]);
+
+        parent::__construct($kernel, $store, $surrogate, array_merge(['debug' => true], $options));
+
+        $this->addSubscriber(new PurgeListener());
+        $this->addSubscriber(new PurgeTagsListener());
+        $this->addSubscriber(new CleanupCacheTagsListener());
+    }
+
+    public function fetch(Request $request, bool $catch = false): Response
+    {
+        return parent::fetch($request, $catch);
+    }
+}
+```
+
+### 3. Update `src/Kernel.php`
+
+The kernel must implement `HttpCacheProvider` so FOSHttpCacheBundle can dispatch tag invalidation requests directly to `AppCache` without HTTP.
+
+```php
+namespace App;
+
+use FOS\HttpCache\SymfonyCache\HttpCacheAware;
+use FOS\HttpCache\SymfonyCache\HttpCacheProvider;
+use OpenDxp\Kernel as OpenDxpKernel;
+
+class Kernel extends OpenDxpKernel implements HttpCacheProvider
+{
+    use HttpCacheAware;
+
+    public function __construct(string $environment, bool $debug)
+    {
+        parent::__construct($environment, $debug);
+        
+        $this->setHttpCache(new AppCache($this));
+    }
+}
+```
+
+### 4. Update `public/index.php`
+
+Return the `AppCache` kernel instead of the inner kernel when it is available:
+
+```php
+return static function () {
+    Bootstrap::bootstrap();
+
+    $kernel = Bootstrap::kernel();
+
+    if ($kernel instanceof \FOS\HttpCache\SymfonyCache\HttpCacheProvider) {
+        return $kernel->getHttpCache();
+    }
+
+    return $kernel;
+};
+```
+
+### 5. Configure FOSHttpCacheBundle
+
+```yaml
+# config/packages/fos_http_cache.yaml
+fos_http_cache:
+    proxy_client:
+        symfony:
+            use_kernel_dispatcher: true
+    tags:
+        enabled: true
+```
+
+`use_kernel_dispatcher: true` routes invalidation calls directly to `AppCache` in-process. 
+No HTTP server setup is needed.

@@ -117,14 +117,14 @@ class HttpCacheTagDataCollector extends DataCollector
         $labels = [
             'doc'         => 'Documents',
             'obj'         => 'Objects',
-            'obj-class'   => 'DataObject Classes',
+            'obj_class'   => 'DataObject Classes',
             'asset'       => 'Assets',
             'translation' => 'Translations',
         ];
 
         $listPrefixes = [
-            'doc-list',
-            'asset-list'
+            'doc_list',
+            'asset_list',
         ];
 
         $grouped = [];
@@ -150,9 +150,6 @@ class HttpCacheTagDataCollector extends DataCollector
 
     private function formatPrefix(string $prefix): string
     {
-        $str = str_replace('-', ' ', $prefix);
-        $str = (string) preg_replace('/([a-z])([A-Z])/', '$1 $2', $str);
-
-        return ucwords($str);
+        return ucwords(str_replace('_', ' ', $prefix));
     }
 }

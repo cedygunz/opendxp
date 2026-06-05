@@ -28,7 +28,7 @@ final class CacheTag implements \Stringable
         $prefix = $this->type->prefix();
 
         return $this->identifier !== null
-            ? $prefix . ':' . $this->identifier
+            ? $prefix . '_' . strtolower((string) $this->identifier)
             : $prefix;
     }
 }
