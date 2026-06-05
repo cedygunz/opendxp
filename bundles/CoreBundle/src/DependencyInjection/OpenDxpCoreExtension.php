@@ -19,9 +19,9 @@ namespace OpenDxp\Bundle\CoreBundle\DependencyInjection;
 use InvalidArgumentException;
 use OpenDxp;
 use OpenDxp\Bundle\CoreBundle\EventListener\TranslationDebugListener;
+use OpenDxp\Bundle\CoreBundle\EventListener\HttpCache\HttpCacheScopeListener;
 use OpenDxp\Bundle\CoreBundle\HttpCache\Strategy\OpenDxpElementCacheStrategy;
 use OpenDxp\Bundle\CoreBundle\HttpCache\Strategy\TranslationCacheStrategy;
-use OpenDxp\HttpCache\HttpCacheScope;
 use OpenDxp\Extension\Document\Areabrick\Attribute\AsAreabrick;
 use OpenDxp\Http\Context\OpenDxpContextGuesser;
 use OpenDxp\Loader\ImplementationLoader\ClassMapLoader;
@@ -318,7 +318,7 @@ final class OpenDxpCoreExtension extends ConfigurableExtension
 
         $collectFromRequest = ($config['scope'] ?? 'controller') === 'request';
         $container
-            ->getDefinition(HttpCacheScope::class)
+            ->getDefinition(HttpCacheScopeListener::class)
             ->setArgument('$collectFromRequest', $collectFromRequest);
 
         $this->registerHttpCacheStrategies($container, $config['elements'] ?? []);

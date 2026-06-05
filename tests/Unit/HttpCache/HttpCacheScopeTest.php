@@ -41,12 +41,6 @@ class HttpCacheScopeTest extends TestCase
         $this->assertFalse($this->scope->isActive());
     }
 
-    public function testCollectFromRequestMakesScopeActiveByDefault(): void
-    {
-        $scope = new HttpCacheScope(collectFromRequest: true);
-        $this->assertTrue($scope->isActive());
-    }
-
     public function testResetRestoresInitialState(): void
     {
         $this->scope->enable();
@@ -56,14 +50,6 @@ class HttpCacheScopeTest extends TestCase
 
         $this->scope->enable();
         $this->assertTrue($this->scope->isActive());
-    }
-
-    public function testResetRestoresCollectFromRequestState(): void
-    {
-        $scope = new HttpCacheScope(collectFromRequest: true);
-        $scope->disable();
-        $scope->reset();
-        $this->assertTrue($scope->isActive());
     }
 
     public function testSuspendedSuppressesCollectionForDuration(): void

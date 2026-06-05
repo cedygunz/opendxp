@@ -26,14 +26,9 @@ use Symfony\Contracts\Service\ResetInterface;
  */
 class HttpCacheScope implements ResetInterface
 {
-    private bool $active;
+    private bool $active = false;
     private bool $disabled = false;
     private bool $suspended = false;
-
-    public function __construct(private readonly bool $collectFromRequest = false)
-    {
-        $this->active = $collectFromRequest;
-    }
 
     /**
      * Activates tag collection.
@@ -96,7 +91,7 @@ class HttpCacheScope implements ResetInterface
 
     public function reset(): void
     {
-        $this->active = $this->collectFromRequest;
+        $this->active = false;
         $this->disabled = false;
         $this->suspended = false;
     }

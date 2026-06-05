@@ -22,6 +22,7 @@ use OpenDxp\Routing\HttpCacheTaggableInterface;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -33,14 +34,34 @@ class HttpCacheScopeListener implements EventSubscriberInterface
         private readonly HttpCache $httpCache,
         private readonly HttpCacheScope $httpCacheScope,
         private readonly OpenDxpContextResolver $contextResolver,
+        private readonly bool $collectFromRequest = false,
     ) {
     }
 
     public static function getSubscribedEvents(): array
     {
         return [
+            KernelEvents::REQUEST    => ['onKernelRequest', 512],
             KernelEvents::CONTROLLER => ['onKernelController', 0],
         ];
+    }
+
+    public function onKernelRequest(RequestEvent $event): void
+    {
+        if (!$this->collectFromRequest || !$event->isMainRequest()) {
+            return;
+        }
+
+        $request = $event->getRequest();
+
+        if (
+            !$request->isMethodCacheable() ||
+            $this->contextResolver->matchesOpenDxpContext($request, OpenDxpContextResolver::CONTEXT_ADMIN)
+        ) {
+            return;
+        }
+
+        $this->httpCacheScope->enable();
     }
 
     public function onKernelController(ControllerEvent $event): void
@@ -51,22 +72,25 @@ class HttpCacheScopeListener implements EventSubscriberInterface
 
         $request = $event->getRequest();
 
-        if (!$request->isMethodCacheable()
-            || $this->contextResolver->matchesOpenDxpContext($request, OpenDxpContextResolver::CONTEXT_ADMIN)) {
-            return;
-        }
+        if (!$this->collectFromRequest) {
 
-        $this->httpCacheScope->enable();
+            if (
+                !$request->isMethodCacheable() ||
+                $this->contextResolver->matchesOpenDxpContext($request, OpenDxpContextResolver::CONTEXT_ADMIN)
+            ) {
+                return;
+            }
+
+            $this->httpCacheScope->enable();
+        }
 
         $route = $request->attributes->get(DynamicRouter::ROUTE_KEY);
-        if ($route instanceof HttpCacheTaggableInterface) {
-            $element = $route->getCacheElement();
-            if ($element !== null) {
-                $this->httpCache->collectTagsFor($element);
-            }
+        $content = $request->attributes->get(DynamicRouter::CONTENT_KEY);
+
+        if ($route instanceof HttpCacheTaggableInterface && null !== $element = $route->getCacheElement()) {
+            $this->httpCache->collectTagsFor($element);
         }
 
-        $content = $request->attributes->get(DynamicRouter::CONTENT_KEY);
         if ($content !== null) {
             $this->httpCache->collectTagsFor($content);
         }

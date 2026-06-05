@@ -13,6 +13,7 @@ use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class HttpCacheScopeListenerTest extends TestCase
@@ -36,6 +37,7 @@ class HttpCacheScopeListenerTest extends TestCase
             $this->httpCache,
             $this->scope,
             $this->resolver,
+            collectFromRequest: false,
         );
     }
 
@@ -115,6 +117,69 @@ class HttpCacheScopeListenerTest extends TestCase
 
         $this->listener->onKernelController(
             new ControllerEvent($this->kernel, static fn () => new Response(), $request, HttpKernelInterface::MAIN_REQUEST),
+        );
+    }
+
+    public function testRequestScopeEnablesOnKernelRequest(): void
+    {
+        $listener = new HttpCacheScopeListener($this->httpCache, $this->scope, $this->resolver, collectFromRequest: true);
+        $this->resolver->method('matchesOpenDxpContext')->willReturn(false);
+        $this->scope->expects($this->once())->method('enable');
+
+        $listener->onKernelRequest($this->makeRequestEvent(isMain: true));
+    }
+
+    public function testRequestScopeDoesNotEnableForAdminContext(): void
+    {
+        $listener = new HttpCacheScopeListener($this->httpCache, $this->scope, $this->resolver, collectFromRequest: true);
+        $this->resolver->method('matchesOpenDxpContext')->willReturn(true);
+        $this->scope->expects($this->never())->method('enable');
+
+        $listener->onKernelRequest($this->makeRequestEvent(isMain: true));
+    }
+
+    public function testRequestScopeDoesNotEnableForNonCacheableMethod(): void
+    {
+        $listener = new HttpCacheScopeListener($this->httpCache, $this->scope, $this->resolver, collectFromRequest: true);
+        $this->resolver->method('matchesOpenDxpContext')->willReturn(false);
+        $this->scope->expects($this->never())->method('enable');
+
+        $listener->onKernelRequest($this->makeRequestEvent(isMain: true, method: 'POST'));
+    }
+
+    public function testRequestScopeDoesNotEnableForSubRequest(): void
+    {
+        $listener = new HttpCacheScopeListener($this->httpCache, $this->scope, $this->resolver, collectFromRequest: true);
+        $this->scope->expects($this->never())->method('enable');
+
+        $listener->onKernelRequest($this->makeRequestEvent(isMain: false));
+    }
+
+    public function testControllerScopeDoesNotEnableOnKernelRequest(): void
+    {
+        $this->resolver->method('matchesOpenDxpContext')->willReturn(false);
+        $this->scope->expects($this->never())->method('enable');
+
+        $this->listener->onKernelRequest($this->makeRequestEvent(isMain: true));
+    }
+
+    public function testRequestScopeDoesNotEnableAgainOnKernelController(): void
+    {
+        $listener = new HttpCacheScopeListener($this->httpCache, $this->scope, $this->resolver, collectFromRequest: true);
+        $this->resolver->method('matchesOpenDxpContext')->willReturn(false);
+        $this->scope->expects($this->never())->method('enable');
+
+        $listener->onKernelController($this->makeControllerEvent(isMain: true));
+    }
+
+    private function makeRequestEvent(bool $isMain, string $method = 'GET'): RequestEvent
+    {
+        $request = Request::create('/', $method);
+
+        return new RequestEvent(
+            $this->kernel,
+            $request,
+            $isMain ? HttpKernelInterface::MAIN_REQUEST : HttpKernelInterface::SUB_REQUEST,
         );
     }
 
