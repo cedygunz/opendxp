@@ -46,11 +46,15 @@ class HttpCacheResponseSubscriber implements EventSubscriberInterface
             return;
         }
 
-        /** @var HttpCacheSettings|null $settings */
         $settings = $event->getRequest()->attributes->get('_http_cache_settings');
 
-        $sharedMaxAge = $settings?->sharedMaxAge ?? $this->sharedMaxAge;
-        $maxAge = $settings?->maxAge ?? $this->maxAge;
+        if ($settings instanceof HttpCacheSettings) {
+            $sharedMaxAge = $settings->sharedMaxAge;
+            $maxAge       = $settings->maxAge;
+        } else {
+            $sharedMaxAge = $this->sharedMaxAge;
+            $maxAge       = $this->maxAge;
+        }
 
         $response = $event->getResponse();
 
