@@ -112,28 +112,62 @@ fos_http_cache:
 **Supported proxy clients:** Varnish, Fastly, nginx, Cloudflare, Symfony HttpCache. 
 See [FOSHttpCacheBundle proxy client docs](https://foshttpcachebundle.readthedocs.io/en/stable/reference/configuration/proxy-clients.html).
 
-### 3. Make responses cacheable
+***
 
-OpenDXP collects tags, but the proxy only caches responses explicitly marked as public:
+### 3. Cache-Control headers
 
-```php
-// Via Symfony attribute (recommended)
-#[Cache(public: true, smaxage: 3600)]
-public function pageAction(): Response { ... }
+When the HTTP cache scope is active, OpenDXP automatically sets `Cache-Control: public` with the configured TTL values on the response. 
+No controller code or FOS rules required for standard use.
 
-// Or programmatically
-$response->setPublic();
-$response->setSharedMaxAge(3600);
+```yaml
+# config/packages/opendxp.yaml
+opendxp:
+    http_cache:
+        enabled: true
+        shared_max_age: 3600   # reverse proxy TTL (s-maxage), default: 3600
+        max_age: 0             # browser TTL (max-age), default: 0
 ```
 
-Or via FOSHttpCacheBundle cache control rules (no controller code needed):
+`shared_max_age: 0` disables automatic header management entirely. OpenDXP sets no `Cache-Control` headers and leaves the response as Symfony delivers it.
+
+Headers are only set when:
+- the request is a main request
+- the scope is active
+- the response is successful (2xx)
+
+#### Per-request override
+
+To override the TTL for a single request (e.g. for a specific document type), 
+set a `HttpCacheSettings` instance as the `_http_cache_settings` request attribute before the response is sent:
+
+```php
+use OpenDxp\HttpCache\HttpCacheSettings;
+
+$request->attributes->set('_http_cache_settings', new HttpCacheSettings(
+    sharedMaxAge: 300,   // cache this response for 5 minutes only
+    maxAge: 0,
+));
+```
+
+#### Overriding via FOSHttpCacheBundle
+
+FOSHttpCacheBundle's `CacheControlListener` runs after OpenDXP's subscriber. 
+With `overwrite: true`, it replaces the headers OpenDXP set:
 
 ```yaml
 fos_http_cache:
     cache_control:
+        defaults:
+            overwrite: true
         rules:
-            - { match: { path: ^/(?!admin) }, headers: { public: true, s_maxage: 3600 } }
+            -   match: 
+                    path: ^/news, 
+                headers: 
+                    cache_control: { public: true, max_age: 64000, s_maxage: 64000 }
+                    etag: "strong"
+                    vary: [Accept-Encoding, Accept-Language]
 ```
+See [FOSHttpCacheBundle caching headers docs](https://foshttpcachebundle.readthedocs.io/en/latest/features/headers.html).
 
 ***
 
@@ -145,6 +179,9 @@ opendxp:
         enabled: true
 
         scope: controller           # "controller" (default) or "request": when collection starts
+
+        shared_max_age: 3600        # reverse proxy TTL in seconds (s-maxage). 0 = disabled (default: 3600)
+        max_age: 0                  # browser TTL in seconds (max-age). Default: 0
 
         elements:
             documents:
@@ -225,7 +262,7 @@ app.http_cache.my_entity:
         - name: opendxp.http_cache.doctrine_entity
           entity_class: App\Entity\MyEntity
           tag_prefix: app-my-entity
-          # identifier_expression: 'object.getId()'   # optional — this is the default
+          # identifier_expression: 'object.getId()'   # default / optional
 ```
 
 This produces tags like `app-my-entity:42`.

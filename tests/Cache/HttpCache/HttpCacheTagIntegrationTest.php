@@ -162,11 +162,11 @@ class HttpCacheTagIntegrationTest extends ModelTestCase
 
         $this->kernel->handle(Request::create($doc1->getFullPath()));
 
-        $response2 = $this->kernel->handle(Request::create($doc2->getFullPath()));
-        $tags2 = $response2->headers->get('X-Cache-Tags', '');
+        $response = $this->kernel->handle(Request::create($doc2->getFullPath()));
+        $tags = $response->headers->get('X-Cache-Tags', '');
 
-        $this->assertTag('doc:' . $doc2->getId(), $tags2);
-        $this->assertStringNotContainsString('doc:' . $doc1->getId(), $tags2);
+        $this->assertTag('doc:' . $doc2->getId(), $tags);
+        $this->assertStringNotContainsString('doc:' . $doc1->getId(), $tags);
     }
 
     private function assertTag(string $tag, string $headerValue): void

@@ -19,6 +19,7 @@ namespace OpenDxp\Bundle\CoreBundle\DependencyInjection;
 use InvalidArgumentException;
 use OpenDxp;
 use OpenDxp\Bundle\CoreBundle\EventListener\TranslationDebugListener;
+use OpenDxp\Bundle\CoreBundle\EventListener\HttpCache\HttpCacheResponseSubscriber;
 use OpenDxp\Bundle\CoreBundle\EventListener\HttpCache\HttpCacheScopeListener;
 use OpenDxp\Bundle\CoreBundle\HttpCache\Strategy\OpenDxpElementCacheStrategy;
 use OpenDxp\Bundle\CoreBundle\HttpCache\Strategy\TranslationCacheStrategy;
@@ -320,6 +321,11 @@ final class OpenDxpCoreExtension extends ConfigurableExtension
         $container
             ->getDefinition(HttpCacheScopeListener::class)
             ->setArgument('$collectFromRequest', $collectFromRequest);
+
+        $container
+            ->getDefinition(HttpCacheResponseSubscriber::class)
+            ->setArgument('$sharedMaxAge', $config['shared_max_age'] ?? 3600)
+            ->setArgument('$maxAge', $config['max_age'] ?? 0);
 
         $this->registerHttpCacheStrategies($container, $config['elements'] ?? []);
     }
