@@ -17,6 +17,7 @@ namespace OpenDxp\Model\Site;
 
 use OpenDxp\Model;
 use OpenDxp\Model\Exception\NotFoundException;
+use OpenDxp\Tool\Serialize;
 
 /**
  * @internal
@@ -77,7 +78,8 @@ class Dao extends Model\Dao\AbstractDao
         );
 
         foreach ($sites as $site) {
-            $domains = \OpenDxp\Tool\Serialize::unserialize($site['domains']);
+
+            $domains = Serialize::unserialize($site['domains'], ['allowed_classes' => false]);
 
             if (!is_array($domains)) {
                 continue;
@@ -130,7 +132,7 @@ class Dao extends Model\Dao\AbstractDao
         foreach ($site as $key => $value) {
             if (in_array($key, $this->getValidTableColumns('sites'))) {
                 if (is_array($value) || is_object($value)) {
-                    $value = \OpenDxp\Tool\Serialize::serialize($value);
+                    $value = Serialize::serialize($value);
                 }
                 if (is_bool($value)) {
                     $value = (int) $value;

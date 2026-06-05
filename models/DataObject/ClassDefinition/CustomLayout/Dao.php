@@ -18,6 +18,7 @@ namespace OpenDxp\Model\DataObject\ClassDefinition\CustomLayout;
 use Exception;
 use OpenDxp\Config;
 use OpenDxp\Model;
+use OpenDxp\Tool\Serialize;
 use Override;
 use Symfony\Component\Uid\Uuid as Uid;
 use Symfony\Component\Uid\UuidV4;
@@ -53,7 +54,7 @@ class Dao extends Model\Dao\OpenDxpLocationAwareConfigDao
      */
     public function getById(?string $id = null): void
     {
-        if ($id != null) {
+        if ($id !== null) {
             $this->model->setId($id);
         }
 
@@ -62,12 +63,12 @@ class Dao extends Model\Dao\OpenDxpLocationAwareConfigDao
         if ($data instanceof Model\DataObject\ClassDefinition\CustomLayout) {
             $this->assignVariablesToModel($data->getObjectVars());
         } else {
-            if ($data && $id != null) {
+            if ($data && $id !== null) {
                 $data['id'] = $id;
             }
 
             if ($data && is_string($data['layoutDefinitions'] ?? null)) {
-                $data['layoutDefinitions'] = unserialize($data['layoutDefinitions']);
+                $data['layoutDefinitions'] = Serialize::unserialize($data['layoutDefinitions'], ['allowed_classes' => false]);
             } elseif (is_array($data['layoutDefinitions'] ?? null)) {
                 $data['layoutDefinitions'] = Model\DataObject\ClassDefinition\Service::generateLayoutTreeFromArray($data['layoutDefinitions'], true);
             }
@@ -154,8 +155,19 @@ class Dao extends Model\Dao\OpenDxpLocationAwareConfigDao
         $this->model->setModificationDate($ts);
 
         $data = [];
-        $allowedProperties = ['id', 'name', 'description', 'creationDate', 'modificationDate',
-            'userOwner', 'userModification', 'classId', 'default', 'layoutDefinitions', ];
+        $allowedProperties = [
+            'id',
+            'name',
+            'description',
+            'creationDate',
+            'modificationDate',
+            'userOwner',
+            'userModification',
+            'classId',
+            'default',
+            'layoutDefinitions'
+        ];
+
         $dataRaw = $this->model->getObjectVars();
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {

@@ -62,15 +62,17 @@ class TranslationController extends UserAwareController
                 $element = \OpenDxp\Model\Element\Service::getElementById($el['type'], (int) $el['id']);
                 $output = '';
 
+                if (!$element || !$element->isAllowed('view')) {
+                    continue;
+                }
+
                 // check supported types (subtypes)
                 if (!in_array($element->getType(), ['page', 'snippet', 'email', 'object'])) {
                     continue;
                 }
 
                 if ($element instanceof ElementInterface) {
-                    $output .= '<h1 class="element-headline">' . ucfirst(
-                        $element->getType()
-                    ) . ' - ' . $element->getRealFullPath() . ' (ID: ' . $element->getId() . ')</h1>';
+                    $output .= '<h1 class="element-headline">' . ucfirst($element->getType()) . ' - ' . $element->getRealFullPath() . ' (ID: ' . $element->getId() . ')</h1>';
                 }
 
                 if ($element instanceof PageSnippet) {
@@ -131,11 +133,8 @@ class TranslationController extends UserAwareController
                         $element->parentNode->removeChild($element);
                     }
 
-                    $clearText = function ($string) {
-                        $string = str_replace("\r\n", '', $string);
-                        $string = str_replace("\n", '', $string);
-                        $string = str_replace("\r", '', $string);
-                        $string = str_replace("\t", '', $string);
+                    $clearText = static function ($string) {
+                        $string = str_replace(["\r\n", "\n", "\r", "\t"], '', $string);
                         $string = preg_replace('/&[a-zA-Z0-9]+;/', '', $string); // remove html entities
                         $string = preg_replace('#[ ]+#', '', $string);
 

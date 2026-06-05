@@ -45,6 +45,11 @@ class Tree extends DAV\Tree
         $nameParts[count($nameParts) - 1] = Element\Service::getValidKey($nameParts[count($nameParts) - 1], 'asset');
         $destinationPath = implode('/', $nameParts);
 
+        $user = \OpenDxp\Tool\Admin::getCurrentUser();
+        if (!$user) {
+            throw new DAV\Exception\NotAuthenticated('Authentication required');
+        }
+
         try {
             if (dirname($sourcePath) === dirname($destinationPath)) {
                 $asset = null;
@@ -52,6 +57,9 @@ class Tree extends DAV\Tree
                 if ($asset = Asset::getByPath('/' . $destinationPath)) {
                     // If we got here, this means the destination exists, and needs to be overwritten
                     $sourceAsset = Asset::getByPath('/' . $sourcePath);
+                    if (!$sourceAsset->isAllowed('delete') || !$asset->isAllowed('publish')) {
+                        throw new DAV\Exception\Forbidden('Insufficient permissions to overwrite asset');
+                    }
                     $asset->setData($sourceAsset->getData());
                     $sourceAsset->delete();
                 }
@@ -62,6 +70,9 @@ class Tree extends DAV\Tree
                     $asset = \OpenDxp\Tool\Serialize::unserialize($log['/' .$destinationPath]['data']);
                     if ($asset) {
                         $sourceAsset = Asset::getByPath('/' . $sourcePath);
+                        if (!$sourceAsset->isAllowed('delete') || !$asset->isAllowed('publish')) {
+                            throw new DAV\Exception\Forbidden('Insufficient permissions to overwrite asset');
+                        }
                         $asset->setData($sourceAsset->getData());
                         $sourceAsset->delete();
                     }
@@ -70,18 +81,25 @@ class Tree extends DAV\Tree
                 if (!$asset) {
                     $asset = Asset::getByPath('/' . $sourcePath);
                 }
+                if (!$asset->isAllowed('rename')) {
+                    throw new DAV\Exception\Forbidden('Insufficient permissions to rename asset');
+                }
                 $asset->setFilename(basename($destinationPath));
             } else {
                 $asset = Asset::getByPath('/' . $sourcePath);
+                if (!$asset->isAllowed('rename')) {
+                    throw new DAV\Exception\Forbidden('Insufficient permissions to move asset');
+                }
                 $parent = Asset::getByPath('/' . dirname($destinationPath));
 
                 $asset->setPath($parent->getRealFullPath() . '/');
                 $asset->setParentId($parent->getId());
             }
 
-            $user = \OpenDxp\Tool\Admin::getCurrentUser();
             $asset->setUserModification($user->getId());
             $asset->save();
+        } catch (DAV\Exception $e) {
+            throw $e;
         } catch (Exception $e) {
             Logger::error((string) $e);
         }

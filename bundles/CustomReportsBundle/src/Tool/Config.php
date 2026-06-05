@@ -396,6 +396,27 @@ class Config extends Model\AbstractModel implements JsonSerializable
         $this->sharedRoleNames = $sharedRoleNames;
     }
 
+    public function isAllowedForUser(Model\User $user): bool
+    {
+        if ($user->isAdmin() || $user->isAllowed('reports_config')) {
+            return true;
+        }
+
+        if ($this->getShareGlobally()) {
+            return true;
+        }
+
+        if ($this->getSharedUserIds() && in_array($user->getId(), $this->getSharedUserIds(), true)) {
+            return true;
+        }
+
+        if ($this->getSharedRoleIds() && array_intersect($user->getRoles(), $this->getSharedRoleIds())) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function jsonSerialize(): array
     {
         $data = $this->getObjectVars();

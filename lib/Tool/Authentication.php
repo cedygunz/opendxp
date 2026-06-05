@@ -79,7 +79,7 @@ class Authentication
         });
 
         try {
-            $token = unserialize($serializedToken);
+            $token = Serialize::unserialize($serializedToken);
         } catch (ErrorException $e) {
             if (0x37313BC !== $e->getCode()) {
                 throw $e;

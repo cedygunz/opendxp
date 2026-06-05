@@ -33,7 +33,12 @@ trait CompositeIndexTrait
         // fetch existing indices
         $existingMap = [];
         // prefix with "c_"
-        $existingIndicesRaw = $this->db->fetchAllAssociative('SHOW INDEXES FROM ' . $this->db->quoteIdentifier($table) . " WHERE Key_Name LIKE 'c\_%'");
+        $existingIndicesRaw = $this->db->fetchAllAssociative(
+            sprintf('SHOW INDEXES FROM %s WHERE Key_Name LIKE "c\\_%%"',
+                $this->db->quoteIdentifier($table)
+            )
+        );
+
         foreach ($existingIndicesRaw as $item) {
             $key = $item['Key_name'];
             $column = $item['Column_name'];
@@ -47,39 +52,64 @@ trait CompositeIndexTrait
             $existingMap[$key] = implode(',', $columns);
         }
 
-        $newIndicesFilteredByType = array_filter($compositeIndices, fn ($item) =>
+        $newIndicesFilteredByType = array_filter($compositeIndices, static fn ($item) =>
             // query or localized_query
-            $item['index_type'] === $type);
+            $item['index_type'] === $type
+        );
 
+        // key => plain comma-separated columns (for comparison with $existingMap)
         $newIndicesMap = [];
+        // key => raw column array (for safe SQL generation)
+        $newIndicesColumns = [];
+
         foreach ($newIndicesFilteredByType as $newIndex) {
-            $key = $newIndex['index_key'];
+
+            $key = 'c_' . $newIndex['index_key'];
             $columns = $newIndex['index_columns'];
 
-            $newIndicesMap['c_' . $key] = implode(',', $columns);
+            if (empty($columns)) {
+                continue;
+            }
+
+            $newIndicesMap[$key] = implode(',', $columns);
+            $newIndicesColumns[$key] = $columns;
         }
 
         $drop = [];
         $add = [];
         foreach ($existingMap as $key => $existing) {
-            if (!isset($newIndicesMap[$key]) || $existing != $newIndicesMap[$key]) {
+            if (!isset($newIndicesMap[$key]) || $existing !== $newIndicesMap[$key]) {
                 $drop[] = $key;
             }
         }
 
         foreach ($newIndicesMap as $key => $new) {
-            if (!isset($existingMap[$key]) || $existingMap[$key] != $new) {
+            if (!isset($existingMap[$key]) || $existingMap[$key] !== $new) {
                 $add[] = $key;
             }
         }
 
         foreach ($drop as $key) {
-            $this->db->executeQuery(sprintf('ALTER TABLE `%s` DROP INDEX `%s`;', $table, $key));
+            $this->db->executeQuery(sprintf(
+                'ALTER TABLE %s DROP INDEX %s;',
+                $this->db->quoteIdentifier($table),
+                $this->db->quoteIdentifier($key)
+            ));
         }
 
         foreach ($add as $key) {
-            $columnName = $newIndicesMap[$key];
-            $this->db->executeQuery(sprintf('ALTER TABLE `%s` ADD INDEX `%s` (%s);', $table, $key, $columnName));
+
+            $quotedColumns = implode(
+                ', ',
+                array_map($this->db->quoteIdentifier(...), $newIndicesColumns[$key])
+            );
+
+            $this->db->executeQuery(sprintf(
+                'ALTER TABLE %s ADD INDEX %s (%s);',
+                $this->db->quoteIdentifier($table),
+                $this->db->quoteIdentifier($key),
+                $quotedColumns
+            ));
         }
     }
 }
