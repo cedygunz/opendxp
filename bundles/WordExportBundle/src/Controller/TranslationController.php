@@ -71,9 +71,7 @@ class TranslationController extends UserAwareController
                     continue;
                 }
 
-                if ($element instanceof ElementInterface) {
-                    $output .= '<h1 class="element-headline">' . ucfirst($element->getType()) . ' - ' . $element->getRealFullPath() . ' (ID: ' . $element->getId() . ')</h1>';
-                }
+                $output .= '<h1 class="element-headline">' . ucfirst($element->getType()) . ' - ' . $element->getRealFullPath() . ' (ID: ' . $element->getId() . ')</h1>';
 
                 if ($element instanceof PageSnippet) {
                     if ($element instanceof Page) {
