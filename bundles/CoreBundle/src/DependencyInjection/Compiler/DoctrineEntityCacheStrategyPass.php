@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace OpenDxp\Bundle\CoreBundle\DependencyInjection\Compiler;
 
 use OpenDxp\HttpCache\HttpCache;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -37,33 +38,40 @@ final class DoctrineEntityCacheStrategyPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds('opendxp.http_cache.doctrine_entity') as $id => $tags) {
             $definition = $container->getDefinition($id);
 
-            foreach ($tags as $tag) {
-                $entityClass = $tag['entity_class'] ?? null;
-                $tagPrefix = $tag['tag_prefix'] ?? null;
+            if (count($tags) > 1) {
+                throw new InvalidConfigurationException(sprintf(
+                    'Service "%s" may only have one "opendxp.http_cache.doctrine_entity" tag.',
+                    $id
+                ));
+            }
 
-                if (!$entityClass || !$tagPrefix) {
-                    throw new \InvalidArgumentException(sprintf(
-                        'Service "%s" tagged with "opendxp.http_cache.doctrine_entity" must define "entity_class" and "tag_prefix".',
-                        $id
-                    ));
-                }
+            $tag = $tags[0];
 
-                $definition->setArguments([
-                    '$entityClass'          => $entityClass,
-                    '$tagPrefix'            => $tagPrefix,
-                    '$identifierExpression' => $tag['identifier_expression'] ?? 'object.getId()',
-                    '$httpCache'            => new Reference(HttpCache::class),
+            $entityClass = $tag['entity_class'] ?? null;
+            $tagPrefix = $tag['tag_prefix'] ?? null;
+
+            if (!$entityClass || !$tagPrefix) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Service "%s" tagged with "opendxp.http_cache.doctrine_entity" must define "entity_class" and "tag_prefix".',
+                    $id
+                ));
+            }
+
+            $definition->setArguments([
+                '$entityClass'          => $entityClass,
+                '$tagPrefix'            => $tagPrefix,
+                '$identifierExpression' => $tag['identifier_expression'] ?? 'object.getId()',
+                '$httpCache'            => new Reference(HttpCache::class),
+            ]);
+
+            $definition->addTag('opendxp.http_cache.strategy');
+
+            foreach (['postLoad', 'postPersist', 'postUpdate', 'postRemove'] as $event) {
+                $definition->addTag('doctrine.event_listener', [
+                    'event'  => $event,
+                    'method' => $event,
+                    'lazy'   => true,
                 ]);
-
-                $definition->addTag('opendxp.http_cache.strategy');
-
-                foreach (['postLoad', 'postPersist', 'postUpdate', 'postRemove'] as $event) {
-                    $definition->addTag('doctrine.event_listener', [
-                        'event'  => $event,
-                        'method' => $event,
-                        'lazy'   => true,
-                    ]);
-                }
             }
         }
     }
