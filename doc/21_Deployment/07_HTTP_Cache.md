@@ -130,59 +130,32 @@ See [FOSHttpCacheBundle proxy client docs](https://foshttpcachebundle.readthedoc
 
 ***
 
-### 3. Cache-Control headers
+### 4. Configure Cache-Control headers
 
-When the HTTP cache scope is active, OpenDXP automatically sets `Cache-Control: public` with the configured TTL values on the response. 
-No controller code or FOS rules required for standard use.
+OpenDXP does not set `Cache-Control` headers automatically.
+Use FOSHttpCacheBundle's `cache_control` rules to define which responses should be cached and for how long.
+The following example globally enables caching for all non-admin GET/HEAD requests.
 
-```yaml
-# config/packages/opendxp.yaml
-opendxp:
-    http_cache:
-        enabled: true
-        shared_max_age: 3600   # reverse proxy TTL (s-maxage), default: 3600
-        max_age: 0             # browser TTL (max-age), default: 0
-```
-
-`shared_max_age: 0` disables automatic header management entirely. OpenDXP sets no `Cache-Control` headers and leaves the response as Symfony delivers it.
-
-Headers are only set when:
-- the request is a main request
-- the scope is active
-- the response is successful (2xx)
-
-#### Per-request override
-
-To override the TTL for a single request (e.g. for a specific document type), 
-set a `HttpCacheSettings` instance as the `_http_cache_settings` request attribute before the response is sent:
-
-```php
-use OpenDxp\HttpCache\HttpCacheSettings;
-
-$request->attributes->set('_http_cache_settings', new HttpCacheSettings(
-    sharedMaxAge: 300,   // cache this response for 5 minutes only
-    maxAge: 0,
-));
-```
-
-#### Overriding via FOSHttpCacheBundle
-
-FOSHttpCacheBundle's `CacheControlListener` runs after OpenDXP's subscriber. 
-With `overwrite: true`, it replaces the headers OpenDXP set:
+This could be be a good starting point for most projects:
 
 ```yaml
+# config/packages/fos_http_cache.yaml
 fos_http_cache:
     cache_control:
         defaults:
-            overwrite: true
+            overwrite: false
         rules:
-            -   match: 
-                    path: ^/news, 
-                headers: 
-                    cache_control: { public: true, max_age: 64000, s_maxage: 64000 }
-                    etag: "strong"
-                    vary: [Accept-Encoding, Accept-Language]
+            -
+                match:
+                    path: ^(?!/(admin))
+                headers:
+                    cache_control:
+                        public: true
+                        max_age: 15
+                        s_maxage: 30
+                    etag: true
 ```
+
 See [FOSHttpCacheBundle caching headers docs](https://foshttpcachebundle.readthedocs.io/en/latest/features/headers.html).
 
 ***
@@ -195,9 +168,6 @@ opendxp:
         enabled: true
 
         scope: controller           # "controller" (default) or "request": when collection starts
-
-        shared_max_age: 3600        # reverse proxy TTL in seconds (s-maxage). 0 = disabled (default: 3600)
-        max_age: 0                  # browser TTL in seconds (max-age). Default: 0
 
         elements:
             documents:

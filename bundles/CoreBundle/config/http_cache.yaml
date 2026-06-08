@@ -6,7 +6,6 @@ services:
     OpenDxp\Bundle\CoreBundle\EventListener\HttpCache\HttpCacheScopeListener: ~
     OpenDxp\Bundle\CoreBundle\EventListener\HttpCache\HttpCachePostLoadListener: ~
     OpenDxp\Bundle\CoreBundle\EventListener\HttpCache\ElementChangeListener: ~
-    OpenDxp\Bundle\CoreBundle\EventListener\HttpCache\HttpCacheResponseSubscriber: ~
 
     OpenDxp\HttpCache\HttpCacheScope:
         tags:
