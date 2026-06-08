@@ -165,7 +165,7 @@ class Dao extends Model\Dao\OpenDxpLocationAwareConfigDao
             'userModification',
             'classId',
             'default',
-            'layoutDefinitions'
+            'layoutDefinitions',
         ];
 
         $dataRaw = $this->model->getObjectVars();

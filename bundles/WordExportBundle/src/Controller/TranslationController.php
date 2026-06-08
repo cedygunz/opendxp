@@ -26,7 +26,6 @@ use OpenDxp\Model\DataObject;
 use OpenDxp\Model\Document\Page;
 use OpenDxp\Model\Document\PageSnippet;
 use OpenDxp\Model\Document\Service;
-use OpenDxp\Model\Element\ElementInterface;
 use OpenDxp\Tool;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;

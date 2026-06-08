@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace OpenDxp\Bundle\CustomReportsBundle\Tool\Adapter;
 
-use Exception;
 use OpenDxp\Bundle\CustomReportsBundle\Exception\InvalidQueryException;
 use OpenDxp\Db;
 use stdClass;

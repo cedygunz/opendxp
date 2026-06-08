@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace OpenDxp\Bundle\CustomReportsBundle\Controller\Reports;
 
 use Exception;
-use OpenDxp\Bundle\CustomReportsBundle\Tool;
 use OpenDxp\Bundle\CustomReportsBundle\Exception\InvalidQueryException;
+use OpenDxp\Bundle\CustomReportsBundle\Tool;
 use OpenDxp\Controller\Traits\JsonHelperTrait;
 use OpenDxp\Controller\UserAwareController;
 use OpenDxp\Model\Element\Service;
@@ -31,6 +31,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
+use Throwable;
 
 /**
  * @internal
@@ -211,7 +212,7 @@ class CustomReportController extends UserAwareController
             $success = true;
         } catch (InvalidQueryException $e) {
             $errorMessage = $e->getMessage();
-        } catch (\Throwable) {
+        } catch (Throwable) {
             $errorMessage = 'Failed to load columns.';
         }
 
@@ -459,7 +460,7 @@ class CustomReportController extends UserAwareController
             'sort'             => $sort,
             'dir'              => $dir,
             'filters'          => $filters,
-            'drillDownFilters' => $drillDownFilters
+            'drillDownFilters' => $drillDownFilters,
         ];
     }
 }
