@@ -28,10 +28,10 @@ final class Serialize
         return serialize($data);
     }
 
-    public static function unserialize(?string $data = null): mixed
+    public static function unserialize(?string $data = null, array $options = []): mixed
     {
         if ($data) {
-            return unserialize($data);
+            return unserialize($data, $options);
         }
 
         return $data;

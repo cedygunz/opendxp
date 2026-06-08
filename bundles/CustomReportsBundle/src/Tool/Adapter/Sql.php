@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace OpenDxp\Bundle\CustomReportsBundle\Tool\Adapter;
 
 use Exception;
+use OpenDxp\Bundle\CustomReportsBundle\Exception\InvalidQueryException;
 use OpenDxp\Db;
 use stdClass;
 
@@ -60,7 +61,7 @@ class Sql extends AbstractAdapter
             $sql = $this->buildQueryString($configuration);
         }
 
-        if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i', $sql, $matches)) {
+        if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE)\b/i', $sql, $matches)) {
             $sql .= ' LIMIT 0,1';
             $db = Db::get();
             $res = $db->fetchAssociative($sql);
@@ -71,43 +72,45 @@ class Sql extends AbstractAdapter
             return [];
         }
 
-        throw new Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
+        throw new InvalidQueryException("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
     }
 
     protected function buildQueryString(stdClass $config, bool $ignoreSelectAndGroupBy = false, ?array $drillDownFilters = null, ?string $selectField = null): string
     {
-        $config = (array)$config;
+        $arguments = get_object_vars($config);
         $sql = '';
-        if (!empty($config['sql']) && !$ignoreSelectAndGroupBy) {
-            if (!str_starts_with(strtoupper(trim($config['sql'])), 'SELECT')) {
+
+        if (!empty($arguments['sql']) && !$ignoreSelectAndGroupBy) {
+            if (!str_starts_with(strtoupper(trim($arguments['sql'])), 'SELECT')) {
                 $sql .= 'SELECT';
             }
-            $sql .= "\n" . $config['sql'];
+            $sql .= "\n" . $arguments['sql'];
         } elseif ($selectField) {
             $db = Db::get();
             $sql .= 'SELECT ' . $db->quoteIdentifier($selectField);
         } else {
             $sql .= 'SELECT *';
         }
-        if (!empty($config['from'])) {
-            if (!str_starts_with(strtoupper(trim($config['from'])), 'FROM')) {
+
+        if (!empty($arguments['from'])) {
+            if (!str_starts_with(strtoupper(trim($arguments['from'])), 'FROM')) {
                 $sql .= "\n" . 'FROM ';
             }
-            $sql .= "\n" . $config['from'];
+            $sql .= "\n" . $arguments['from'];
         }
 
-        if (!empty($config['where'])) {
-            if (str_starts_with(strtoupper(trim($config['where'])), 'WHERE')) {
-                $config['where'] = preg_replace('/^\s*WHERE\s*/', '', $config['where']);
+        if (!empty($arguments['where'])) {
+            if (str_starts_with(strtoupper(trim($arguments['where'])), 'WHERE')) {
+                $arguments['where'] = preg_replace('/^\s*WHERE\s*/', '', $arguments['where']);
             }
-            $sql .= "\n" . 'WHERE (' . $config['where'] . ')';
+            $sql .= "\n" . 'WHERE (' . $arguments['where'] . ')';
         }
 
-        if (!empty($config['groupby']) && !$ignoreSelectAndGroupBy) {
-            if (!str_starts_with(strtoupper(trim($config['groupby'])), 'GROUP BY')) {
+        if (!empty($arguments['groupby']) && !$ignoreSelectAndGroupBy) {
+            if (!str_starts_with(strtoupper(trim($arguments['groupby'])), 'GROUP BY')) {
                 $sql .= ' GROUP BY ';
             }
-            $sql .= "\n" . $config['groupby'];
+            $sql .= "\n" . $arguments['groupby'];
         }
 
         if ($drillDownFilters) {
@@ -179,7 +182,7 @@ class Sql extends AbstractAdapter
             }
         }
 
-        if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i', $sql, $matches)) {
+        if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE)\b/i', $sql, $matches)) {
             $condition = implode(' AND ', $condition);
 
             $total = sprintf('SELECT COUNT(*) FROM (%s) AS somerandxyz WHERE %s', $sql, $condition);

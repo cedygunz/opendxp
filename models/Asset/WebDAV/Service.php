@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace OpenDxp\Model\Asset\WebDAV;
 
-use OpenDxp\Model\Asset;
+use OpenDxp\Tool\Serialize;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -31,38 +31,30 @@ class Service
 
     public static function getDeleteLog(): array
     {
-        $log = [];
-        if (file_exists(self::getDeleteLogFile())) {
-            $log = unserialize(file_get_contents(self::getDeleteLogFile()));
-            if (!is_array($log)) {
-                $log = [];
-            } else {
-                // cleanup old entries
-                $tmpLog = [];
-                foreach ($log as $path => $data) {
-                    if ($data['timestamp'] > (time() - 30)) { // remove 30 seconds old entries
-                        $tmpLog[$path] = $data;
-                    }
-                }
-
-                $log = $tmpLog;
-            }
+        if (!file_exists(self::getDeleteLogFile())) {
+            return [];
         }
 
-        return $log;
+        $log = Serialize::unserialize(
+            file_get_contents(self::getDeleteLogFile()),
+            ['allowed_classes' => false]
+        );
+
+        if (!is_array($log)) {
+            return [];
+        }
+
+        $cutoff = time() - 30;
+
+        return array_filter($log, static fn (array $data) => $data['timestamp'] > $cutoff);
     }
 
     public static function saveDeleteLog(array $log): void
     {
-        // cleanup old entries
-        $tmpLog = [];
-        foreach ($log as $path => $data) {
-            if ($data['timestamp'] > (time() - 30)) { // remove 30 seconds old entries
-                $tmpLog[$path] = $data;
-            }
-        }
+        $cutoff = time() - 30;
+        $log = array_filter($log, static fn (array $data) => $data['timestamp'] > $cutoff);
 
         $filesystem = new Filesystem();
-        $filesystem->dumpFile(Asset\WebDAV\Service::getDeleteLogFile(), serialize($tmpLog));
+        $filesystem->dumpFile(self::getDeleteLogFile(), Serialize::serialize($log));
     }
 }

@@ -71,15 +71,15 @@ class File extends DAV\File
             Asset\Service::loadAllFields($this->asset);
             $this->asset->delete();
 
-            // add the asset to the delete history, this is used so come over problems with programs like photoshop (delete, create instead of replace => move)
-            // for details see Asset\WebDAV\Tree::move()
+            // add the asset to the delete history, this is used so come over problems with programs like photoshop
+            // (delete, create instead of replace => move). for more details @see Asset\WebDAV\Tree::move()
             $log = Asset\WebDAV\Service::getDeleteLog();
 
             $this->asset->setInDumpState(true);
             $log[$this->asset->getRealFullPath()] = [
-                'id' => $this->asset->getId(),
+                'id'        => $this->asset->getId(),
                 'timestamp' => time(),
-                'data' =>\OpenDxp\Tool\Serialize::serialize($this->asset),
+                'data'      => \OpenDxp\Tool\Serialize::serialize($this->asset),
             ];
 
             $this->asset->setInDumpState(false);

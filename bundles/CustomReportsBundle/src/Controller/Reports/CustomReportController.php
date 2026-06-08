@@ -18,6 +18,7 @@ namespace OpenDxp\Bundle\CustomReportsBundle\Controller\Reports;
 
 use Exception;
 use OpenDxp\Bundle\CustomReportsBundle\Tool;
+use OpenDxp\Bundle\CustomReportsBundle\Exception\InvalidQueryException;
 use OpenDxp\Controller\Traits\JsonHelperTrait;
 use OpenDxp\Controller\UserAwareController;
 use OpenDxp\Model\Element\Service;
@@ -63,7 +64,6 @@ class CustomReportController extends UserAwareController
         $this->checkPermission('reports_config');
 
         $success = false;
-
         $reportName = $request->request->getString('name');
         $this->isValidConfigName($reportName);
 
@@ -89,10 +89,8 @@ class CustomReportController extends UserAwareController
     {
         $this->checkPermission('reports_config');
 
-        $report = Tool\Config::getByName($request->request->getString('name'));
-        if (!$report) {
-            throw $this->createNotFoundException();
-        }
+        $report = $this->loadReport($request->request->getString('name'));
+
         if (!$report->isWriteable()) {
             throw new ConfigWriteException();
         }
@@ -114,10 +112,8 @@ class CustomReportController extends UserAwareController
             throw new Exception('report already exists');
         }
 
-        $report = Tool\Config::getByName($request->request->getString('name'));
-        if (!$report) {
-            throw $this->createNotFoundException();
-        }
+        $report = $this->loadReport($request->request->getString('name'));
+
         $reportData = $this->encodeJson($report);
         $reportData = $this->decodeJson($reportData);
 
@@ -141,10 +137,8 @@ class CustomReportController extends UserAwareController
     {
         $this->checkPermissionsHasOneOf(['reports_config', 'reports']);
 
-        $report = Tool\Config::getByName($request->query->getString('name'));
-        if (!$report) {
-            throw $this->createNotFoundException();
-        }
+        $report = $this->loadReport($request->query->getString('name'), true);
+
         $data = $report->getObjectVars();
         $data['writeable'] = $report->isWriteable();
 
@@ -154,13 +148,13 @@ class CustomReportController extends UserAwareController
     #[Route('/update', name: 'opendxp_bundle_customreports_customreport_update', methods: ['PUT'])]
     public function updateAction(Request $request): JsonResponse
     {
-        $this->checkPermission('reports_config');
         $reportName = $request->request->getString('name');
+
+        $this->checkPermission('reports_config');
         $this->isValidConfigName($reportName);
-        $report = Tool\Config::getByName($reportName);
-        if (!$report) {
-            throw $this->createNotFoundException();
-        }
+
+        $report = $this->loadReport($reportName);
+
         if (!$report->isWriteable()) {
             throw new ConfigWriteException();
         }
@@ -188,12 +182,9 @@ class CustomReportController extends UserAwareController
     {
         $this->checkPermission('reports_config');
 
-        $report = Tool\Config::getByName($request->request->getString('name'));
-        if (!$report) {
-            throw $this->createNotFoundException();
-        }
-        $columnConfiguration = $report->getColumnConfiguration();
+        $report = $this->loadReport($request->request->getString('name'));
 
+        $columnConfiguration = $report->getColumnConfiguration();
         $configuration = json_decode($request->request->getString('configuration'));
         $configuration = $configuration[0] ?? null;
 
@@ -218,8 +209,10 @@ class CustomReportController extends UserAwareController
             }
 
             $success = true;
-        } catch (Exception $e) {
+        } catch (InvalidQueryException $e) {
             $errorMessage = $e->getMessage();
+        } catch (\Throwable) {
+            $errorMessage = 'Failed to load columns.';
         }
 
         return $this->jsonResponse([
@@ -242,13 +235,13 @@ class CustomReportController extends UserAwareController
         foreach ($items as $report) {
             if ($report->getDataSourceConfig() !== null) {
                 $reports[] = [
-                    'name' => htmlspecialchars($report->getName()),
-                    'niceName' => htmlspecialchars($report->getNiceName()),
-                    'iconClass' => htmlspecialchars($report->getIconClass()),
-                    'group' => htmlspecialchars($report->getGroup()),
+                    'name'           => htmlspecialchars($report->getName()),
+                    'niceName'       => htmlspecialchars($report->getNiceName()),
+                    'iconClass'      => htmlspecialchars($report->getIconClass()),
+                    'group'          => htmlspecialchars($report->getGroup()),
                     'groupIconClass' => htmlspecialchars($report->getGroupIconClass()),
-                    'menuShortcut' => $report->getMenuShortcut(),
-                    'reportClass' => htmlspecialchars($report->getReportClass()),
+                    'menuShortcut'   => $report->getMenuShortcut(),
+                    'reportClass'    => htmlspecialchars($report->getReportClass()),
                 ];
             }
         }
@@ -265,10 +258,8 @@ class CustomReportController extends UserAwareController
         $this->checkPermission('reports');
         $offset = $request->request->getInt('start', 0);
         $limit = $request->request->getInt('limit', 40);
-        $config = Tool\Config::getByName($request->request->getString('name'));
-        if (!$config) {
-            throw $this->createNotFoundException();
-        }
+        $config = $this->loadReport($request->request->getString('name'), true);
+
         $configuration = $config->getDataSourceConfig();
         $adapter = Tool\Config::getAdapter($configuration, $config);
         $sortFilters = $this->getSortAndFilters($request, $configuration);
@@ -290,10 +281,8 @@ class CustomReportController extends UserAwareController
         $filters = ($request->request->getString('filter') ? json_decode($request->request->getString('filter'), true) : null);
         $drillDownFilters = $request->request->all('drillDownFilters');
 
-        $config = Tool\Config::getByName($request->request->getString('name'));
-        if (!$config) {
-            throw $this->createNotFoundException();
-        }
+        $config = $this->loadReport($request->request->getString('name'), true);
+
         $configuration = $config->getDataSourceConfig();
 
         $adapter = Tool\Config::getAdapter($configuration, $config);
@@ -309,10 +298,8 @@ class CustomReportController extends UserAwareController
     public function chartAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports');
-        $config = Tool\Config::getByName($request->request->getString('name'));
-        if (!$config) {
-            throw $this->createNotFoundException();
-        }
+        $config = $this->loadReport($request->request->getString('name'), true);
+
         $configuration = $config->getDataSourceConfig();
         $adapter = Tool\Config::getAdapter($configuration, $config);
         $sortFilters = $this->getSortAndFilters($request, $configuration);
@@ -351,10 +338,7 @@ class CustomReportController extends UserAwareController
         }
         $includeHeaders = $request->query->getBoolean('headers');
 
-        $config = Tool\Config::getByName($request->query->getString('name'));
-        if (!$config) {
-            throw $this->createNotFoundException();
-        }
+        $config = $this->loadReport($request->query->getString('name'), true);
 
         $columns = $config->getColumnConfiguration();
         $fields = [];
@@ -380,7 +364,7 @@ class CustomReportController extends UserAwareController
             $exportFile = $this->getTemporaryFileFromFileName($exportFile);
         }
 
-        $fp = fopen($exportFile, 'a');
+        $fp = fopen($exportFile, 'ab');
 
         if ($includeHeaders) {
             fputcsv($fp, $fields, ';');
@@ -421,10 +405,24 @@ class CustomReportController extends UserAwareController
         throw new FileNotFoundException("File \"$exportFile\" not found!");
     }
 
+    private function loadReport(string $name, bool $checkAccess = false): Tool\Config
+    {
+        $report = Tool\Config::getByName($name);
+        if (!$report) {
+            throw $this->createNotFoundException();
+        }
+
+        if ($checkAccess && !$report->isAllowedForUser($this->getOpenDxpUser())) {
+            throw $this->createAccessDeniedException();
+        }
+
+        return $report;
+    }
+
     /**
      * @throws Exception
      */
-    public function isValidConfigName(string $configName): void
+    private function isValidConfigName(string $configName): void
     {
         if (!preg_match('/^[a-zA-Z0-9_\-]+$/', $configName)) {
             throw new Exception('The customer report name is invalid');
@@ -445,11 +443,23 @@ class CustomReportController extends UserAwareController
 
         $filters = ($request->request->has('filter') ? json_decode($request->request->getString('filter'), true) : null);
         $drillDownFilters = $request->request->all('drillDownFilters');
-        if ($sort === null && $dir === null && property_exists($configuration, 'orderby') && $configuration->orderby !== '' && $configuration->orderbydir !== '') {
+
+        if (
+            $sort === null &&
+            $dir === null &&
+            property_exists($configuration, 'orderby') &&
+            $configuration->orderby !== '' &&
+            $configuration->orderbydir !== ''
+        ) {
             $sort = $configuration->orderby;
             $dir = $configuration->orderbydir;
         }
 
-        return ['sort' => $sort, 'dir' => $dir, 'filters' => $filters, 'drillDownFilters' => $drillDownFilters];
+        return [
+            'sort'             => $sort,
+            'dir'              => $dir,
+            'filters'          => $filters,
+            'drillDownFilters' => $drillDownFilters
+        ];
     }
 }
