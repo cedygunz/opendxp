@@ -227,7 +227,7 @@ class SystemSettingsConfig
                 $target = trim($l);
                 if ($target) {
                     if (in_array($target, $fallbacks)) {
-                        throw new Exception("Language `$source` | `$target` causes an infinte loop.");
+                        throw new Exception("Language `$source` | `$target` causes an infinite loop.");
                     }
                     $fallbacks[] = $target;
 

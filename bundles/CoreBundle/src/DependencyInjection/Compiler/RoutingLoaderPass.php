@@ -22,7 +22,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Set attribute loader to our own implementation normalizing admin routes: converts the prefix
- * opendxp_pimcoreadmin_ to just opendxp_admin_
+ * opendxp_admin_admin_ to just opendxp_admin_
  *
  * @internal
  */
