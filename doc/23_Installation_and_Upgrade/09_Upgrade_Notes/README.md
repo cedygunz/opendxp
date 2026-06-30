@@ -1,5 +1,15 @@
 # Upgrade Notes
 
+## OpenDXP 1.3.3
+- Chore: Fix infinite-loop typo and stale routing docblock [#156](https://github.com/open-dxp/opendxp/pull/156)
+- Chore: Refactor composite index generation, permission checks, and serialization handling [#155](https://github.com/open-dxp/opendxp/pull/155):
+  - Optimized composite index handling with static callbacks and safer query parameterization
+  - Improved WebDAV asset permission checks for rename, move, and overwrite actions
+  - Standardized serialization/unserialization with Serialize utility throughout the codebase
+  - Introduced InvalidQueryException for safer query validation in custom reports
+  - Added isAllowedForUser validation for report configuration access
+  - Enhanced CustomReportController with reusable loadReport and isValidConfigName methods, reducing duplicate logic
+
 ## OpenDXP 1.3.2
 - Improvement: `UnmanagedTablesSchemaFilter` (formally `IgnoreCoreTablesFilterListener`) is now disabled by default and only activates during `doctrine:schema:update`, `doctrine:schema:validate`, and commands implementing `ExcludesUnmanagedTablesInterface`
   - New Feature: If `ExcludesUnmanagedTablesInterface` is implemented on any console command that calls `SchemaTool::updateSchema()` directly to prevent unintended DROP TABLE statements for non-ORM tables, see [docs](../../19_Development_Tools_and_Details/06_Doctrine_Schema_Filter.md)
