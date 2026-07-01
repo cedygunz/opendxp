@@ -275,7 +275,7 @@ final class Config implements ArrayAccess
         }
 
         $cached = Cache::load($cacheKey);
-        if ($cached instanceof CachedCollection && $cached->type === CachedCollectionType::WebsiteSetting) {
+        if ($cached instanceof CachedCollection) {
             foreach ($cached->entries as $entry) {
                 if ($entry['value'] instanceof ElementInterface && !RuntimeCache::isRegistered($entry['value']->getCacheTag())) {
                     RuntimeCache::set($entry['value']->getCacheTag(), $entry['value']);
