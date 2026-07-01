@@ -19,6 +19,27 @@ namespace OpenDxp\Event;
 final class WebsiteSettingEvents
 {
     /**
+     * Fired by WebsiteSetting::getById() after a single setting is loaded.
+     *
+     * @Event("OpenDxp\Event\Model\WebsiteSettingLoadEvent")
+     */
+    public const string POST_LOAD = 'opendxp.websiteSetting.postLoad';
+
+    /**
+     * Fired by Config::getWebsiteConfig() after the full setting collection is loaded.
+     *
+     * @Event("OpenDxp\Event\Model\WebsiteSettingLoadEvent")
+     */
+    public const string LIST_LOAD = 'opendxp.websiteSetting.listLoad';
+
+    /**
+     * Fired by Config::getWebsiteConfigValue() when a specific key is accessed.
+     *
+     * @Event("OpenDxp\Event\Model\WebsiteSettingLoadEvent")
+     */
+    public const string DATA_LOAD = 'opendxp.websiteSetting.dataLoad';
+
+    /**
      * @Event("OpenDxp\Event\Model\WebsiteSettingEvent")
      */
     public const string PRE_ADD = 'opendxp.websiteSetting.preAdd';

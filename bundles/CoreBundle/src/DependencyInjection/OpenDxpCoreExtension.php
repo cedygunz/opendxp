@@ -22,6 +22,7 @@ use OpenDxp\Bundle\CoreBundle\EventListener\TranslationDebugListener;
 use OpenDxp\Bundle\CoreBundle\EventListener\HttpCache\HttpCacheScopeListener;
 use OpenDxp\Bundle\CoreBundle\HttpCache\Strategy\OpenDxpElementCacheStrategy;
 use OpenDxp\Bundle\CoreBundle\HttpCache\Strategy\TranslationCacheStrategy;
+use OpenDxp\Bundle\CoreBundle\HttpCache\Strategy\WebsiteSettingCacheStrategy;
 use OpenDxp\Extension\Document\Areabrick\Attribute\AsAreabrick;
 use OpenDxp\Http\Context\OpenDxpContextGuesser;
 use OpenDxp\Loader\ImplementationLoader\ClassMapLoader;
@@ -330,6 +331,7 @@ final class OpenDxpCoreExtension extends ConfigurableExtension
         $dataObjects = $elements['data_objects'] ?? [];
         $assets = $elements['assets'] ?? [];
         $translations = $elements['translations'] ?? [];
+        $websiteSettings = $elements['website_settings'] ?? [];
 
         $docsEnabled = $documents['enabled'] ?? true;
         $objEnabled = $dataObjects['enabled'] ?? true;
@@ -352,6 +354,12 @@ final class OpenDxpCoreExtension extends ConfigurableExtension
             $definition = new Definition(TranslationCacheStrategy::class);
             $definition->addTag('opendxp.http_cache.strategy');
             $container->setDefinition(TranslationCacheStrategy::class, $definition);
+        }
+
+        if ($websiteSettings['enabled'] ?? true) {
+            $definition = new Definition(WebsiteSettingCacheStrategy::class);
+            $definition->addTag('opendxp.http_cache.strategy');
+            $container->setDefinition(WebsiteSettingCacheStrategy::class, $definition);
         }
     }
 

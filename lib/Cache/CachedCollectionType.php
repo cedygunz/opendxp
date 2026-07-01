@@ -13,22 +13,9 @@ declare(strict_types=1);
  * @license    https://www.gnu.org/licenses/gpl-3.0.html  GNU General Public License version 3 (GPLv3)
  */
 
-namespace OpenDxp\HttpCache\Tag;
+namespace OpenDxp\Cache;
 
-enum ElementTagType: string implements CacheTagType
+enum CachedCollectionType: string
 {
-    case Document = 'doc';
-    case DocumentList = 'doc_list';
-    case DataObject = 'obj';
-    case DataObjectClass = 'obj_class';
-    case Asset = 'asset';
-    case AssetList = 'asset_list';
-    case Translation = 'translation';
     case WebsiteSetting = 'website_setting';
-    case WebsiteSettingList = 'website_setting_list';
-
-    public function prefix(): string
-    {
-        return $this->value;
-    }
 }

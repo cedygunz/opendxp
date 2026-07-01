@@ -33,17 +33,20 @@ When a page is rendered, OpenDXP automatically collects cache tags for every ele
 
 Built-in tags collected automatically:
 
-| Source                             | Tags added                      |
-|------------------------------------|---------------------------------|
-| Route document (e.g. `/about-us`)  | `doc_42`                        |
-| Route DataObject (URL slug)        | `obj_17`, `obj_class_employee`* |
-| Document loaded during rendering   | `doc_5`, `doc_12`               |
-| DataObject loaded during rendering | `obj_3`, `obj_8`                |
-| Asset loaded during rendering      | `asset_22`                      |
-| Document listing executed          | `doc_list`*                     |
-| Asset listing executed             | `asset_list`*                   |
-| DataObject listing executed        | `obj_class_employee`*           |
-| Translation changed                | `translation`                   |
+| Source                                 | Tags added                                  |
+|----------------------------------------|---------------------------------------------|
+| Route document (e.g. `/about-us`)      | `doc_42`                                    |
+| Route DataObject (URL slug)            | `obj_17`, `obj_class_employee`*             |
+| Document loaded during rendering       | `doc_5`, `doc_12`                           |
+| DataObject loaded during rendering     | `obj_3`, `obj_8`                            |
+| Asset loaded during rendering          | `asset_22`                                  |
+| Document listing executed              | `doc_list`*                                 |
+| Asset listing executed                 | `asset_list`*                               |
+| DataObject listing executed            | `obj_class_employee`*                       |
+| Translation changed                    | `translation`                               |
+| `WebsiteSetting::getById()` called     | `website_setting_5`, `website_setting_list` |
+| `opendxp_website_config('key')` called | `website_setting_5`                         |
+| `opendxp_website_config()` called      | `website_setting_list`                      |
 
 \* Only when `tag_list: true` is set (default) in the `elements` config.
 
@@ -66,7 +69,7 @@ The reverse proxy stores this header alongside the cached response and strips it
 
 ### 3. Invalidation on content change
 
-When a Document, DataObject, Asset or Translation is saved or deleted, `ElementChangeListener` calls `HttpCache::invalidate()` directly. FOSHttpCacheBundle's `InvalidationListener` flushes all queued invalidation requests to the proxy after the response is sent (`kernel.terminate`).
+When a Document, DataObject, Asset, Translation or WebsiteSetting is saved or deleted, `ElementChangeListener` calls `HttpCache::invalidate()` directly. FOSHttpCacheBundle's `InvalidationListener` flushes all queued invalidation requests to the proxy after the response is sent (`kernel.terminate`).
 
 ```
 Save Document 42
@@ -181,6 +184,8 @@ opendxp:
                 tag_list: true      # also tag/invalidate "asset_list" (default: true)
             translations:
                 enabled: true       # invalidate on translation changes (default: true)
+            website_settings:
+                enabled: true       # tag/invalidate website settings (default: true)
 ```
 
 All `elements` options default to `true`. The full configuration above is equivalent to just setting `enabled: true`.

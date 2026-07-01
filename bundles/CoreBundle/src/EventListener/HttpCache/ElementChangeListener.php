@@ -22,9 +22,11 @@ use OpenDxp\Event\Model\AssetEvent;
 use OpenDxp\Event\Model\DataObjectEvent;
 use OpenDxp\Event\Model\DocumentEvent;
 use OpenDxp\Event\Model\TranslationEvent;
+use OpenDxp\Event\Model\WebsiteSettingEvent;
 use OpenDxp\Event\TranslationEvents;
-use OpenDxp\HttpCache\HttpCacheArguments;
+use OpenDxp\Event\WebsiteSettingEvents;
 use OpenDxp\HttpCache\HttpCache;
+use OpenDxp\HttpCache\HttpCacheArguments;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -53,6 +55,10 @@ class ElementChangeListener implements EventSubscriberInterface
 
             TranslationEvents::POST_SAVE   => 'onTranslationChange',
             TranslationEvents::POST_DELETE => 'onTranslationChange',
+
+            WebsiteSettingEvents::POST_ADD    => 'onWebsiteSettingChange',
+            WebsiteSettingEvents::POST_UPDATE => 'onWebsiteSettingChange',
+            WebsiteSettingEvents::POST_DELETE => 'onWebsiteSettingChange',
         ];
     }
 
@@ -90,6 +96,11 @@ class ElementChangeListener implements EventSubscriberInterface
         }
 
         $this->httpCache->invalidate($event->getTranslation());
+    }
+
+    public function onWebsiteSettingChange(WebsiteSettingEvent $event): void
+    {
+        $this->httpCache->invalidate($event->getWebsiteSetting());
     }
 
     private function shouldSkip(DocumentEvent|DataObjectEvent|AssetEvent $event): bool
