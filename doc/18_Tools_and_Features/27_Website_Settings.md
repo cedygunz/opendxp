@@ -108,11 +108,11 @@ When HTTP caching is enabled, website settings participate in tag-based cache in
 
 The tag added to a response depends on which access path triggered the load:
 
-| Access                          | Tags added                                     |
-|---------------------------------|------------------------------------------------|
-| `WebsiteSetting::getById($id)`  | `website_setting_{id}`, `website_setting_list` |
-| `opendxp_website_config('key')` | `website_setting_{id}`                         |
-| `opendxp_website_config()`      | `website_setting_list`                         |
+| Access                          | Tags added             |
+|---------------------------------|------------------------|
+| `WebsiteSetting::getById($id)`  | `website_setting_{id}` |
+| `opendxp_website_config('key')` | `website_setting_{id}` |
+| `opendxp_website_config()`      | `website_setting_list` |
 
 When a setting is saved or deleted, both `website_setting_{id}` and `website_setting_list` are invalidated.
 

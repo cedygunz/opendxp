@@ -36,10 +36,7 @@ class WebsiteSettingCacheStrategy implements HttpCacheTagStrategyInterface
         if ($element instanceof WebsiteSettingLoadEvent) {
             return match ($element->getType()) {
                 WebsiteSettingLoadEvent::TYPE_SINGLE => $element->getSetting() !== null
-                    ? [
-                        new CacheTag(ElementTagType::WebsiteSetting, $element->getSetting()->getId()),
-                        new CacheTag(ElementTagType::WebsiteSettingList),
-                    ]
+                    ? [new CacheTag(ElementTagType::WebsiteSetting, $element->getSetting()->getId())]
                     : [],
                 WebsiteSettingLoadEvent::TYPE_DATA => $element->getId() !== null
                     ? [new CacheTag(ElementTagType::WebsiteSetting, $element->getId())]
