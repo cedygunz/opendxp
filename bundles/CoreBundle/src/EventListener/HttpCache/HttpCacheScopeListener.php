@@ -15,9 +15,11 @@ declare(strict_types=1);
 
 namespace OpenDxp\Bundle\CoreBundle\EventListener\HttpCache;
 
+use OpenDxp\Http\Request\Resolver\DocumentResolver;
 use OpenDxp\Http\Request\Resolver\OpenDxpContextResolver;
 use OpenDxp\HttpCache\HttpCache;
 use OpenDxp\HttpCache\HttpCacheScope;
+use OpenDxp\Model\Document;
 use OpenDxp\Routing\HttpCacheTaggableInterface;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -34,7 +36,9 @@ class HttpCacheScopeListener implements EventSubscriberInterface
         private readonly HttpCache $httpCache,
         private readonly HttpCacheScope $httpCacheScope,
         private readonly OpenDxpContextResolver $contextResolver,
+        private readonly DocumentResolver $documentResolver,
         private readonly bool $collectFromRequest = false,
+        private readonly bool $tagFallbackDocument = true,
     ) {
     }
 
@@ -85,13 +89,19 @@ class HttpCacheScopeListener implements EventSubscriberInterface
         }
 
         $route = $request->attributes->get(DynamicRouter::ROUTE_KEY);
-        $content = $request->attributes->get(DynamicRouter::CONTENT_KEY);
+        $content = $this->documentResolver->getDocument($request);
 
-        if ($route instanceof HttpCacheTaggableInterface && null !== $element = $route->getCacheElement()) {
-            $this->httpCache->collectTagsFor($element);
+        $routeElement = $route instanceof HttpCacheTaggableInterface ? $route->getCacheElement() : null;
+
+        if ($routeElement !== null) {
+            $this->httpCache->collectTagsFor($routeElement);
         }
 
-        if ($content !== null) {
+        // if the route itself didn't resolve to a Document, any $content here can only be a fallback document
+        // (e.g. nearest document by path for a custom route), not something the route matched
+        $isFallback = !$routeElement instanceof Document && $content instanceof Document;
+
+        if ($isFallback && $this->tagFallbackDocument) {
             $this->httpCache->collectTagsFor($content);
         }
     }

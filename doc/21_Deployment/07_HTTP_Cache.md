@@ -44,7 +44,7 @@ Built-in tags collected automatically:
 | Asset listing executed                 | `asset_list`*                               |
 | DataObject listing executed            | `obj_class_employee`*                       |
 | Translation changed                    | `translation`                               |
-| `WebsiteSetting::getById()` called     | `website_setting_5`, `website_setting_list` |
+| `WebsiteSetting::getById()` called     | `website_setting_5`                         |
 | `opendxp_website_config('key')` called | `website_setting_5`                         |
 | `opendxp_website_config()` called      | `website_setting_list`                      |
 
@@ -57,7 +57,16 @@ Tags are only collected during cacheable HTTP methods (GET, HEAD). POST/PUT/DELE
 > rendering (e.g. in `kernel.request` listeners) are not tagged. Set `scope: request` to collect
 > from the very beginning of the request.
 
-### 2. Tags written to response header
+### 2. Fallback document tagging
+
+Every route other than a document route (e.g. static route, symfony route) has no document of its own.
+For these, OpenDXP still resolves a "fallback" document, the nearest document found by path.
+
+By default, this fallback document is also tagged and invalidated like any other content document. 
+If your route's response does not actually depend on that fallback document,
+set `tag_fallback_document: false` to stop tagging/invalidating it for routes that only resolved a fallback. 
+
+### 3. Tags written to response header
 
 FOSHttpCacheBundle's `TagListener` writes all collected tags to the response header configured for the active proxy client. For example, with Varnish `ban` mode:
 
@@ -67,7 +76,7 @@ X-Cache-Tags: doc_42 obj_17 obj_class_employee asset_22
 
 The reverse proxy stores this header alongside the cached response and strips it before delivering to the browser.
 
-### 3. Invalidation on content change
+### 4. Invalidation on content change
 
 When a Document, DataObject, Asset, Translation or WebsiteSetting is saved or deleted, `ElementChangeListener` calls `HttpCache::invalidate()` directly. FOSHttpCacheBundle's `InvalidationListener` flushes all queued invalidation requests to the proxy after the response is sent (`kernel.terminate`).
 
@@ -171,6 +180,8 @@ opendxp:
         enabled: true
 
         scope: controller           # "controller" (default) or "request": when collection starts
+
+        tag_fallback_document: true # tag/invalidate the fallback document on routes without their own (default: true)
 
         elements:
             documents:

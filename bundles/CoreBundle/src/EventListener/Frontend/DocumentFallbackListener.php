@@ -23,6 +23,7 @@ use OpenDxp\Http\Request\Resolver\OpenDxpContextResolver;
 use OpenDxp\Http\Request\Resolver\SiteResolver;
 use OpenDxp\Model\Document;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -111,28 +112,30 @@ class DocumentFallbackListener implements EventSubscriberInterface
                     $request->setLocale($document->getProperty('language'));
                 }
             }
-        } else {
-            // if we're in a sub request and no explicit document is set - try to load document from
-            // parent and/or main request and set it on our sub-request
-            $parentRequest = $this->requestStack->getParentRequest();
-            $mainRequest = $this->requestStack->getMainRequest();
 
-            $eligibleRequests = [];
+            return;
+        }
 
-            if ($parentRequest instanceof \Symfony\Component\HttpFoundation\Request) {
-                $eligibleRequests[] = $parentRequest;
-            }
+        // if we're in a sub request and no explicit document is set - try to load document from
+        // parent and/or main request and set it on our sub-request
+        $parentRequest = $this->requestStack->getParentRequest();
+        $mainRequest = $this->requestStack->getMainRequest();
 
-            if ($mainRequest !== $parentRequest) {
-                $eligibleRequests[] = $mainRequest;
-            }
+        $eligibleRequests = [];
 
-            foreach ($eligibleRequests as $eligibleRequest) {
-                if ($document = $this->documentResolver->getDocument($eligibleRequest)) {
-                    $this->documentResolver->setDocument($request, $document);
+        if ($parentRequest instanceof Request) {
+            $eligibleRequests[] = $parentRequest;
+        }
 
-                    return;
-                }
+        if ($mainRequest !== $parentRequest) {
+            $eligibleRequests[] = $mainRequest;
+        }
+
+        foreach ($eligibleRequests as $eligibleRequest) {
+            if ($document = $this->documentResolver->getDocument($eligibleRequest)) {
+                $this->documentResolver->setDocument($request, $document);
+
+                return;
             }
         }
     }

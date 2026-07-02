@@ -318,9 +318,12 @@ final class OpenDxpCoreExtension extends ConfigurableExtension
         $loader->load('http_cache.yaml');
 
         $collectFromRequest = ($config['scope'] ?? 'controller') === 'request';
+        $tagFallbackDocument = $config['tag_fallback_document'] ?? true;
+
         $container
             ->getDefinition(HttpCacheScopeListener::class)
-            ->setArgument('$collectFromRequest', $collectFromRequest);
+            ->setArgument('$collectFromRequest', $collectFromRequest)
+            ->setArgument('$tagFallbackDocument', $tagFallbackDocument);
 
         $this->registerHttpCacheStrategies($container, $config['elements'] ?? []);
     }
