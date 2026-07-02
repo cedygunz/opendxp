@@ -19,6 +19,7 @@ use OpenDxp\HttpCache\HttpCacheTagStrategyInterface;
 use OpenDxp\HttpCache\Tag\CacheTag;
 use OpenDxp\HttpCache\Tag\ElementTagType;
 use OpenDxp\Model\Translation;
+use OpenDxp\Model;
 
 /**
  * @internal
@@ -27,7 +28,7 @@ class TranslationCacheStrategy implements HttpCacheTagStrategyInterface
 {
     public function supports(object $element): bool
     {
-        return $element instanceof Translation;
+        return $element instanceof Translation && $element->getDomain() !== Model\Translation::DOMAIN_ADMIN;
     }
 
     public function getTags(object $element): array

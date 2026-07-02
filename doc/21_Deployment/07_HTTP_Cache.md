@@ -36,23 +36,26 @@ Built-in tags collected automatically:
 | Source                                 | Tags added                                  |
 |----------------------------------------|---------------------------------------------|
 | Route document (e.g. `/about-us`)      | `doc_42`                                    |
-| Route DataObject (URL slug)            | `obj_17`, `obj_class_employee`*             |
+| Route DataObject (URL slug)            | `obj_17`, `obj_class_employee` <sup>*</sup> |
 | Document loaded during rendering       | `doc_5`, `doc_12`                           |
 | DataObject loaded during rendering     | `obj_3`, `obj_8`                            |
 | Asset loaded during rendering          | `asset_22`                                  |
-| Document listing executed              | `doc_list`*                                 |
-| Asset listing executed                 | `asset_list`*                               |
-| DataObject listing executed            | `obj_class_employee`*                       |
-| Translation changed                    | `translation`                               |
+| Document listing executed              | `doc_list` <sup>*</sup>                     |
+| Asset listing executed                 | `asset_list` <sup>*</sup>                   |
+| DataObject listing executed            | `obj_class_employee` <sup>*</sup>           |
+| Translation changed <sup>**</sup>      | `translation`                               |
 | `WebsiteSetting::getById()` called     | `website_setting_5`                         |
 | `opendxp_website_config('key')` called | `website_setting_5`                         |
 | `opendxp_website_config()` called      | `website_setting_list`                      |
 
-\* Only when `tag_list: true` is set (default) in the `elements` config.
-
-Tags are only collected during cacheable HTTP methods (GET, HEAD). POST/PUT/DELETE requests never contribute to the response tag set.
+\* Only when `tag_list: true` is set (default) in the `elements` config.  
+\** Translations in the `admin` domain are never tagged or invalidated, since they are not part of a cached frontend response.
 
 > [!NOTE]
+> Tags are only collected during cacheable HTTP methods (GET, HEAD). 
+> POST/PUT/DELETE requests never contribute to the response tag set.
+
+> [!IMPORTANT] 
 > By default (`scope: controller`) collection starts at `kernel.controller`: elements loaded before
 > rendering (e.g. in `kernel.request` listeners) are not tagged. Set `scope: request` to collect
 > from the very beginning of the request.
