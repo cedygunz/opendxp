@@ -194,20 +194,6 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @deprecated since OpenDXP 1.3 and will be removed in 2.0. Direct RuntimeCache injection is no longer supported.
-     */
-    public static function setWebsiteConfig(CachedCollection|null $config, ?string $language = null): void
-    {
-        trigger_deprecation(
-            'open-dxp/opendxp',
-            '1.3',
-            'Calling "%s()" is deprecated and will be removed in 2.0. Direct RuntimeCache injection is no longer supported.', __METHOD__
-        );
-
-        RuntimeCache::set(self::getWebsiteConfigRuntimeCacheKey($language), $config);
-    }
-
-    /**
      * Returns whole website config or only a given setting for the current site
      *
      * @param string|null $key  Config key to directly load. If null, the whole config will be returned
