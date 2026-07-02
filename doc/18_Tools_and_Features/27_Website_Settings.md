@@ -66,7 +66,7 @@ class TestController
         // Get the "some-number" setting for "de".
         // If the property does not exist, you will get the setting with no language provided
         $someSetting = \OpenDxp\Model\WebsiteSetting::getByName('some-number', null, 'de');
-        $currentNumber = $somesetting->getData();
+        $currentNumber = $someSetting->getData();
         
         // Now do something with the data or set new data (count up in this case)
         $newNumber = $currentNumber + 1;
