@@ -64,7 +64,7 @@ class TestController
     public function testAction(): Response
     {
         // Get the "some-number" setting for "de".
-        // If the property does not exist, you will get the setting with not language provided
+        // If the property does not exist, you will get the setting with no language provided
         $someSetting = \OpenDxp\Model\WebsiteSetting::getByName('some-number', null, 'de');
         $currentNumber = $somesetting->getData();
         
