@@ -23,6 +23,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @internal
+ *
+ * @deprecated since OpenDXP 1.4 and will be removed in 2.0. Use OpenDxp\Bundle\AdminBundle\Service\Notification\NotificationFilterParser instead.
  */
 class NotificationServiceFilterParser
 {
@@ -62,6 +64,14 @@ class NotificationServiceFilterParser
      */
     public function parse(): array
     {
+        trigger_deprecation(
+            'open-dxp/opendxp',
+            '1.4',
+            'Calling "%s()" is deprecated and will be removed in 2.0. Use "%s" instead.',
+            __METHOD__,
+            'OpenDxp\Bundle\AdminBundle\Service\Notification\NotificationFilterParser'
+        );
+        
         $result = [];
         $filter = $this->request->request->get(self::KEY_FILTER, '[]');
         $items = json_decode($filter, true);
