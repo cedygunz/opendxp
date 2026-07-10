@@ -17,10 +17,10 @@ namespace OpenDxp\HttpCache\Tag;
 
 enum ElementTagType: string implements CacheTagType
 {
-    case Document = 'doc';
-    case DocumentList = 'doc_list';
-    case DataObject = 'obj';
-    case DataObjectClass = 'obj_class';
+    case Document = 'document';
+    case DocumentList = 'document_list';
+    case DataObject = 'data_object';
+    case DataObjectClass = 'data_object_class';
     case Asset = 'asset';
     case AssetList = 'asset_list';
     case Translation = 'translation';

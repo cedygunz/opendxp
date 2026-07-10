@@ -115,16 +115,18 @@ class HttpCacheTagDataCollector extends DataCollector
     private function groupByType(array $tags): array
     {
         $labels = [
-            'doc'         => 'Documents',
-            'obj'         => 'Objects',
-            'obj_class'   => 'DataObject Classes',
-            'asset'       => 'Assets',
-            'translation' => 'Translations',
+            'document'          => 'Documents',
+            'data_object'       => 'Objects',
+            'data_object_class' => 'DataObject Classes',
+            'asset'             => 'Assets',
+            'translation'       => 'Translations',
+            'website_setting'   => 'Website Settings',
         ];
 
         $listPrefixes = [
-            'doc_list',
+            'document_list',
             'asset_list',
+            'website_setting_list',
         ];
 
         $grouped = [];

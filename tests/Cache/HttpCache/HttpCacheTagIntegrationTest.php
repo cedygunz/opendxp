@@ -35,7 +35,7 @@ class HttpCacheTagIntegrationTest extends ModelTestCase
 
         $response = $this->kernel->handle(Request::create($doc->getFullPath()));
 
-        $this->assertTag('doc_' . $doc->getId(), $response->headers->get('X-Cache-Tags', ''));
+        $this->assertTag('document_' . $doc->getId(), $response->headers->get('X-Cache-Tags', ''));
     }
 
     public function testDocumentPostLoadTagInResponseHeader(): void
@@ -50,8 +50,8 @@ class HttpCacheTagIntegrationTest extends ModelTestCase
         $response = $this->kernel->handle($request);
         $tags = $response->headers->get('X-Cache-Tags', '');
 
-        $this->assertTag('doc_' . $page->getId(), $tags);
-        $this->assertTag('doc_' . $loaded->getId(), $tags);
+        $this->assertTag('document_' . $page->getId(), $tags);
+        $this->assertTag('document_' . $loaded->getId(), $tags);
     }
 
     public function testAssetPostLoadTagInResponseHeader(): void
@@ -66,7 +66,7 @@ class HttpCacheTagIntegrationTest extends ModelTestCase
         $response = $this->kernel->handle($request);
         $tags = $response->headers->get('X-Cache-Tags', '');
 
-        $this->assertTag('doc_' . $page->getId(), $tags);
+        $this->assertTag('document_' . $page->getId(), $tags);
         $this->assertTag('asset_' . $asset->getId(), $tags);
     }
 
@@ -82,7 +82,7 @@ class HttpCacheTagIntegrationTest extends ModelTestCase
         $response = $this->kernel->handle($request);
         $tags = $response->headers->get('X-Cache-Tags', '');
 
-        $this->assertTag('obj_' . $folder->getId(), $tags);
+        $this->assertTag('data_object_' . $folder->getId(), $tags);
     }
 
     public function testMultipleElementsAllTagged(): void
@@ -99,7 +99,7 @@ class HttpCacheTagIntegrationTest extends ModelTestCase
         $response = $this->kernel->handle($request);
         $tags = $response->headers->get('X-Cache-Tags', '');
 
-        $this->assertTag('doc_' . $doc->getId(), $tags);
+        $this->assertTag('document_' . $doc->getId(), $tags);
         $this->assertTag('asset_' . $asset->getId(), $tags);
     }
 
@@ -112,7 +112,7 @@ class HttpCacheTagIntegrationTest extends ModelTestCase
 
         $response = $this->kernel->handle($request);
 
-        $this->assertTag('doc_list', $response->headers->get('X-Cache-Tags', ''));
+        $this->assertTag('document_list', $response->headers->get('X-Cache-Tags', ''));
     }
 
     public function testAssetListingAddsAssetListTag(): void
@@ -142,8 +142,8 @@ class HttpCacheTagIntegrationTest extends ModelTestCase
         $response = $this->kernel->handle($request);
         $tags = $response->headers->get('X-Cache-Tags', '');
 
-        $this->assertTag('doc_' . $mainDoc->getId(), $tags);
-        $this->assertTag('doc_' . $subDoc->getId(), $tags);
+        $this->assertTag('document_' . $mainDoc->getId(), $tags);
+        $this->assertTag('document_' . $subDoc->getId(), $tags);
     }
 
     public function testTagsNotCollectedOutsideRequestScope(): void
@@ -165,8 +165,8 @@ class HttpCacheTagIntegrationTest extends ModelTestCase
         $response = $this->kernel->handle(Request::create($doc2->getFullPath()));
         $tags = $response->headers->get('X-Cache-Tags', '');
 
-        $this->assertTag('doc_' . $doc2->getId(), $tags);
-        $this->assertStringNotContainsString('doc_' . $doc1->getId(), $tags);
+        $this->assertTag('document_' . $doc2->getId(), $tags);
+        $this->assertStringNotContainsString('document_' . $doc1->getId(), $tags);
     }
 
     private function assertTag(string $tag, string $headerValue): void

@@ -33,20 +33,20 @@ When a page is rendered, OpenDXP automatically collects cache tags for every ele
 
 Built-in tags collected automatically:
 
-| Source                                 | Tags added                                  |
-|----------------------------------------|---------------------------------------------|
-| Route document (e.g. `/about-us`)      | `doc_42`                                    |
-| Route DataObject (URL slug)            | `obj_17`, `obj_class_employee` <sup>*</sup> |
-| Document loaded during rendering       | `doc_5`, `doc_12`                           |
-| DataObject loaded during rendering     | `obj_3`, `obj_8`                            |
-| Asset loaded during rendering          | `asset_22`                                  |
-| Document listing executed              | `doc_list` <sup>*</sup>                     |
-| Asset listing executed                 | `asset_list` <sup>*</sup>                   |
-| DataObject listing executed            | `obj_class_employee` <sup>*</sup>           |
-| Translation changed <sup>**</sup>      | `translation`                               |
-| `WebsiteSetting::getById()` called     | `website_setting_5`                         |
-| `opendxp_website_config('key')` called | `website_setting_5`                         |
-| `opendxp_website_config()` called      | `website_setting_list`                      |
+| Source                                 | Tags added                                                  |
+|----------------------------------------|-------------------------------------------------------------|
+| Route document (e.g. `/about-us`)      | `document_42`                                               |
+| Route DataObject (URL slug)            | `data_object_17`, `data_object_class_employee` <sup>*</sup> |
+| Document loaded during rendering       | `document_5`, `document_12`                                 |
+| DataObject loaded during rendering     | `data_object_3`, `data_object_8`                            |
+| Asset loaded during rendering          | `asset_22`                                                  |
+| Document listing executed              | `document_list` <sup>*</sup>                                |
+| Asset listing executed                 | `asset_list` <sup>*</sup>                                   |
+| DataObject listing executed            | `data_object_class_employee` <sup>*</sup>                   |
+| Translation changed <sup>**</sup>      | `translation`                                               |
+| `WebsiteSetting::getById()` called     | `website_setting_5`                                         |
+| `opendxp_website_config('key')` called | `website_setting_5`                                         |
+| `opendxp_website_config()` called      | `website_setting_list`                                      |
 
 \* Only when `tag_list: true` is set (default) in the `elements` config.  
 \** Translations in the `admin` domain are never tagged or invalidated, since they are not part of a cached frontend response.
@@ -74,7 +74,7 @@ set `tag_fallback_document: false` to stop tagging/invalidating it for routes th
 FOSHttpCacheBundle's `TagListener` writes all collected tags to the response header configured for the active proxy client. For example, with Varnish `ban` mode:
 
 ```
-X-Cache-Tags: doc_42 obj_17 obj_class_employee asset_22
+X-Cache-Tags: document_42 data_object_17 data_object_class_employee asset_22
 ```
 
 The reverse proxy stores this header alongside the cached response and strips it before delivering to the browser.
@@ -87,10 +87,10 @@ When a Document, DataObject, Asset, Translation or WebsiteSetting is saved or de
 Save Document 42
   → ElementChangeListener::onDocumentChange()
   → HttpCache::invalidate($document)
-  → OpenDxpElementCacheStrategy::getTags() → ['doc_42', 'doc_list']
-  → CacheManager::invalidateTags(['doc_42', 'doc_list'])
+  → OpenDxpElementCacheStrategy::getTags() → ['document_42', 'document_list']
+  → CacheManager::invalidateTags(['document_42', 'document_list'])
   → kernel.terminate → FOSHttpCacheBundle flushes to proxy
-  → Varnish/Fastly/etc. invalidates all responses tagged doc_42 or doc_list
+  → Varnish/Fastly/etc. invalidates all responses tagged document_42 or document_list
 ```
 
 ***
@@ -189,10 +189,10 @@ opendxp:
         elements:
             documents:
                 enabled: true       # tag/invalidate documents (default: true)
-                tag_list: true      # also tag/invalidate "doc_list" (default: true)
+                tag_list: true      # also tag/invalidate "document_list" (default: true)
             data_objects:
                 enabled: true       # tag/invalidate data objects (default: true)
-                tag_list: true      # also tag/invalidate "obj_class:{className}" (default: true)
+                tag_list: true      # also tag/invalidate "data_object_class_{className}" (default: true)
             assets:
                 enabled: true       # tag/invalidate assets (default: true)
                 tag_list: true      # also tag/invalidate "asset_list" (default: true)
@@ -254,7 +254,7 @@ See [FOSHttpCacheBundle tagging docs](https://foshttpcachebundle.readthedocs.io/
 ***
 
 ### 2. Via Doctrine entity strategy
-For Doctrine entities that need a single `{prefix}:{id}` tag, use the `DoctrineGeneralEntityCacheStrategy` service. 
+For Doctrine entities that need a single `{prefix}_{id}` tag, use the `DoctrineGeneralEntityCacheStrategy` service. 
 
 Collection (on `postLoad`) and invalidation (on `postPersist`/`postUpdate`/`postRemove`) are handled automatically, 
 which only fires for the registered entity classes.
@@ -266,11 +266,11 @@ app.http_cache.my_entity:
     tags:
         - name: opendxp.http_cache.doctrine_entity
           entity_class: App\Entity\MyEntity
-          tag_prefix: app-my-entity
+          tag_prefix: app_my_entity
           # identifier_expression: 'object.getId()'   # default / optional
 ```
 
-This produces tags like `app-my-entity:42`.
+This produces tags like `app_my_entity_42`.
 
 > [!NOTE]
 > `identifier_expression` is a Symfony expression evaluated with `object` as the entity instance.
@@ -310,7 +310,7 @@ Define your tag types with `CacheTagType`:
 enum BlogTagType: string implements CacheTagType
 {
     case Post     = 'blog';
-    case PostList = 'blog-list';
+    case PostList = 'blog_list';
 
     public function prefix(): string { return $this->value; }
 }
