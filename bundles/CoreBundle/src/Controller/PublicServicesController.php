@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 /**
  * @internal
@@ -60,7 +61,7 @@ class PublicServicesController extends AbstractController
                 "File System error for asset thumbnail {$config['thumbnail_name']} from config {$config['type']} for file {$filename}",
                 ['exception' => $e]
             );
-        } catch (\Throwable) {
+        } catch (Throwable) {
             Logger::error(
                 "Unable to generate asset thumbnail {$config['thumbnail_name']} from config {$config['type']} for file {$filename}"
             );
