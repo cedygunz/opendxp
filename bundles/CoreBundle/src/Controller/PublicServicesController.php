@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace OpenDxp\Bundle\CoreBundle\Controller;
 
 use Exception;
+use League\Flysystem\FilesystemException;
 use OpenDxp\Bundle\SeoBundle\Config;
 use OpenDxp\Logger;
 use OpenDxp\Model\Asset;
@@ -54,11 +55,18 @@ class PublicServicesController extends AbstractController
             }
 
             throw new Exception('Unable to generate '.$config['type'].' thumbnail, see logs for details.');
-        } catch (Exception $e) {
-            Logger::error($e->getMessage());
-
-            return new RedirectResponse('/bundles/opendxpadmin/img/filetype-not-supported.svg');
+        } catch (FilesystemException $e) {
+            Logger::error(
+                "File System error for asset thumbnail {$config['thumbnail_name']} from config {$config['type']} for file {$filename}",
+                ['exception' => $e]
+            );
+        } catch (\Throwable) {
+            Logger::error(
+                "Unable to generate asset thumbnail {$config['thumbnail_name']} from config {$config['type']} for file {$filename}"
+            );
         }
+
+        return new RedirectResponse('/bundles/opendxpadmin/img/filetype-not-supported.svg');
     }
 
     public function robotsTxtAction(Request $request): Response
