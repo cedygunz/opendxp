@@ -58,11 +58,13 @@ class HttpCacheScope implements ResetInterface
      */
     public function suspended(callable $fn): mixed
     {
+        $previousSuspended = $this->suspended;
         $this->suspended = true;
+        
         try {
             return $fn();
         } finally {
-            $this->suspended = false;
+            $this->suspended = $previousSuspended;
         }
     }
 
