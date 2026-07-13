@@ -54,6 +54,8 @@ class AssetPreviewImageHandler implements BatchHandlerInterface
                 } elseif ($asset instanceof Asset\Document || $asset instanceof Asset\Video) {
                     $thumbnail = $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig());
                 } elseif ($asset instanceof Asset\Folder) {
+                    // no exists() verification needed here: getPreviewImage() redispatches
+                    // itself on read while tile thumbnails are still missing
                     $asset->getPreviewImage(true);
                 }
 
