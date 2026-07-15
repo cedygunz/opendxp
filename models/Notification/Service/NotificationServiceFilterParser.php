@@ -71,7 +71,7 @@ class NotificationServiceFilterParser
             __METHOD__,
             'OpenDxp\Bundle\AdminBundle\Service\Notification\NotificationFilterParser'
         );
-        
+
         $result = [];
         $filter = $this->request->request->get(self::KEY_FILTER, '[]');
         $items = json_decode($filter, true);
