@@ -18,8 +18,8 @@ namespace OpenDxp\Bundle\CoreBundle\HttpCache\Strategy;
 use OpenDxp\HttpCache\HttpCacheTagStrategyInterface;
 use OpenDxp\HttpCache\Tag\CacheTag;
 use OpenDxp\HttpCache\Tag\ElementTagType;
-use OpenDxp\Model\Translation;
 use OpenDxp\Model;
+use OpenDxp\Model\Translation;
 
 /**
  * @internal

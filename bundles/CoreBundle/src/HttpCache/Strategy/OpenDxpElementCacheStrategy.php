@@ -54,18 +54,18 @@ class OpenDxpElementCacheStrategy implements HttpCacheTagStrategyInterface
     public function getTags(object $element): array
     {
         return match (true) {
-            # listings
+            // listings
             $element instanceof AssetListing => $this->tag(ElementTagType::AssetList, $this->assetsTagList),
             $element instanceof DocumentListing => $this->tag(ElementTagType::DocumentList, $this->documentsTagList),
             $element instanceof ObjectListing => $this->tag(ElementTagType::DataObjectClass, $this->dataObjectsTagList, $element->getClassName()),
-            # single elements
+            // single elements
             $element instanceof Asset => [
                 ...$this->tag(ElementTagType::Asset, true, $element->getId()),
-                ...$this->tag(ElementTagType::AssetList, $this->assetsTagList)
+                ...$this->tag(ElementTagType::AssetList, $this->assetsTagList),
             ],
             $element instanceof Document => [
                 ...$this->tag(ElementTagType::Document, true, $element->getId()),
-                ...$this->tag(ElementTagType::DocumentList, $this->documentsTagList)
+                ...$this->tag(ElementTagType::DocumentList, $this->documentsTagList),
             ],
             $element instanceof DataObject => [
                 ...$this->tag(ElementTagType::DataObject, true, $element->getId()),

@@ -17,9 +17,10 @@ declare(strict_types=1);
 namespace OpenDxp\Bundle\CoreBundle\DependencyInjection;
 
 use InvalidArgumentException;
+use LogicException;
 use OpenDxp;
-use OpenDxp\Bundle\CoreBundle\EventListener\TranslationDebugListener;
 use OpenDxp\Bundle\CoreBundle\EventListener\HttpCache\HttpCacheScopeListener;
+use OpenDxp\Bundle\CoreBundle\EventListener\TranslationDebugListener;
 use OpenDxp\Bundle\CoreBundle\HttpCache\Strategy\OpenDxpElementCacheStrategy;
 use OpenDxp\Bundle\CoreBundle\HttpCache\Strategy\TranslationCacheStrategy;
 use OpenDxp\Bundle\CoreBundle\HttpCache\Strategy\WebsiteSettingCacheStrategy;
@@ -309,7 +310,7 @@ final class OpenDxpCoreExtension extends ConfigurableExtension
         }
 
         if (!class_exists(\FOS\HttpCacheBundle\FOSHttpCacheBundle::class)) {
-            throw new \LogicException(
+            throw new LogicException(
                 'opendxp.http_cache.enabled requires FOSHttpCacheBundle. Try running "composer require friendsofsymfony/http-cache-bundle" and register it in bundles.php: FOS\HttpCacheBundle\FOSHttpCacheBundle::class => [\'all\' => true].'
             );
         }

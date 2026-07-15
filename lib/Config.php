@@ -183,7 +183,7 @@ final class Config implements ArrayAccess
     public static function getWebsiteConfig(?string $language = null): array
     {
         $collection = self::getWebsiteConfigCollection($language);
-        $values = array_map(static fn(array $entry) => $entry['value'], $collection->entries);
+        $values = array_map(static fn (array $entry) => $entry['value'], $collection->entries);
 
         OpenDxp::getContainer()?->get('event_dispatcher')?->dispatch(
             new WebsiteSettingLoadEvent(WebsiteSettingLoadEvent::TYPE_LIST, language: $language, values: $values),

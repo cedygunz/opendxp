@@ -1,6 +1,18 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * OpenDXP
+ *
+ * This source file is licensed under the GNU General Public License version 3 (GPLv3).
+ *
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) OpenDXP (https://www.opendxp.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0.html  GNU General Public License version 3 (GPLv3)
+ */
+
 namespace OpenDxp\Tests\Unit\HttpCache;
 
 use OpenDxp\Bundle\CoreBundle\EventListener\HttpCache\HttpCacheScopeListener;
@@ -11,6 +23,7 @@ use OpenDxp\HttpCache\HttpCacheScope;
 use OpenDxp\Model\Document;
 use OpenDxp\Routing\HttpCacheTaggableInterface;
 use OpenDxp\Tests\Support\Test\TestCase;
+use stdClass;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,10 +34,15 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 class HttpCacheScopeListenerTest extends TestCase
 {
     private HttpCache $httpCache;
+
     private HttpCacheScope $scope;
+
     private OpenDxpContextResolver $resolver;
+
     private DocumentResolver $documentResolver;
+
     private HttpCacheScopeListener $listener;
+
     private HttpKernelInterface $kernel;
 
     protected function setUp(): void
@@ -75,7 +93,7 @@ class HttpCacheScopeListenerTest extends TestCase
     {
         $this->resolver->method('matchesOpenDxpContext')->willReturn(false);
 
-        $element = new \stdClass();
+        $element = new stdClass();
         $route   = $this->createMock(HttpCacheTaggableInterface::class);
         $route->method('getCacheElement')->willReturn($element);
 
@@ -101,7 +119,7 @@ class HttpCacheScopeListenerTest extends TestCase
         $this->resolver->method('matchesOpenDxpContext')->willReturn(false);
         $this->httpCache->expects($this->never())->method('collectTagsFor');
 
-        $this->listener->onKernelController($this->makeControllerEvent(isMain: true, routeDocument: new \stdClass()));
+        $this->listener->onKernelController($this->makeControllerEvent(isMain: true, routeDocument: new stdClass()));
     }
 
     public function testCollectsContentKeyTag(): void
@@ -119,7 +137,7 @@ class HttpCacheScopeListenerTest extends TestCase
     {
         $this->resolver->method('matchesOpenDxpContext')->willReturn(false);
 
-        $object = new \stdClass();
+        $object = new stdClass();
         $route  = $this->createMock(HttpCacheTaggableInterface::class);
         $route->method('getCacheElement')->willReturn($object);
 
@@ -153,7 +171,7 @@ class HttpCacheScopeListenerTest extends TestCase
         $listener = $this->makeListener(tagFallbackDocument: false);
         $this->resolver->method('matchesOpenDxpContext')->willReturn(false);
 
-        $object = new \stdClass();
+        $object = new stdClass();
         $route  = $this->createMock(HttpCacheTaggableInterface::class);
         $route->method('getCacheElement')->willReturn($object);
 

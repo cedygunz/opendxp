@@ -21,7 +21,9 @@ use Symfony\Contracts\EventDispatcher\Event;
 final class WebsiteSettingLoadEvent extends Event
 {
     public const string TYPE_SINGLE = 'single';
+
     public const string TYPE_LIST   = 'list';
+
     public const string TYPE_DATA   = 'data';
 
     /**

@@ -27,7 +27,9 @@ use Symfony\Contracts\Service\ResetInterface;
 class HttpCacheScope implements ResetInterface
 {
     private bool $active = false;
+
     private bool $disabled = false;
+
     private bool $suspended = false;
 
     /**
@@ -60,7 +62,7 @@ class HttpCacheScope implements ResetInterface
     {
         $previousSuspended = $this->suspended;
         $this->suspended = true;
-        
+
         try {
             return $fn();
         } finally {

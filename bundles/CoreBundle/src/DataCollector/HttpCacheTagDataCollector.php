@@ -21,6 +21,7 @@ use OpenDxp\HttpCache\TraceableHttpCacheTagCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
+use Throwable;
 
 /**
  * @internal
@@ -33,7 +34,7 @@ class HttpCacheTagDataCollector extends DataCollector
     ) {
     }
 
-    public function collect(Request $request, Response $response, ?\Throwable $exception = null): void
+    public function collect(Request $request, Response $response, ?Throwable $exception = null): void
     {
         $tracedTags = $this->deduplicateTags($this->collector->getCollectedTags());
         $tracedStrings = array_map(strval(...), $tracedTags);
@@ -106,7 +107,7 @@ class HttpCacheTagDataCollector extends DataCollector
         $allTags = array_filter(array_map(trim(...), preg_split('/[\s,]+/', $headerValue) ?: []));
         $tracedSet = array_flip($tracedStrings);
 
-        return array_values(array_filter($allTags, static fn(string $tag) => !isset($tracedSet[$tag])));
+        return array_values(array_filter($allTags, static fn (string $tag) => !isset($tracedSet[$tag])));
     }
 
     /**

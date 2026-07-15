@@ -15,7 +15,9 @@ declare(strict_types=1);
 
 namespace OpenDxp\HttpCache\Tag;
 
-final class CacheTag implements \Stringable
+use Stringable;
+
+final class CacheTag implements Stringable
 {
     public function __construct(
         public readonly CacheTagType $type,

@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace OpenDxp\Bundle\CoreBundle\HttpCache\Strategy;
 
+use LogicException;
 use OpenDxp\Event\Model\WebsiteSettingLoadEvent;
 use OpenDxp\HttpCache\HttpCacheTagStrategyInterface;
 use OpenDxp\HttpCache\Tag\CacheTag;
@@ -42,7 +43,7 @@ class WebsiteSettingCacheStrategy implements HttpCacheTagStrategyInterface
                     ? [new CacheTag(ElementTagType::WebsiteSetting, $element->getId())]
                     : [],
                 WebsiteSettingLoadEvent::TYPE_LIST => [new CacheTag(ElementTagType::WebsiteSettingList)],
-                default => throw new \LogicException(sprintf('Unsupported WebsiteSettingLoadEvent type: "%s"', $element->getType())),
+                default => throw new LogicException(sprintf('Unsupported WebsiteSettingLoadEvent type: "%s"', $element->getType())),
             };
         }
 

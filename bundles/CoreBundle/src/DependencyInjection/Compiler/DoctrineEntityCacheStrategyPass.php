@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace OpenDxp\Bundle\CoreBundle\DependencyInjection\Compiler;
 
+use InvalidArgumentException;
 use OpenDxp\HttpCache\HttpCache;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -51,7 +52,7 @@ final class DoctrineEntityCacheStrategyPass implements CompilerPassInterface
             $tagPrefix = $tag['tag_prefix'] ?? null;
 
             if (!$entityClass || !$tagPrefix) {
-                throw new \InvalidArgumentException(sprintf(
+                throw new InvalidArgumentException(sprintf(
                     'Service "%s" tagged with "opendxp.http_cache.doctrine_entity" must define "entity_class" and "tag_prefix".',
                     $id
                 ));
