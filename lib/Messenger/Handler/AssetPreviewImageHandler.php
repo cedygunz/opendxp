@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace OpenDxp\Messenger\Handler;
 
+use OpenDxp\Exception\ThumbnailGenerationFailedException;
 use OpenDxp\Messenger\AssetPreviewImageMessage;
 use OpenDxp\Model\Asset;
 use Psr\Log\LoggerInterface;
@@ -47,14 +48,28 @@ class AssetPreviewImageHandler implements BatchHandlerInterface
             try {
                 $asset = Asset::getById($message->getId());
 
+                $thumbnail = null;
                 if ($asset instanceof Asset\Image) {
-                    $asset->getThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
-                } elseif ($asset instanceof Asset\Document) {
-                    $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
-                } elseif ($asset instanceof Asset\Video) {
-                    $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+                    $thumbnail = $asset->getThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig());
+                } elseif ($asset instanceof Asset\Document || $asset instanceof Asset\Video) {
+                    $thumbnail = $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig());
                 } elseif ($asset instanceof Asset\Folder) {
+                    // no exists() verification needed here: getPreviewImage() redispatches
+                    // itself on read while tile thumbnails are still missing
                     $asset->getPreviewImage(true);
+                }
+
+                if ($thumbnail !== null) {
+                    $thumbnail->generate(false);
+
+                    if (!$thumbnail->exists()) {
+                        // generation errors are caught and logged inside generate(), the path reference
+                        // then points to the "filetype not supported" placeholder instead of a thumbnail
+                        throw new ThumbnailGenerationFailedException(sprintf(
+                            'Unable to generate preview image thumbnail for asset %d, see previous log entries for details',
+                            $message->getId()
+                        ));
+                    }
                 }
 
                 $ack->ack($message);
