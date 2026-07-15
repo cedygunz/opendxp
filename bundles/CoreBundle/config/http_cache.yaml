@@ -1,0 +1,40 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    OpenDxp\Bundle\CoreBundle\EventListener\HttpCache\HttpCacheScopeListener: ~
+    OpenDxp\Bundle\CoreBundle\EventListener\HttpCache\HttpCachePostLoadListener: ~
+    OpenDxp\Bundle\CoreBundle\EventListener\HttpCache\ElementChangeListener: ~
+    OpenDxp\Bundle\CoreBundle\EventListener\HttpCache\WebsiteSettingLoadListener: ~
+
+    OpenDxp\HttpCache\HttpCacheScope:
+        tags:
+            - { name: kernel.reset, method: reset }
+
+    OpenDxp\HttpCache\HttpCacheTagCollector:
+        tags:
+            - { name: kernel.reset, method: reset }
+
+    OpenDxp\HttpCache\TraceableHttpCacheTagCollector:
+        decorates: OpenDxp\HttpCache\HttpCacheTagCollector
+        tags:
+            - { name: kernel.reset, method: reset }
+
+    OpenDxp\HttpCache\HttpCacheTagCollectorInterface:
+        alias: OpenDxp\HttpCache\TraceableHttpCacheTagCollector
+        public: true
+
+    OpenDxp\HttpCache\HttpCache:
+        public: true
+        arguments:
+            $strategies: !tagged_iterator opendxp.http_cache.strategy
+            $cacheManager: '@?FOS\HttpCacheBundle\CacheManager'
+
+    OpenDxp\Bundle\CoreBundle\DataCollector\HttpCacheTagDataCollector:
+        arguments:
+            $responseTagger: '@FOS\HttpCacheBundle\Http\SymfonyResponseTagger'
+        tags:
+            -   name: data_collector
+                id: opendxp.http_cache_tags
+                template: '@OpenDxpCore/data_collector/http_cache_tags.html.twig'

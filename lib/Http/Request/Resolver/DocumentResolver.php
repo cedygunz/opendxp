@@ -24,7 +24,7 @@ class DocumentResolver extends AbstractRequestResolver
 {
     public function getDocument(?Request $request = null): ?Document
     {
-        if (!$request instanceof \Symfony\Component\HttpFoundation\Request) {
+        if (!$request instanceof Request) {
             $request = $this->getCurrentRequest();
         }
 
@@ -39,6 +39,7 @@ class DocumentResolver extends AbstractRequestResolver
     public function setDocument(Request $request, Document $document): void
     {
         $request->attributes->set(DynamicRouter::CONTENT_KEY, $document);
+
         if ($document->getProperty('language')) {
             $request->setLocale($document->getProperty('language'));
         }

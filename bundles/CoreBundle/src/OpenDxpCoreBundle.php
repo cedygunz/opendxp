@@ -19,6 +19,7 @@ namespace OpenDxp\Bundle\CoreBundle;
 use OpenDxp\Bundle\AdminBundle\OpenDxpAdminBundle;
 use OpenDxp\Bundle\CoreBundle\DependencyInjection\Compiler\AreabrickPass;
 use OpenDxp\Bundle\CoreBundle\DependencyInjection\Compiler\CacheFallbackPass;
+use OpenDxp\Bundle\CoreBundle\DependencyInjection\Compiler\DoctrineEntityCacheStrategyPass;
 use OpenDxp\Bundle\CoreBundle\DependencyInjection\Compiler\HtmlSanitizerPass;
 use OpenDxp\Bundle\CoreBundle\DependencyInjection\Compiler\ImageAdapterAliasPass;
 use OpenDxp\Bundle\CoreBundle\DependencyInjection\Compiler\LongRunningHelperPass;
@@ -38,6 +39,7 @@ use OpenDxp\Bundle\CoreBundle\DependencyInjection\OpenDxpCoreExtension;
 use OpenDxp\HttpKernel\Bundle\DependentBundleInterface;
 use OpenDxp\HttpKernel\BundleCollection\BundleCollection;
 use Override;
+use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -76,6 +78,7 @@ class OpenDxpCoreBundle extends Bundle implements DependentBundleInterface
         $container->addCompilerPass(new TranslationSanitizerPass());
         $container->addCompilerPass(new SerializerPass());
         $container->addCompilerPass(new ImageAdapterAliasPass());
+        $container->addCompilerPass(new DoctrineEntityCacheStrategyPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 10);
     }
 
     #[Override]

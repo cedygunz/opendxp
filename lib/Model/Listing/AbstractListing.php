@@ -22,8 +22,10 @@ use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Query\QueryBuilder;
 use InvalidArgumentException;
 use Iterator;
+use OpenDxp;
 use OpenDxp\Db;
 use OpenDxp\Db\Helper;
+use OpenDxp\HttpCache\HttpCache;
 use OpenDxp\Model\AbstractModel;
 use OpenDxp\Model\Listing\Dao\AbstractDao;
 
@@ -409,9 +411,21 @@ abstract class AbstractListing extends AbstractModel implements Iterator, Counta
     {
         if ($this->data === null) {
             $this->getDao()->load();
+            $this->onDataLoaded();
         }
 
         return $this->data;
+    }
+
+    /**
+     * Called once after data has been loaded for the first time.
+     */
+    protected function onDataLoaded(): void
+    {
+        $container = OpenDxp::getContainer();
+        if ($container->getParameter('opendxp.http_cache.enabled')) {
+            $container->get(HttpCache::class)->collectTagsFor($this);
+        }
     }
 
     /**

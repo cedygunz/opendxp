@@ -19,6 +19,7 @@ namespace OpenDxp\Model;
 use Exception;
 use OpenDxp\Cache\RuntimeCache;
 use OpenDxp\Event\Model\WebsiteSettingEvent;
+use OpenDxp\Event\Model\WebsiteSettingLoadEvent;
 use OpenDxp\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use OpenDxp\Event\WebsiteSettingEvents;
 use OpenDxp\Model\Element\ElementInterface;
@@ -75,6 +76,11 @@ final class WebsiteSetting extends AbstractModel
         } catch (NotFoundException) {
             return null;
         }
+
+        $setting->dispatchEvent(
+            new WebsiteSettingLoadEvent(WebsiteSettingLoadEvent::TYPE_SINGLE, setting: $setting),
+            WebsiteSettingEvents::POST_LOAD
+        );
 
         RuntimeCache::set($cacheKey, $setting);
 

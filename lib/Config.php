@@ -19,9 +19,13 @@ namespace OpenDxp;
 use ArrayAccess;
 use Exception;
 use OpenDxp;
+use OpenDxp\Cache\CachedCollection;
+use OpenDxp\Cache\CachedCollectionType;
 use OpenDxp\Cache\RuntimeCache;
 use OpenDxp\Config\ReportConfigWriter;
+use OpenDxp\Event\Model\WebsiteSettingLoadEvent;
 use OpenDxp\Event\SystemEvents;
+use OpenDxp\Event\WebsiteSettingEvents;
 use OpenDxp\Model\Element\ElementInterface;
 use OpenDxp\Model\Tool\SettingsStore;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
@@ -178,104 +182,15 @@ final class Config implements ArrayAccess
      */
     public static function getWebsiteConfig(?string $language = null): array
     {
-        if (RuntimeCache::isRegistered(self::getWebsiteConfigRuntimeCacheKey($language))) {
-            $config = RuntimeCache::get(self::getWebsiteConfigRuntimeCacheKey($language));
-        } else {
-            $cacheKey = 'website_config';
-            if ($language) {
-                $cacheKey .= '_' . $language;
-            }
+        $collection = self::getWebsiteConfigCollection($language);
+        $values = array_map(static fn(array $entry) => $entry['value'], $collection->entries);
 
-            $siteId = 0;
-            if (Model\Site::isSiteRequest()) {
-                $siteId = Model\Site::getCurrentSite()->getId();
-            } elseif (Tool::isFrontendRequestByAdmin()) {
-                // this is necessary to set the correct settings in editmode/preview (using the main domain)
-                // we cannot use the document resolver service here, because we need the document on the main request
-                $originDocument = OpenDxp::getContainer()->get('request_stack')->getMainRequest()->get(DynamicRouter::CONTENT_KEY);
-                if ($originDocument) {
-                    $site = Tool\Frontend::getSiteForDocument($originDocument);
-                    if ($site) {
-                        $siteId = $site->getId();
-                    }
-                }
-            }
+        OpenDxp::getContainer()?->get('event_dispatcher')?->dispatch(
+            new WebsiteSettingLoadEvent(WebsiteSettingLoadEvent::TYPE_LIST, language: $language, values: $values),
+            WebsiteSettingEvents::LIST_LOAD
+        );
 
-            if ($siteId) {
-                $cacheKey = $cacheKey . '_site_' . $siteId;
-            }
-
-            $config = Cache::load($cacheKey);
-            if (!$config) {
-                $config = [];
-                $cacheTags = ['website_config', 'system', 'config', 'output'];
-
-                $list = new Model\WebsiteSetting\Listing();
-                $list = $list->load();
-
-                foreach ($list as $item) {
-                    $itemSiteId = $item->getSiteId();
-
-                    if ($itemSiteId && $itemSiteId !== $siteId) {
-                        continue;
-                    }
-
-                    $itemLanguage = $item->getLanguage();
-
-                    if ($itemLanguage && $language !== $itemLanguage) {
-                        continue;
-                    }
-
-                    $key = $item->getName();
-
-                    if (!$itemLanguage && isset($config[$key])) {
-                        continue;
-                    }
-
-                    $s = match ($item->getType()) {
-                        'document', 'asset', 'object' => $item->getData(),
-                        'bool' => (bool) $item->getData(),
-                        'text' => (string) $item->getData(),
-                        default => null,
-                    };
-
-                    if ($s instanceof Model\Element\ElementInterface) {
-                        $elementCacheKey = $s->getCacheTag();
-                        $cacheTags[$elementCacheKey] = $elementCacheKey;
-                    }
-
-                    if (isset($s)) {
-                        $config[$key] = $s;
-                    }
-                }
-
-                //TODO resolve for all langs, current lang first, then no lang
-                Cache::save($config, $cacheKey, $cacheTags, null, 998);
-            } elseif (is_array($config)) {
-                foreach ($config as $setting) {
-                    if ($setting instanceof ElementInterface) {
-                        $elementCacheKey = $setting->getCacheTag();
-                        if (!RuntimeCache::isRegistered($elementCacheKey)) {
-                            RuntimeCache::set($elementCacheKey, $setting);
-                        }
-                    }
-                }
-            }
-
-            self::setWebsiteConfig($config, $language);
-        }
-
-        return $config;
-    }
-
-    /**
-     * @param array<string, mixed>|null $config
-     *
-     * @internal
-     */
-    public static function setWebsiteConfig(?array $config, ?string $language = null): void
-    {
-        RuntimeCache::set(self::getWebsiteConfigRuntimeCacheKey($language), $config);
+        return $values;
     }
 
     /**
@@ -286,12 +201,123 @@ final class Config implements ArrayAccess
      */
     public static function getWebsiteConfigValue(?string $key = null, mixed $default = null, ?string $language = null): mixed
     {
-        $config = self::getWebsiteConfig($language);
-        if (null !== $key) {
-            return $config[$key] ?? $default;
+        if (null === $key) {
+            return self::getWebsiteConfig($language);
         }
 
-        return $config;
+        $collection = self::getWebsiteConfigCollection($language);
+        $entry = $collection->entries[$key] ?? null;
+        $value = $entry['value'] ?? $default;
+
+        OpenDxp::getContainer()?->get('event_dispatcher')?->dispatch(
+            new WebsiteSettingLoadEvent(WebsiteSettingLoadEvent::TYPE_DATA, key: $key, language: $language, id: $entry['id'] ?? null, value: $value),
+            WebsiteSettingEvents::DATA_LOAD
+        );
+
+        return $value;
+    }
+
+    private static function getWebsiteConfigCollection(?string $language): CachedCollection
+    {
+        $runtimeKey = self::getWebsiteConfigRuntimeCacheKey($language);
+
+        if (RuntimeCache::isRegistered($runtimeKey)) {
+            $cached = RuntimeCache::get($runtimeKey);
+            if ($cached instanceof CachedCollection) {
+                return $cached;
+            }
+        }
+
+        $collection = self::loadWebsiteConfigCacheCollection($language);
+        RuntimeCache::set($runtimeKey, $collection);
+
+        return $collection;
+    }
+
+    private static function loadWebsiteConfigCacheCollection(?string $language): CachedCollection
+    {
+        $cacheKey = 'website_config';
+        if ($language) {
+            $cacheKey .= '_' . $language;
+        }
+
+        $siteId = 0;
+        if (Model\Site::isSiteRequest()) {
+            $siteId = Model\Site::getCurrentSite()->getId();
+        } elseif (Tool::isFrontendRequestByAdmin()) {
+            // this is necessary to set the correct settings in editmode/preview (using the main domain)
+            // we cannot use the document resolver service here, because we need the document on the main request
+            $originDocument = OpenDxp::getContainer()->get('request_stack')->getMainRequest()->get(DynamicRouter::CONTENT_KEY);
+            if ($originDocument) {
+                $site = Tool\Frontend::getSiteForDocument($originDocument);
+                if ($site) {
+                    $siteId = $site->getId();
+                }
+            }
+        }
+
+        if ($siteId) {
+            $cacheKey .= '_site_' . $siteId;
+        }
+
+        $cached = Cache::load($cacheKey);
+        if ($cached instanceof CachedCollection) {
+            foreach ($cached->entries as $entry) {
+                if ($entry['value'] instanceof ElementInterface && !RuntimeCache::isRegistered($entry['value']->getCacheTag())) {
+                    RuntimeCache::set($entry['value']->getCacheTag(), $entry['value']);
+                }
+            }
+
+            return $cached;
+        }
+
+        $entries = [];
+        $cacheTags = ['website_config', 'system', 'config', 'output'];
+
+        $list = new Model\WebsiteSetting\Listing();
+        $list = $list->load();
+
+        foreach ($list as $item) {
+            $itemSiteId = $item->getSiteId();
+
+            if ($itemSiteId && $itemSiteId !== $siteId) {
+                continue;
+            }
+
+            $itemLanguage = $item->getLanguage();
+
+            if ($itemLanguage && $language !== $itemLanguage) {
+                continue;
+            }
+
+            $key = $item->getName();
+
+            if (!$itemLanguage && isset($entries[$key])) {
+                continue;
+            }
+
+            $s = match ($item->getType()) {
+                'document', 'asset', 'object' => $item->getData(),
+                'bool' => (bool) $item->getData(),
+                'text' => (string) $item->getData(),
+                default => null,
+            };
+
+            if ($s instanceof Model\Element\ElementInterface) {
+                $elementCacheKey = $s->getCacheTag();
+                $cacheTags[$elementCacheKey] = $elementCacheKey;
+            }
+
+            if (isset($s)) {
+                //TODO resolve for all langs, current lang first, then no lang
+                $entries[$key] = ['value' => $s, 'id' => $item->getId()];
+            }
+        }
+
+        $collection = new CachedCollection(CachedCollectionType::WebsiteSetting, $entries);
+        Cache::save($collection, $cacheKey, array_values($cacheTags), null, 998);
+
+        return $collection;
     }
 
     /**

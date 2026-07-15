@@ -63,14 +63,14 @@ class TestController
 {
     public function testAction(): Response
     {
-        // get the "somenumber" setting for "de"
-        // if the property does not exist you will get the setting with not language provided
-        $somesetting = \OpenDxp\Model\WebsiteSetting::getByName('somenumber', null, 'de');
-        $currentnumber = $somesetting->getData();
-        //Now do something with the data or set new data
-        //Count up in this case
-        $newnumber = $currentnumber + 1;
-        $somesetting->setData($newnumber);
+        // Get the "some-number" setting for "de".
+        // If the property does not exist, you will get the setting with no language provided
+        $someSetting = \OpenDxp\Model\WebsiteSetting::getByName('some-number', null, 'de');
+        $currentNumber = $someSetting->getData();
+        
+        // Now do something with the data or set new data (count up in this case)
+        $newNumber = $currentNumber + 1;
+        $somesetting->setData($newNumber);
         $somesetting->save();
         
         // ...
@@ -80,54 +80,42 @@ class TestController
 
 ### Events
 
-You can also listen to events when a website setting is changed.
+You can listen to events when a website setting is loaded or changed.
 
-```php
-namespace OpenDxp\Event;
+**Load events** fire a `WebsiteSettingLoadEvent`, which carries a `type` constant indicating the access path:
 
-final class WebsiteSettingEvents
-{
-    /**
-     * @Event("OpenDxp\Event\Model\WebsiteSettingEvent")
-     *
-     * @var string
-     */
-    public const PRE_ADD = 'opendxp.websiteSetting.preAdd';
+| Constant                          | Fired by                              | Event type                             |
+|-----------------------------------|---------------------------------------|----------------------------------------|
+| `WebsiteSettingEvents::POST_LOAD` | `WebsiteSetting::getById()`           | `WebsiteSettingLoadEvent::TYPE_SINGLE` |
+| `WebsiteSettingEvents::LIST_LOAD` | `Config::getWebsiteConfig()`          | `WebsiteSettingLoadEvent::TYPE_LIST`   |
+| `WebsiteSettingEvents::DATA_LOAD` | `Config::getWebsiteConfigValue($key)` | `WebsiteSettingLoadEvent::TYPE_DATA`   |
 
-    /**
-     * @Event("OpenDxp\Event\Model\WebsiteSettingEvent")
-     *
-     * @var string
-     */
-    public const POST_ADD = 'opendxp.websiteSetting.postAdd';
+**Mutation events** fire a `WebsiteSettingEvent`:
 
-    /**
-     * @Event("OpenDxp\Event\Model\WebsiteSettingEvent")
-     *
-     * @var string
-     */
-    public const PRE_UPDATE = 'opendxp.websiteSetting.preUpdate';
+| Constant                            | Fired by   |
+|-------------------------------------|------------|
+| `WebsiteSettingEvents::PRE_ADD`     | `save()`   |
+| `WebsiteSettingEvents::POST_ADD`    | `save()`   |
+| `WebsiteSettingEvents::PRE_UPDATE`  | `save()`   |
+| `WebsiteSettingEvents::POST_UPDATE` | `save()`   |
+| `WebsiteSettingEvents::PRE_DELETE`  | `delete()` |
+| `WebsiteSettingEvents::POST_DELETE` | `delete()` |
 
-    /**
-     * @Event("OpenDxp\Event\Model\WebsiteSettingEvent")
-     *
-     * @var string
-     */
-    public const POST_UPDATE = 'opendxp.websiteSetting.postUpdate';
 
-    /**
-     * @Event("OpenDxp\Event\Model\WebsiteSettingEvent")
-     *
-     * @var string
-     */
-    public const PRE_DELETE = 'opendxp.websiteSetting.preDelete';
+### HTTP Cache
 
-    /**
-     * @Event("OpenDxp\Event\Model\WebsiteSettingEvent")
-     *
-     * @var string
-     */
-    public const POST_DELETE = 'opendxp.websiteSetting.postDelete';
-}
-```
+When HTTP caching is enabled, website settings participate in tag-based cache invalidation automatically.
 
+The tag added to a response depends on which access path triggered the load:
+
+| Access                          | Tags added             |
+|---------------------------------|------------------------|
+| `WebsiteSetting::getById($id)`  | `website_setting_{id}` |
+| `opendxp_website_config('key')` | `website_setting_{id}` |
+| `opendxp_website_config()`      | `website_setting_list` |
+
+When a setting is saved or deleted, both `website_setting_{id}` and `website_setting_list` are invalidated.
+
+> [!TIP]  
+> Using `opendxp_website_config('key')` instead of `opendxp_website_config()` gives more granular cache invalidation: 
+> only pages that loaded the changed setting are purged, not every page that loaded any setting.

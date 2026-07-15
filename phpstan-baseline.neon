@@ -21,6 +21,12 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: bundles/CoreBundle/src/DependencyInjection/Compiler/DoctrineEntityCacheStrategyPass.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
 			count: 2
 			path: bundles/CoreBundle/src/DependencyInjection/OpenDxpCoreExtension.php
 

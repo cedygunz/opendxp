@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 return [
+    FOS\HttpCacheBundle\FOSHttpCacheBundle::class                                    => ['all' => true],
     OpenDxp\Bundle\GlossaryBundle\OpenDxpGlossaryBundle::class                       => ['all' => true],
     OpenDxp\Bundle\SimpleBackendSearchBundle\OpenDxpSimpleBackendSearchBundle::class => ['all' => true],
     OpenDxp\Bundle\SeoBundle\OpenDxpSeoBundle::class                                 => ['all' => true],
