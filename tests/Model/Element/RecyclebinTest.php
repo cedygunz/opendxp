@@ -172,8 +172,6 @@ class RecyclebinTest extends ModelTestCase
     /**
      * Verifies that flush() empties the recycle bin storage without failing when its
      * storage root (e.g. `var/recyclebin`) is a symlink to another directory.
-     *
-     * @see https://github.com/open-dxp/opendxp/issues/165
      */
     public function testFlushDoesNotFailWhenStorageRootIsSymlink(): void
     {
