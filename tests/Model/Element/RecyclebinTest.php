@@ -16,7 +16,9 @@ declare(strict_types=1);
 
 namespace OpenDxp\Tests\Model\Element;
 
+use OpenDxp;
 use OpenDxp\Model\DataObject;
+use OpenDxp\Model\Element\Recyclebin;
 use OpenDxp\Model\Element\Recyclebin\Item;
 use OpenDxp\Model\User;
 use OpenDxp\Tests\Support\Test\ModelTestCase;
@@ -165,5 +167,38 @@ class RecyclebinTest extends ModelTestCase
         $this->assertEquals($inputText, $restoredSourceObject->getInput(), 'Input data not restored properly');
         $this->assertEquals($relationObject->getId(), $restoredRelation[0]->getId(), 'Simple object relation not restored properly');
         $this->assertEquals($relationObject->getId(), $restoredLocalizedRelation[0]->getId(), 'Localized object relation not restored properly');
+    }
+
+    /**
+     * Verifies that flush() empties the recycle bin storage without failing when its
+     * storage root (e.g. `var/recyclebin`) is a symlink to another directory.
+     *
+     * @see https://github.com/open-dxp/opendxp/issues/165
+     */
+    public function testFlushDoesNotFailWhenStorageRootIsSymlink(): void
+    {
+        $projectDir = OpenDxp::getContainer()->getParameter('kernel.project_dir');
+        $recyclebinPath = $projectDir . '/var/recyclebin';
+        $symlinkTarget = sys_get_temp_dir() . '/recyclebin-symlink-target-' . uniqid('', true);
+
+        rename($recyclebinPath, $symlinkTarget);
+        symlink($symlinkTarget, $recyclebinPath);
+
+        try {
+            $object = TestHelper::createEmptyObject();
+            Item::create($object, $this->user);
+            $object->delete();
+
+            $storage = Storage::get('recycle_bin');
+            $this->assertNotEmpty(iterator_to_array($storage->listContents('/', true), false), 'Expected recycle bin storage to contain the recycled item');
+
+            (new Recyclebin())->flush();
+
+            $this->assertEmpty(iterator_to_array($storage->listContents('/', true), false), 'Expected recycle bin storage to be empty after flush');
+            $this->assertDirectoryExists($recyclebinPath, 'Expected recycle bin storage root to still exist after flush');
+        } finally {
+            unlink($recyclebinPath);
+            rename($symlinkTarget, $recyclebinPath);
+        }
     }
 }
