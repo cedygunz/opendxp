@@ -691,7 +691,10 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         }
 
         if ($operator === '=') {
-            $listing->addConditionParam('`'.$this->getName().'` LIKE ?', '%,'.$data.',%');
+            $classId = $listing instanceof DataObject\Listing\Concrete ? $listing->getClassId() : null;
+            $listing->addConditionParam(
+                $this->getRelationFilterCondition((string) $data, $operator, $this->getName(), '', $classId)
+            );
 
             return $listing;
         }
@@ -707,8 +710,9 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     {
         $name = $params['name'] ?: $this->name;
         $brickPrefix = !empty($params['brickPrefix']) ? $params['brickPrefix'] : '';
+        $classId = isset($params['classId']) ? (string) $params['classId'] : null;
 
-        return $this->getRelationFilterCondition($value, $operator, $name, $brickPrefix);
+        return $this->getRelationFilterCondition($value, $operator, $name, $brickPrefix, $classId);
     }
 
     public function getQueryColumnType(): string
