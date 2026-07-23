@@ -63,15 +63,28 @@ trait RelationFilterConditionParser
                     $quotedId = $db->quote($id);
                     $typeCondition = $type !== null ? ' AND type = ' . $db->quote($type) : '';
 
-                    $directMatch = "SELECT src_id FROM $relationsTable WHERE ownertype = $quotedOwnerType AND fieldname = $quotedFieldName AND dest_id = $quotedId$typeCondition";
+                    $directMatch = sprintf(
+                        'SELECT src_id FROM %s WHERE ownertype = %s AND fieldname = %s AND dest_id = %s%s',
+                        $relationsTable,
+                        $quotedOwnerType,
+                        $quotedFieldName,
+                        $quotedId,
+                        $typeCondition
+                    );
 
                     // Variants inherit the relation from their parent instead of storing their own row, so match those too.
-                    $inheritedMatch = "SELECT child.id FROM objects child
-                        WHERE child.classId = $quotedClassId
-                          AND NOT EXISTS (SELECT 1 FROM $relationsTable r WHERE r.src_id = child.id AND r.fieldname = $quotedFieldName)
-                          AND child.parentId IN ($directMatch)";
+                    $inheritedMatch = sprintf(
+                        'SELECT child.id FROM objects child
+                        WHERE child.classId = %s
+                          AND NOT EXISTS (SELECT 1 FROM %s r WHERE r.src_id = child.id AND r.fieldname = %s)
+                          AND child.parentId IN (%s)',
+                        $quotedClassId,
+                        $relationsTable,
+                        $quotedFieldName,
+                        $directMatch
+                    );
 
-                    return "id IN ($directMatch UNION $inheritedMatch)";
+                    return sprintf('id IN (%s UNION %s)', $directMatch, $inheritedMatch);
                 },
                 $values,
             );
