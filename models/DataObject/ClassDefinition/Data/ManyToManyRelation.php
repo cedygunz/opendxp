@@ -750,7 +750,10 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         }
 
         if ($operator === '=') {
-            $listing->addConditionParam('`'.$this->getName().'` LIKE ?', '%,'.$data['type'].'|'.$data['id'].',%');
+            $classId = $listing instanceof DataObject\Listing\Concrete ? $listing->getClassId() : null;
+            $listing->addConditionParam(
+                $this->getRelationFilterCondition((string) $data['id'], $operator, $this->getName(), '', $classId, (string) $data['type'])
+            );
 
             return $listing;
         }
@@ -766,8 +769,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     {
         $name = $params['name'] ?: $this->name;
         $brickPrefix = !empty($params['brickPrefix']) ? $params['brickPrefix'] : '';
+        $classId = isset($params['classId']) ? (string) $params['classId'] : null;
 
-        return $this->getRelationFilterCondition($value, $operator, $name, $brickPrefix);
+        return $this->getRelationFilterCondition($value, $operator, $name, $brickPrefix, $classId);
     }
 
     public function getQueryColumnType(): string
