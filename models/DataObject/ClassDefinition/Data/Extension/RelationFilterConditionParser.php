@@ -26,7 +26,7 @@ use OpenDxp\Db\Helper;
 trait RelationFilterConditionParser
 {
     /**
-     * Builds the filter condition for a relation field; pass $classId to use the fast indexed lookup instead of the old LIKE scan.
+     * Builds the filter condition for a relation field; pass $classId to use fast indexed lookup.
      */
     public function getRelationFilterCondition(?string $value, string $operator, string $name, string $brickPrefix = '', ?string $classId = null, ?string $destinationType = null): string
     {
