@@ -166,6 +166,9 @@ services:
     # user-checker checking opendxp users for validity
     OpenDxp\Security\User\UserChecker: ~
 
+    OpenDxp\Security\Voter\UserPermissionVoter: ~
+    OpenDxp\Security\Voter\ElementPermissionVoter: ~
+
     #
     # System Settings Services
 

@@ -11,3 +11,5 @@ A simplified guide to this setup is illustrated in [Authenticate against OpenDXP
 
 For more complex examples, custom user providers and a full configuration reference please read the
 [Symfony Security Component documentation](https://symfony.com/doc/current/security.html).
+
+To use `#[IsGranted]`/`Security::isGranted()` against OpenDXP's own permission checks, see [Permission Voters](./10_Permission_Voters.md).

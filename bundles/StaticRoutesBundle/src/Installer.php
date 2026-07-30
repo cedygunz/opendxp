@@ -16,8 +16,10 @@ declare(strict_types=1);
 
 namespace OpenDxp\Bundle\StaticRoutesBundle;
 
+use OpenDxp\Bundle\StaticRoutesBundle\Security\StaticRoutesPermission;
 use OpenDxp\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use OpenDxp\Model\Tool\SettingsStore;
+use OpenDxp\Security\PermissionAttribute;
 use Override;
 
 /**
@@ -28,10 +30,6 @@ class Installer extends SettingsStoreAwareInstaller
     protected const string SETTINGS_STORE_SCOPE = 'opendxp_staticroutes';
 
     protected const string USER_PERMISSION_CATEGORY = 'OpenDxp Static Routes Bundle';
-
-    protected const array USER_PERMISSIONS = [
-        'routes',
-    ];
 
     #[Override]
     public function install(): void
@@ -52,9 +50,9 @@ class Installer extends SettingsStoreAwareInstaller
     {
         $db = \OpenDxp\Db::get();
 
-        foreach (self::USER_PERMISSIONS as $permission) {
+        foreach (StaticRoutesPermission::cases() as $permission) {
             $db->insert('users_permission_definitions', [
-                $db->quoteIdentifier('key') => $permission,
+                $db->quoteIdentifier('key') => PermissionAttribute::for($permission->value),
                 $db->quoteIdentifier('category') => self::USER_PERMISSION_CATEGORY,
             ]);
         }
@@ -64,9 +62,9 @@ class Installer extends SettingsStoreAwareInstaller
     {
         $db = \OpenDxp\Db::get();
 
-        foreach (self::USER_PERMISSIONS as $permission) {
+        foreach (StaticRoutesPermission::cases() as $permission) {
             $db->delete('users_permission_definitions', [
-                $db->quoteIdentifier('key') => $permission,
+                $db->quoteIdentifier('key') => PermissionAttribute::for($permission->value),
             ]);
         }
     }

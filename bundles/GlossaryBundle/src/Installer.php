@@ -16,7 +16,9 @@ declare(strict_types=1);
 
 namespace OpenDxp\Bundle\GlossaryBundle;
 
+use OpenDxp\Bundle\GlossaryBundle\Security\GlossaryPermission;
 use OpenDxp\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
+use OpenDxp\Security\PermissionAttribute;
 use Override;
 
 /**
@@ -25,10 +27,6 @@ use Override;
 class Installer extends SettingsStoreAwareInstaller
 {
     protected const string USER_PERMISSIONS_CATEGORY = 'OpenDxp Glossary Bundle';
-
-    protected const array USER_PERMISSIONS = [
-        'glossary',
-    ];
 
     #[Override]
     public function install(): void
@@ -50,9 +48,9 @@ class Installer extends SettingsStoreAwareInstaller
     {
         $db = \OpenDxp\Db::get();
 
-        foreach (self::USER_PERMISSIONS as $permission) {
+        foreach (GlossaryPermission::cases() as $permission) {
             $db->insert('users_permission_definitions', [
-                $db->quoteIdentifier('key') => $permission,
+                $db->quoteIdentifier('key') => PermissionAttribute::for($permission->value),
                 $db->quoteIdentifier('category') => self::USER_PERMISSIONS_CATEGORY,
             ]);
         }
@@ -62,9 +60,9 @@ class Installer extends SettingsStoreAwareInstaller
     {
         $db = \OpenDxp\Db::get();
 
-        foreach (self::USER_PERMISSIONS as $permission) {
+        foreach (GlossaryPermission::cases() as $permission) {
             $db->delete('users_permission_definitions', [
-                $db->quoteIdentifier('key') => $permission,
+                $db->quoteIdentifier('key') => PermissionAttribute::for($permission->value),
             ]);
         }
     }

@@ -16,18 +16,14 @@ declare(strict_types=1);
 
 namespace OpenDxp\Bundle\SeoBundle;
 
+use OpenDxp\Bundle\SeoBundle\Security\SeoPermission;
 use OpenDxp\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
+use OpenDxp\Security\PermissionAttribute;
 use Override;
 
 class Installer extends SettingsStoreAwareInstaller
 {
     protected const string USER_PERMISSIONS_CATEGORY = 'OpenDxp Seo Bundle';
-
-    protected const array USER_PERMISSIONS = [
-        'robots.txt',
-        'seo_document_editor',
-        'http_errors',
-    ];
 
     #[Override]
     public function install(): void
@@ -49,9 +45,9 @@ class Installer extends SettingsStoreAwareInstaller
     {
         $db = \OpenDxp\Db::get();
 
-        foreach (self::USER_PERMISSIONS as $permission) {
+        foreach (SeoPermission::cases() as $permission) {
             $db->insert('users_permission_definitions', [
-                $db->quoteIdentifier('key') => $permission,
+                $db->quoteIdentifier('key') => PermissionAttribute::for($permission->value),
                 $db->quoteIdentifier('category') => self::USER_PERMISSIONS_CATEGORY,
             ]);
         }
@@ -61,9 +57,9 @@ class Installer extends SettingsStoreAwareInstaller
     {
         $db = \OpenDxp\Db::get();
 
-        foreach (self::USER_PERMISSIONS as $permission) {
+        foreach (SeoPermission::cases() as $permission) {
             $db->delete('users_permission_definitions', [
-                $db->quoteIdentifier('key') => $permission,
+                $db->quoteIdentifier('key') => PermissionAttribute::for($permission->value),
             ]);
         }
     }

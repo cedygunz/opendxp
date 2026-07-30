@@ -22,9 +22,10 @@ use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use OpenDxp\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
-use OpenDxp\Bundle\GenericExecutionEngineBundle\Utils\Constants\PermissionConstants;
+use OpenDxp\Bundle\GenericExecutionEngineBundle\Security\GenericExecutionEnginePermission;
 use OpenDxp\Bundle\GenericExecutionEngineBundle\Utils\Constants\TableConstants;
 use OpenDxp\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
+use OpenDxp\Security\PermissionAttribute;
 use Override;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
@@ -34,11 +35,6 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 final class Installer extends SettingsStoreAwareInstaller
 {
     public const string USER_PERMISSIONS_CATEGORY = 'OpenDxp Generic Execution Engine';
-
-    protected const array USER_PERMISSIONS = [
-        PermissionConstants::GEE_JOB_RUN,
-        PermissionConstants::GEE_SEE_ALL_JOB_RUNS,
-    ];
 
     public function __construct(
         private readonly Connection $db,
@@ -211,7 +207,7 @@ final class Installer extends SettingsStoreAwareInstaller
     private function addUserPermission(Schema $schema): void
     {
         if ($schema->hasTable(TableConstants::USER_PERMISSION_DEF_TABLE)) {
-            foreach (self::USER_PERMISSIONS as $permission) {
+            foreach (GenericExecutionEnginePermission::cases() as $permission) {
                 $queryBuilder = $this->db->createQueryBuilder();
                 $queryBuilder
                     ->insert(TableConstants::USER_PERMISSION_DEF_TABLE)
@@ -220,7 +216,7 @@ final class Installer extends SettingsStoreAwareInstaller
                         $this->db->quoteIdentifier('category') => ':category',
                     ])
                     ->setParameters([
-                        'key' => $permission,
+                        'key' => PermissionAttribute::for($permission->value),
                         'category' => self::USER_PERMISSIONS_CATEGORY,
                     ]);
 
@@ -235,12 +231,12 @@ final class Installer extends SettingsStoreAwareInstaller
     private function removeUserPermission(Schema $schema): void
     {
         if ($schema->hasTable(TableConstants::USER_PERMISSION_DEF_TABLE)) {
-            foreach (self::USER_PERMISSIONS as $permission) {
+            foreach (GenericExecutionEnginePermission::cases() as $permission) {
                 $queryBuilder = $this->db->createQueryBuilder();
                 $queryBuilder
                     ->delete(TableConstants::USER_PERMISSION_DEF_TABLE)
                     ->where($this->db->quoteIdentifier('key') . ' = :key')
-                    ->setParameter('key', $permission);
+                    ->setParameter('key', PermissionAttribute::for($permission->value));
 
                 $queryBuilder->executeStatement();
             }
