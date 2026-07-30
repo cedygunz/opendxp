@@ -1,10 +1,10 @@
 # Upgrade Notes
 
 ## OpenDXP 1.4.0
-- New Feature: Tag-based http cache invalidation in [#153](https://github.com/open-dxp/opendxp/pull/153)
+- New Feature: Tag-based http cache invalidation [#153](https://github.com/open-dxp/opendxp/pull/153)
 - New Feature: Introduce Permission Voters (User / Element) [#171](https://github.com/open-dxp/opendxp/pull/171)
 - Improvement: Add indexed relation lookup as opt-in fast path, keep LIKE fallback unchanged [#169](https://github.com/open-dxp/opendxp/pull/169)
-- Improvement: Performance optimizations in element loading and caching [@Cruiser13](https://github.com/open-dxp/opendxp/pull/162)
+- Improvement: Performance: reduce queries and allocations in element loading and caching [@Cruiser13](https://github.com/open-dxp/opendxp/pull/162)
 - Bugfix: Make thumbnail generation errors in PublicServicesController more actionable by logging additional information [@NiklasBr](https://github.com/open-dxp/opendxp/pull/161)
 - Bugfix: Nack failed asset preview thumbnail generation instead of silent ack [@Cruiser13](https://github.com/open-dxp/opendxp/pull/163)
 - Bugfix: Recycle Bin: Avoid rmdir on storage root [#167](https://github.com/open-dxp/opendxp/pull/167)
