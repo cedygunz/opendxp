@@ -1,15 +1,16 @@
 # Upgrade Notes
 
 ## OpenDXP 1.4.0
-- New Feature: tag-based http cache invalidation in [#153](https://github.com/open-dxp/opendxp/pull/153)
+- New Feature: Tag-based http cache invalidation in [#153](https://github.com/open-dxp/opendxp/pull/153)
 - New Feature: Introduce Permission Voters (User / Element) [#171](https://github.com/open-dxp/opendxp/pull/171)
 - Improvement: Add indexed relation lookup as opt-in fast path, keep LIKE fallback unchanged [#169](https://github.com/open-dxp/opendxp/pull/169)
 - Improvement: Performance optimizations in element loading and caching [@Cruiser13](https://github.com/open-dxp/opendxp/pull/162)
-- Bugfix:Make thumbnail generation errors in PublicServicesController more actionable by logging additional information [@NiklasBr](https://github.com/open-dxp/opendxp/pull/161)
-- Bugfix: nack failed asset preview thumbnail generation instead of silent ack [@Cruiser13](https://github.com/open-dxp/opendxp/pull/163)
+- Bugfix: Make thumbnail generation errors in PublicServicesController more actionable by logging additional information [@NiklasBr](https://github.com/open-dxp/opendxp/pull/161)
+- Bugfix: Nack failed asset preview thumbnail generation instead of silent ack [@Cruiser13](https://github.com/open-dxp/opendxp/pull/163)
 - Bugfix: Recycle Bin: Avoid rmdir on storage root [#167](https://github.com/open-dxp/opendxp/pull/167)
 - Bugfix: `ImageThumbnailInterface::getAsset()` and `ImageThumbnailTrait::getAsset()` now declare a nullable return type (`?Asset` instead of `Asset`), matching the already-nullable `$asset` property. A thumbnail built without a backing asset (e.g. from a raw path reference) previously threw a `TypeError` because `getAsset()` returned `null` while promising a non-nullable `Asset`. Note: this widens the return type of a public API method to nullable — callers must now handle a possible `null` return value [@blankse](https://github.com/open-dxp/opendxp/pull/166)
-- Chore:Deprecate NotificationServiceFilterParser class [#164](https://github.com/open-dxp/opendxp/pull/164)
+- Chore: Deprecate NotificationServiceFilterParser class [#164](https://github.com/open-dxp/opendxp/pull/164)
+
 
 ## OpenDXP 1.3.3
 - Chore: Fix infinite-loop typo and stale routing docblock [#156](https://github.com/open-dxp/opendxp/pull/156)
