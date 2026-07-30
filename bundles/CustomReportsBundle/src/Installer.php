@@ -16,17 +16,14 @@ declare(strict_types=1);
 
 namespace OpenDxp\Bundle\CustomReportsBundle;
 
+use OpenDxp\Bundle\CustomReportsBundle\Security\CustomReportsPermission;
 use OpenDxp\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
+use OpenDxp\Security\PermissionAttribute;
 use Override;
 
 class Installer extends SettingsStoreAwareInstaller
 {
     protected const string USER_PERMISSIONS_CATEGORY = 'OpenDxp Custom Reports Bundle';
-
-    protected const array USER_PERMISSIONS = [
-        'reports',
-        'reports_config',
-    ];
 
     #[Override]
     public function install(): void
@@ -46,9 +43,9 @@ class Installer extends SettingsStoreAwareInstaller
     {
         $db = \OpenDxp\Db::get();
 
-        foreach (self::USER_PERMISSIONS as $permission) {
+        foreach (CustomReportsPermission::cases() as $permission) {
             $db->insert('users_permission_definitions', [
-                $db->quoteIdentifier('key') => $permission,
+                $db->quoteIdentifier('key') => PermissionAttribute::for($permission->value),
                 $db->quoteIdentifier('category') => self::USER_PERMISSIONS_CATEGORY,
             ]);
         }
@@ -58,9 +55,9 @@ class Installer extends SettingsStoreAwareInstaller
     {
         $db = \OpenDxp\Db::get();
 
-        foreach (self::USER_PERMISSIONS as $permission) {
+        foreach (CustomReportsPermission::cases() as $permission) {
             $db->delete('users_permission_definitions', [
-                $db->quoteIdentifier('key') => $permission,
+                $db->quoteIdentifier('key') => PermissionAttribute::for($permission->value),
             ]);
         }
     }

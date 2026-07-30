@@ -16,7 +16,9 @@ declare(strict_types=1);
 
 namespace OpenDxp\Bundle\XliffBundle;
 
+use OpenDxp\Bundle\XliffBundle\Security\XliffPermission;
 use OpenDxp\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
+use OpenDxp\Security\PermissionAttribute;
 use Override;
 
 /**
@@ -25,10 +27,6 @@ use Override;
 class Installer extends SettingsStoreAwareInstaller
 {
     protected const USER_PERMISSION_CATEGORY = 'OpenDxp Xliff Bundle';
-
-    protected const USER_PERMISSIONS = [
-        'xliff_import_export',
-    ];
 
     #[Override]
     public function install(): void
@@ -48,9 +46,9 @@ class Installer extends SettingsStoreAwareInstaller
     {
         $db = \OpenDxp\Db::get();
 
-        foreach (self::USER_PERMISSIONS as $permission) {
+        foreach (XliffPermission::cases() as $permission) {
             $db->insert('users_permission_definitions', [
-                $db->quoteIdentifier('key') => $permission,
+                $db->quoteIdentifier('key') => PermissionAttribute::for($permission->value),
                 $db->quoteIdentifier('category') => self::USER_PERMISSION_CATEGORY,
             ]);
         }
@@ -60,9 +58,9 @@ class Installer extends SettingsStoreAwareInstaller
     {
         $db = \OpenDxp\Db::get();
 
-        foreach (self::USER_PERMISSIONS as $permission) {
+        foreach (XliffPermission::cases() as $permission) {
             $db->delete('users_permission_definitions', [
-                $db->quoteIdentifier('key') => $permission,
+                $db->quoteIdentifier('key') => PermissionAttribute::for($permission->value),
             ]);
         }
     }

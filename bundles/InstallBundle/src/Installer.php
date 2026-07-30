@@ -45,7 +45,8 @@ use OpenDxp\Config;
 use OpenDxp\Console\Style\OpenDxpStyle;
 use OpenDxp\Db\Helper;
 use OpenDxp\Model\Tool\SettingsStore;
-use OpenDxp\Model\User;
+use OpenDxp\Security\CorePermission;
+use OpenDxp\Security\PermissionAttribute;
 use OpenDxp\Tool\AssetsInstaller;
 use OpenDxp\Tool\Console;
 use OpenDxp\Tool\Requirements;
@@ -814,47 +815,9 @@ class Installer
             'userOwner' => 1,
             'userModification' => 1,
         ]));
-        $userPermissions = [
-            'assets',
-            'classes',
-            'selectoptions',
-            'clear_cache',
-            'clear_fullpage_cache',
-            'clear_temp_files',
-            'dashboards',
-            'document_types',
-            'documents',
-            'emails',
-            'notes_events',
-            'objects',
-            'predefined_properties',
-            'asset_metadata',
-            'recyclebin',
-            'redirects',
-            'seemode',
-            'share_configurations',
-            'system_settings',
-            'tags_configuration',
-            'tags_assignment',
-            'tags_search',
-            'thumbnails',
-            'translations',
-            'users',
-            'website_settings',
-            'workflow_details',
-            'notifications',
-            'notifications_send',
-            'sites',
-            'objects_sort_method',
-            'objectbricks',
-            'fieldcollections',
-            'quantityValueUnits',
-            'classificationstore',
-        ];
-
-        foreach ($userPermissions as $permission) {
+        foreach (CorePermission::cases() as $permission) {
             $db->insert('users_permission_definitions', [
-                $db->quoteIdentifier('key') => $permission,
+                $db->quoteIdentifier('key') => PermissionAttribute::for($permission->value),
             ]);
         }
     }

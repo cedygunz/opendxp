@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace OpenDxp\Bundle\GenericExecutionEngineBundle\Security;
 
 use OpenDxp\Bundle\GenericExecutionEngineBundle\Exception\PermissionException;
-use OpenDxp\Bundle\GenericExecutionEngineBundle\Utils\Constants\PermissionConstants;
 use OpenDxp\Model\UserInterface;
+use OpenDxp\Security\PermissionAttribute;
 use OpenDxp\Tool\Authentication;
 
 /**
@@ -55,7 +55,7 @@ final readonly class PermissionService implements PermissionServiceInterface
             return false;
         }
 
-        return $this->user->isAllowed(PermissionConstants::GEE_JOB_RUN);
+        return $this->user->isAllowed(PermissionAttribute::for(GenericExecutionEnginePermission::JobRun->value));
     }
 
     public function isAllowedToSeeAllJobRuns(): bool
@@ -64,6 +64,6 @@ final readonly class PermissionService implements PermissionServiceInterface
             return false;
         }
 
-        return $this->user->isAllowed(PermissionConstants::GEE_SEE_ALL_JOB_RUNS);
+        return $this->user->isAllowed(PermissionAttribute::for(GenericExecutionEnginePermission::SeeAllJobRuns->value));
     }
 }
