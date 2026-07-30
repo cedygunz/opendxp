@@ -1,14 +1,15 @@
 # Upgrade Notes
 
-## Unreleased
-- Improvement: Performance optimizations in element loading and caching (fully backwards compatible on the public API):
-  - `Element\Service::prepareGetByIdParams()` uses a fast path for the common `[]` / `['force' => bool]` inputs; validation behavior is unchanged
-  - `DataObject\AbstractObject::getById()` now fetches type discriminator and object row with a single query instead of two. Custom DataObject DAOs that override `Dao::getById()` keep working: the model detects the override and keeps loading through it. To benefit from the single-query fast path, override the new `Dao::initByRow()` instead
-  - Listing DAOs (DataObject, Asset, Document) fetch the persistent-cache entries of all elements with a single batched backend roundtrip (`Cache::prefetch()` / `CoreCacheHandler::prefetch()`) before loading elements individually; the buffered results are consumed by the individual `getById()` calls, so element order, POST_LOAD event order, and visibility filtering are unchanged. Prefetched entries a listing load did not consume are dropped when it finishes (scoped to the batch via `Cache::invalidatePrefetched()` / `Element\Service::invalidatePrefetchedElementsByIds()`, so entries prefetched by an outer batch stay buffered), and `CoreCacheHandler` implements `ResetInterface` (`kernel.reset`), so long-running processes such as Messenger workers cannot serve stale buffered entries across messages
-  - `Asset`, `Document` and `DataObject` `getById()` only construct and dispatch `POST_LOAD` events when listeners are registered
-  - `Document::getById()` caches the per-class abstractness reflection check
-  - `CoreCacheHandler` uses hash lookups for method-local tag bookkeeping (`writeSaveQueue()`, `normalizeClearTags()`, `prepareCacheTags()`); the protected tag list properties keep their array shape
-- Bugfix: `ImageThumbnailInterface::getAsset()` and `ImageThumbnailTrait::getAsset()` now declare a nullable return type (`?Asset` instead of `Asset`), matching the already-nullable `$asset` property. A thumbnail built without a backing asset (e.g. from a raw path reference) previously threw a `TypeError` because `getAsset()` returned `null` while promising a non-nullable `Asset`. Note: this widens the return type of a public API method to nullable — callers must now handle a possible `null` return value [#166](https://github.com/open-dxp/opendxp/pull/166)
+## OpenDXP 1.4.0
+- New Feature: tag-based http cache invalidation in [#153](https://github.com/open-dxp/opendxp/pull/153)
+- New Feature: Introduce Permission Voters (User / Element) [#171](https://github.com/open-dxp/opendxp/pull/171)
+- Improvement: Add indexed relation lookup as opt-in fast path, keep LIKE fallback unchanged [#169](https://github.com/open-dxp/opendxp/pull/169)
+- Improvement: Performance optimizations in element loading and caching [@Cruiser13](https://github.com/open-dxp/opendxp/pull/162)
+- Bugfix:Make thumbnail generation errors in PublicServicesController more actionable by logging additional information [@NiklasBr](https://github.com/open-dxp/opendxp/pull/161)
+- Bugfix: nack failed asset preview thumbnail generation instead of silent ack [@Cruiser13](https://github.com/open-dxp/opendxp/pull/163)
+- Bugfix: Recycle Bin: Avoid rmdir on storage root [#167](https://github.com/open-dxp/opendxp/pull/167)
+- Bugfix: `ImageThumbnailInterface::getAsset()` and `ImageThumbnailTrait::getAsset()` now declare a nullable return type (`?Asset` instead of `Asset`), matching the already-nullable `$asset` property. A thumbnail built without a backing asset (e.g. from a raw path reference) previously threw a `TypeError` because `getAsset()` returned `null` while promising a non-nullable `Asset`. Note: this widens the return type of a public API method to nullable — callers must now handle a possible `null` return value [@blankse](https://github.com/open-dxp/opendxp/pull/166)
+- Chore:Deprecate NotificationServiceFilterParser class [#164](https://github.com/open-dxp/opendxp/pull/164)
 
 ## OpenDXP 1.3.3
 - Chore: Fix infinite-loop typo and stale routing docblock [#156](https://github.com/open-dxp/opendxp/pull/156)
