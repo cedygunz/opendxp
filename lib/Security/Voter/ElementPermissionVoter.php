@@ -24,7 +24,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 final class ElementPermissionVoter extends Voter
 {
-    public function __construct(private readonly TokenStorageUserResolver $tokenResolver,)
+    public function __construct(private readonly TokenStorageUserResolver $tokenResolver)
     {
     }
 
