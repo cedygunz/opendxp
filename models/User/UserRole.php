@@ -157,12 +157,10 @@ abstract class UserRole extends AbstractUser implements UserRoleInterface
      * @internal
      *
      * @return array<string, bool>
-     *
-     * @todo: $permissionInfo should be array, but is declared as null
      */
     public function generatePermissionList(): array
     {
-        $permissionInfo = null;
+        $permissionInfo = [];
 
         $list = new Permission\Definition\Listing();
         $definitions = $list->load();
