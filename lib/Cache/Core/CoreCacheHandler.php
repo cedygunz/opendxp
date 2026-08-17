@@ -34,6 +34,7 @@ use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Service\ResetInterface;
 use Throwable;
 
 /**
@@ -45,7 +46,7 @@ use Throwable;
  *
  * @internal
  */
-class CoreCacheHandler implements LoggerAwareInterface
+class CoreCacheHandler implements LoggerAwareInterface, ResetInterface
 {
     use LoggerAwareTrait;
 
@@ -109,6 +110,14 @@ class CoreCacheHandler implements LoggerAwareInterface
     protected int $maxWriteToCacheItems = 50;
 
     protected bool $writeInProgress = false;
+
+    /**
+     * One-shot buffer filled by prefetch() and consumed by load(); holds the
+     * item data for hits and false for known misses
+     *
+     * @var array<string, mixed>
+     */
+    protected array $prefetchedItems = [];
 
     protected Closure $emptyCacheItemClosure;
 
@@ -228,6 +237,13 @@ class CoreCacheHandler implements LoggerAwareInterface
             return false;
         }
 
+        if (array_key_exists($key, $this->prefetchedItems)) {
+            $data = $this->prefetchedItems[$key];
+            unset($this->prefetchedItems[$key]);
+
+            return $data;
+        }
+
         $item = $this->getItem($key);
 
         if ($item->isHit()) {
@@ -235,6 +251,52 @@ class CoreCacheHandler implements LoggerAwareInterface
         }
 
         return false;
+    }
+
+    /**
+     * Fetch multiple items with a single backend roundtrip and buffer the
+     * results (hits and known misses) for the subsequent load() calls of the
+     * same keys, which then don't need a backend roundtrip of their own.
+     * Buffered entries are consumed on load() and invalidated on writes,
+     * removals, and tag/full clears.
+     *
+     * @param string[] $keys
+     */
+    public function prefetch(array $keys): void
+    {
+        if (!$this->enabled) {
+            $this->logger->debug('Not prefetching objects {keys} from cache (deactivated)', ['keys' => $keys]);
+
+            return;
+        }
+
+        foreach ($this->pool->getItems($keys) as $key => $item) {
+            $this->prefetchedItems[$key] = $item->isHit() ? $item->get() : false;
+        }
+    }
+
+    /**
+     * Drops the given buffered prefetch entries without touching the rest of
+     * the buffer, e.g. entries prefetched by an outer, still running batch.
+     *
+     * @param string[] $keys
+     */
+    public function invalidatePrefetched(array $keys): void
+    {
+        foreach ($keys as $key) {
+            unset($this->prefetchedItems[$key]);
+        }
+    }
+
+    /**
+     * Drops all buffered prefetch entries. Wired to kernel.reset (via service
+     * autoconfiguration) so that long-running processes such as Messenger
+     * workers cannot serve entries which were prefetched but never consumed
+     * (e.g. because a batch aborted) to later, unrelated work.
+     */
+    public function reset(): void
+    {
+        $this->prefetchedItems = [];
     }
 
     /**
@@ -377,6 +439,7 @@ class CoreCacheHandler implements LoggerAwareInterface
         $tags = array_unique($tags);
 
         // check if any of our tags is in cleared tags or tags ignored on save lists
+        $tagsIgnoredOnSave = array_flip($this->tagsIgnoredOnSave);
         foreach ($tags as $tag) {
             if (isset($this->clearedTags[$tag])) {
                 $this->logger->debug('Aborted caching for key {key} because tag {tag} is in the cleared tags list', [
@@ -387,7 +450,7 @@ class CoreCacheHandler implements LoggerAwareInterface
                 return null;
             }
 
-            if (in_array($tag, $this->tagsIgnoredOnSave)) {
+            if (isset($tagsIgnoredOnSave[$tag])) {
                 $this->logger->debug('Aborted caching for key {key} because tag {tag} is in the ignored tags on save list', [
                     'key' => $key,
                     'tag' => $tag,
@@ -417,6 +480,8 @@ class CoreCacheHandler implements LoggerAwareInterface
         if ($this->cacheCleared && !$force) {
             return false;
         }
+
+        unset($this->prefetchedItems[$key]);
 
         $this->writeInProgress = true;
 
@@ -514,6 +579,8 @@ class CoreCacheHandler implements LoggerAwareInterface
     {
         CacheItem::validateKey($key);
 
+        unset($this->prefetchedItems[$key]);
+
         $this->writeLock->lock();
 
         return $this->pool->deleteItem($key);
@@ -524,6 +591,8 @@ class CoreCacheHandler implements LoggerAwareInterface
      */
     public function clearAll(): bool
     {
+        $this->prefetchedItems = [];
+
         $this->writeLock->lock();
 
         $this->logger->info('Clearing the whole cache');
@@ -549,6 +618,10 @@ class CoreCacheHandler implements LoggerAwareInterface
      */
     public function clearTags(array $tags): bool
     {
+        // the tag-to-key mapping is unknown here, so conservatively drop all
+        // prefetched entries
+        $this->prefetchedItems = [];
+
         $this->writeLock->lock();
 
         $originalTags = $tags;
@@ -586,6 +659,8 @@ class CoreCacheHandler implements LoggerAwareInterface
             return true;
         }
 
+        $this->prefetchedItems = [];
+
         $this->logger->debug('Clearing shutdown cache tags', ['tags' => $this->tagsClearedOnShutdown]);
 
         $result = $this->pool->invalidateTags($this->tagsClearedOnShutdown);
@@ -604,7 +679,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      */
     protected function normalizeClearTags(array $tags): array
     {
-        $blocklist = $this->tagsIgnoredOnClear;
+        $blocklist = array_flip($this->tagsIgnoredOnClear);
 
         // Shutdown tags are special tags being shifted to shutdown when scheduled to clear via clearTags. Explanation for
         // the "output" tag:
@@ -614,7 +689,7 @@ class CoreCacheHandler implements LoggerAwareInterface
         foreach ($this->shutdownTags as $shutdownTag) {
             if (in_array($shutdownTag, $tags)) {
                 $this->addTagClearedOnShutdown($shutdownTag);
-                $blocklist[] = $shutdownTag;
+                $blocklist[$shutdownTag] = true;
             }
         }
 
@@ -622,7 +697,7 @@ class CoreCacheHandler implements LoggerAwareInterface
         $tags = array_unique($tags);
 
         // don't clear tags in ignore array
-        $tags = array_filter($tags, fn ($tag) => !in_array($tag, $blocklist));
+        $tags = array_filter($tags, fn ($tag) => !isset($blocklist[$tag]));
 
         return $tags;
     }
@@ -755,7 +830,7 @@ class CoreCacheHandler implements LoggerAwareInterface
             $key = $queueItem->getKey();
 
             // check if key was already processed and don't save it again
-            if (in_array($key, $processedKeys)) {
+            if (isset($processedKeys[$key])) {
                 $this->logger->warning('Not writing item as key {key} was already processed', ['key' => $key]);
 
                 continue;
@@ -769,7 +844,7 @@ class CoreCacheHandler implements LoggerAwareInterface
                 $result = $this->storeCacheData($queueItem->getKey(), $queueItem->getData(), $tags, $queueItem->getLifetime(), $queueItem->isForce());
             }
 
-            $processedKeys[] = $key;
+            $processedKeys[$key] = true;
             $totalResult = $totalResult && $result;
         }
 

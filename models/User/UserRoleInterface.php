@@ -48,8 +48,6 @@ interface UserRoleInterface extends AbstractUserInterface
      * @return array<string, bool>
      *
      * @internal
-     *
-     * @todo: $permissionInfo should be array, but is declared as null
      */
     public function generatePermissionList(): array;
 

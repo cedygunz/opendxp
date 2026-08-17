@@ -29,6 +29,14 @@ final class Recyclebin extends Model\AbstractModel
     public function flush(): void
     {
         $this->getDao()->flush();
-        Storage::get('recycle_bin')->deleteDirectory('/');
+
+        $storage = Storage::get('recycle_bin');
+        foreach ($storage->listContents('/', false) as $item) {
+            if ($item->isDir()) {
+                $storage->deleteDirectory($item->path());
+            } else {
+                $storage->delete($item->path());
+            }
+        }
     }
 }

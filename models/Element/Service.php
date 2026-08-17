@@ -31,6 +31,8 @@ use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Exception;
 use League\Csv\EscapeFormula;
 use OpenDxp;
+use OpenDxp\Cache;
+use OpenDxp\Cache\RuntimeCache;
 use OpenDxp\Db;
 use OpenDxp\Event\SystemEvents;
 use OpenDxp\Logger;
@@ -445,19 +447,83 @@ class Service extends Model\AbstractModel
         };
     }
 
+    private static ?OptionsResolver $getByIdParamsResolver = null;
+
     /**
      * @internal
      */
     public static function prepareGetByIdParams(array $params): array
     {
-        $resolver = new OptionsResolver();
-        $resolver->setDefaults([
-            'force' => false,
-        ]);
+        // fast path for the overwhelmingly common inputs, avoids OptionsResolver
+        // overhead on every getById() call
+        if ($params === []) {
+            return ['force' => false];
+        }
 
-        $resolver->setAllowedTypes('force', 'bool');
+        if (count($params) === 1 && isset($params['force']) && is_bool($params['force'])) {
+            return $params;
+        }
 
-        return $resolver->resolve($params);
+        if (self::$getByIdParamsResolver === null) {
+            $resolver = new OptionsResolver();
+            $resolver->setDefaults([
+                'force' => false,
+            ]);
+
+            $resolver->setAllowedTypes('force', 'bool');
+            self::$getByIdParamsResolver = $resolver;
+        }
+
+        return self::$getByIdParamsResolver->resolve($params);
+    }
+
+    /**
+     * Fetch the persistent-cache entries for a batch of element IDs with a
+     * single backend roundtrip. The results are buffered in the cache handler
+     * and consumed by the subsequent individual getById() calls, which then
+     * behave exactly as without prefetching (RuntimeCache registration,
+     * POST_LOAD event order, visibility checks) — just without one cache
+     * backend roundtrip per element.
+     *
+     * @internal
+     *
+     * @param 'asset'|'document'|'object' $type
+     * @param int[] $ids
+     */
+    public static function prefetchElementsByIds(string $type, array $ids): void
+    {
+        $missingKeys = [];
+        foreach ($ids as $id) {
+            $cacheKey = self::getElementCacheTag($type, $id);
+            if (!isset($missingKeys[$cacheKey]) && !RuntimeCache::isRegistered($cacheKey)) {
+                $missingKeys[$cacheKey] = true;
+            }
+        }
+
+        if ($missingKeys) {
+            Cache::prefetch(array_keys($missingKeys));
+        }
+    }
+
+    /**
+     * Drops any still-buffered prefetch entries for the given element IDs
+     * without touching entries buffered for other batches, so that entries a
+     * batch did not consume (e.g. because it aborted) cannot serve stale data
+     * to later reads in long-running processes.
+     *
+     * @internal
+     *
+     * @param 'asset'|'document'|'object' $type
+     * @param int[] $ids
+     */
+    public static function invalidatePrefetchedElementsByIds(string $type, array $ids): void
+    {
+        $keys = [];
+        foreach ($ids as $id) {
+            $keys[] = self::getElementCacheTag($type, $id);
+        }
+
+        Cache::invalidatePrefetched($keys);
     }
 
     public static function getElementType(ElementInterface $element): ?string

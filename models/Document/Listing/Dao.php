@@ -41,14 +41,28 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         $documentsData = $this->db->fetchAllAssociative($select->getSQL(), $select->getParameters(), $select->getParameterTypes());
 
+        $ids = [];
         foreach ($documentsData as $documentData) {
-            if (!$documentData['type']) {
-                continue;
+            if ($documentData['type']) {
+                $ids[] = (int) $documentData['id'];
             }
-            if (!$doc = Document::getById((int) $documentData['id'])) {
-                continue;
+        }
+
+        // pre-warm the RuntimeCache with a single batched persistent-cache read
+        Model\Element\Service::prefetchElementsByIds('document', $ids);
+
+        try {
+            foreach ($ids as $id) {
+                if (!$doc = Document::getById($id)) {
+                    continue;
+                }
+                $documents[] = $doc;
             }
-            $documents[] = $doc;
+        } finally {
+            // drop this batch's prefetched entries the loop did not consume
+            // (e.g. when a POST_LOAD listener throws), they would otherwise
+            // serve stale data to later reads in long-running processes
+            Model\Element\Service::invalidatePrefetchedElementsByIds('document', $ids);
         }
 
         $this->model->setDocuments($documents);

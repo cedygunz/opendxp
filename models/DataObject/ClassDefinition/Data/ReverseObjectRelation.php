@@ -60,6 +60,16 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     /**
      * @return $this
      */
+    public function setOwnerClassId(string $ownerClassId): static
+    {
+        $this->ownerClassId = $ownerClassId;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
     public function setOwnerClassName(string $ownerClassName): static
     {
         $this->ownerClassName = $ownerClassName;
@@ -214,6 +224,12 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     #[Override]
     public function getClasses(): array
     {
+        // Prefer ownerClassName from definition export; avoid DB lookup via getOwnerClassId()
+        // so DB-less class builds keep concrete reverse-relation phpdocs.
+        if (!empty($this->ownerClassName)) {
+            return Model\Element\Service::fixAllowedTypes([$this->ownerClassName], 'classes');
+        }
+
         if ($this->getOwnerClassId()) {
             return Model\Element\Service::fixAllowedTypes([$this->ownerClassName], 'classes');
         }

@@ -33,6 +33,7 @@ use OpenDxp\Model\Element;
 use OpenDxp\Model\Element\DuplicateFullPathException;
 use OpenDxp\Model\Element\ElementInterface;
 use Override;
+use ReflectionMethod;
 
 /**
  * @method AbstractObject\Dao getDao()
@@ -66,6 +67,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     private static bool $hideUnpublished = false;
 
     private static bool $getInheritedValues = false;
+
+    /**
+     * Per DAO class: does it override getById() with custom logic?
+     *
+     * @var array<class-string, bool>
+     */
+    private static array $daoGetByIdOverrides = [];
 
     /**
      * @internal
@@ -211,19 +219,27 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $object = new Model\DataObject();
 
             try {
-                $typeInfo = $object->getDao()->getTypeById($id);
+                // single query fetching type discriminator and full row at once
+                $row = $object->getDao()->getDataRowById($id);
 
-                if (!empty($typeInfo['type']) && in_array($typeInfo['type'], DataObject::$types)) {
-                    if ($typeInfo['type'] == DataObject::OBJECT_TYPE_FOLDER) {
+                if (!empty($row['type']) && in_array($row['type'], DataObject::$types)) {
+                    if ($row['type'] == DataObject::OBJECT_TYPE_FOLDER) {
                         $className = Folder::class;
                     } else {
-                        $className = 'OpenDxp\\Model\\DataObject\\' . ucfirst($typeInfo['className']);
+                        $className = 'OpenDxp\\Model\\DataObject\\' . ucfirst($row['className']);
                     }
 
                     /** @var AbstractObject $object */
                     $object = self::getModelFactory()->build($className);
                     RuntimeCache::set($cacheKey, $object);
-                    $object->getDao()->getById($id);
+                    $dao = $object->getDao();
+                    if (self::daoOverridesGetById($dao::class)) {
+                        // project-specific DAOs overriding getById() must keep
+                        // their custom loading logic
+                        $dao->getById($id);
+                    } else {
+                        $dao->initByRow($row);
+                    }
                     if ($object->getModificationDate() !== null) {
                         $object->__setDataVersionTimestamp($object->getModificationDate());
                     }
@@ -252,12 +268,28 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             return null;
         }
 
-        OpenDxp::getEventDispatcher()->dispatch(
-            new DataObjectEvent($object, ['params' => $params]),
-            DataObjectEvents::POST_LOAD
-        );
+        $dispatcher = OpenDxp::getEventDispatcher();
+        if ($dispatcher->hasListeners(DataObjectEvents::POST_LOAD)) {
+            $dispatcher->dispatch(
+                new DataObjectEvent($object, ['params' => $params]),
+                DataObjectEvents::POST_LOAD
+            );
+        }
 
         return $object;
+    }
+
+    /**
+     * The single-query load in getById() bypasses the DAO's getById(). DAOs
+     * declaring their own getById() (project-specific customizations) must
+     * keep going through it, detected once per DAO class.
+     *
+     * @param class-string $daoClass
+     */
+    private static function daoOverridesGetById(string $daoClass): bool
+    {
+        return self::$daoGetByIdOverrides[$daoClass] ??= (new ReflectionMethod($daoClass, 'getById'))
+            ->getDeclaringClass()->getName() !== AbstractObject\Dao::class;
     }
 
     public static function getByPath(string $path, array $params = []): static|null
