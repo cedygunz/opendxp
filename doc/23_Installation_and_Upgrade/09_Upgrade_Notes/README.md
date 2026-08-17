@@ -9,8 +9,8 @@
 - Bugfix: Nack failed asset preview thumbnail generation instead of silent ack [@Cruiser13](https://github.com/open-dxp/opendxp/pull/163)
 - Bugfix: Recycle Bin: Avoid rmdir on storage root [#167](https://github.com/open-dxp/opendxp/pull/167)
 - Bugfix: `ImageThumbnailInterface::getAsset()` and `ImageThumbnailTrait::getAsset()` now declare a nullable return type (`?Asset` instead of `Asset`), matching the already-nullable `$asset` property. A thumbnail built without a backing asset (e.g. from a raw path reference) previously threw a `TypeError` because `getAsset()` returned `null` while promising a non-nullable `Asset`. Note: this widens the return type of a public API method to nullable — callers must now handle a possible `null` return value [@blankse](https://github.com/open-dxp/opendxp/pull/166)
+- Bugfix: Make invisible fields in field-collections editable [@Simon-Drohsen](https://github.com/open-dxp/opendxp/pull/175)
 - Chore: Deprecate NotificationServiceFilterParser class [#164](https://github.com/open-dxp/opendxp/pull/164)
-
 
 ## OpenDXP 1.3.3
 - Chore: Fix infinite-loop typo and stale routing docblock [#156](https://github.com/open-dxp/opendxp/pull/156)
