@@ -61,11 +61,22 @@ class Dao extends Model\Listing\Dao\AbstractDao
         // load id's
         $list = $this->loadIdList();
 
+        // pre-warm the RuntimeCache with a single batched persistent-cache read
+        Model\Element\Service::prefetchElementsByIds('object', $list);
+
         $objects = [];
-        foreach ($list as $id) {
-            if ($object = DataObject::getById($id)) {
-                $objects[] = $object;
+
+        try {
+            foreach ($list as $id) {
+                if ($object = DataObject::getById($id)) {
+                    $objects[] = $object;
+                }
             }
+        } finally {
+            // drop this batch's prefetched entries the loop did not consume
+            // (e.g. when a POST_LOAD listener throws), they would otherwise
+            // serve stale data to later reads in long-running processes
+            Model\Element\Service::invalidatePrefetchedElementsByIds('object', $list);
         }
 
         $this->model->setObjects($objects);
