@@ -198,7 +198,7 @@ trait ImageThumbnailTrait
             $asset = $this->getAsset();
             $dimensions = [];
 
-            if ($config) {
+            if ($config && $asset !== null) {
                 $thumbnail = $asset->getDao()->getCachedThumbnail($config->getName(), $this->getFilename());
                 if (isset($thumbnail['width'], $thumbnail['height'])) {
                     $dimensions['width'] = $thumbnail['width'];
@@ -242,7 +242,7 @@ trait ImageThumbnailTrait
         ];
     }
 
-    public function getAsset(): Asset
+    public function getAsset(): ?Asset
     {
         return $this->asset;
     }
@@ -380,9 +380,13 @@ trait ImageThumbnailTrait
 
     public function getFileSize(): ?int
     {
-        $thumbnail = $this->getAsset()->getDao()->getCachedThumbnail($this->getConfig()->getName(), $this->getFilename());
-        if ($thumbnail && $thumbnail['filesize']) {
-            return $thumbnail['filesize'];
+        $asset = $this->getAsset();
+        $config = $this->getConfig();
+        if ($asset !== null && $config !== null) {
+            $thumbnail = $asset->getDao()->getCachedThumbnail($config->getName(), $this->getFilename());
+            if ($thumbnail && $thumbnail['filesize']) {
+                return $thumbnail['filesize'];
+            }
         }
 
         $pathReference = $this->getPathReference(false);

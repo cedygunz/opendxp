@@ -8,6 +8,7 @@
   - `Asset`, `Document` and `DataObject` `getById()` only construct and dispatch `POST_LOAD` events when listeners are registered
   - `Document::getById()` caches the per-class abstractness reflection check
   - `CoreCacheHandler` uses hash lookups for method-local tag bookkeeping (`writeSaveQueue()`, `normalizeClearTags()`, `prepareCacheTags()`); the protected tag list properties keep their array shape
+- Bugfix: `ImageThumbnailInterface::getAsset()` and `ImageThumbnailTrait::getAsset()` now declare a nullable return type (`?Asset` instead of `Asset`), matching the already-nullable `$asset` property. A thumbnail built without a backing asset (e.g. from a raw path reference) previously threw a `TypeError` because `getAsset()` returned `null` while promising a non-nullable `Asset`. Note: this widens the return type of a public API method to nullable — callers must now handle a possible `null` return value [#166](https://github.com/open-dxp/opendxp/pull/166)
 
 ## OpenDXP 1.3.3
 - Chore: Fix infinite-loop typo and stale routing docblock [#156](https://github.com/open-dxp/opendxp/pull/156)
