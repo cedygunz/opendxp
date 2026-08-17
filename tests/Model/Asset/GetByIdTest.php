@@ -10,13 +10,13 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (https://pimcore.com)
- * @copyright  Modification Copyright (c) OpenDXP (https://www.opendxp.io)
+ * @copyright  Copyright (c) OpenDXP (https://www.opendxp.io)
  * @license    https://www.gnu.org/licenses/gpl-3.0.html  GNU General Public License version 3 (GPLv3)
  */
 
 namespace OpenDxp\Tests\Model\Asset;
 
+use OpenDxp;
 use OpenDxp\Cache\RuntimeCache;
 use OpenDxp\Event\AssetEvents;
 use OpenDxp\Event\Model\AssetEvent;
@@ -72,7 +72,7 @@ class GetByIdTest extends ModelTestCase
 
         RuntimeCache::clear();
 
-        $dispatcher = \OpenDxp::getEventDispatcher();
+        $dispatcher = OpenDxp::getEventDispatcher();
         $captured = [];
         $listener = function (AssetEvent $event) use (&$captured): void {
             $captured[] = $event->getAsset()->getId();
