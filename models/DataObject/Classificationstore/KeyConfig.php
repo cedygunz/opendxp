@@ -183,7 +183,7 @@ final class KeyConfig extends Model\AbstractModel
 
         $this->dispatchEvent(new KeyConfigEvent($this), DataObjectClassificationStoreEvents::KEY_CONFIG_PRE_DELETE);
         if ($this->getId()) {
-            self::removeCache();
+            $this->removeCache();
         }
 
         $this->getDao()->delete();
@@ -203,7 +203,7 @@ final class KeyConfig extends Model\AbstractModel
         $this->title = $def && isset($def['title']) ? $def['title'] : null;
 
         if ($this->getId()) {
-            self::removeCache();
+            $this->removeCache();
 
             $isUpdate = true;
             $this->dispatchEvent(new KeyConfigEvent($this), DataObjectClassificationStoreEvents::KEY_CONFIG_PRE_UPDATE);
