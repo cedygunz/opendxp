@@ -42,7 +42,7 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * Parent id
      */
-    protected ?int $parentId = null;
+    protected int $parentId = 0;
 
     /**
      * The group name.
@@ -135,7 +135,7 @@ final class GroupConfig extends Model\AbstractModel
         return $this->id;
     }
 
-    public function getParentId(): ?int
+    public function getParentId(): int
     {
         return $this->parentId;
     }
