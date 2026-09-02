@@ -42,7 +42,7 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * Parent id
      */
-    protected ?int $parentId = null;
+    protected int $parentId = 0;
 
     /**
      * The group name.
@@ -135,7 +135,7 @@ final class GroupConfig extends Model\AbstractModel
         return $this->id;
     }
 
-    public function getParentId(): ?int
+    public function getParentId(): int
     {
         return $this->parentId;
     }
@@ -185,7 +185,7 @@ final class GroupConfig extends Model\AbstractModel
     {
         $this->dispatchEvent(new GroupConfigEvent($this), DataObjectClassificationStoreEvents::GROUP_CONFIG_PRE_DELETE);
         if ($this->getId()) {
-            self::removeCache();
+            $this->removeCache();
         }
 
         $this->getDao()->delete();
@@ -200,7 +200,7 @@ final class GroupConfig extends Model\AbstractModel
         $isUpdate = false;
 
         if ($this->getId()) {
-            self::removeCache();
+            $this->removeCache();
 
             $isUpdate = true;
             $this->dispatchEvent(new GroupConfigEvent($this), DataObjectClassificationStoreEvents::GROUP_CONFIG_PRE_UPDATE);
