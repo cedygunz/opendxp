@@ -20,6 +20,13 @@ parameters:
         - identifier: new.static
         - identifier: missingType.iterableValue
         - identifier: missingType.generics
+        # admin-bundle 1.4 moved these classes to Mapper\GridData and left a class_alias() shim
+        # under the old name, which PHPStan does not evaluate. Against admin-bundle 1.0 the real
+        # class is there and nothing is reported, so the pattern has to tolerate no match.
+        -
+            message: '#unknown class OpenDxp\\Bundle\\AdminBundle\\Service\\GridData\\#'
+            identifier: class.notFound
+            reportUnmatched: false
 
     # see https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:
